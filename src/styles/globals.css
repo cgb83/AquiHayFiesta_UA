@@ -78,7 +78,10 @@ html { font-size: 16px; scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-ui);
-  background: var(--color-bg);
+  background:
+    radial-gradient(circle at 92% 8%, rgba(244, 198, 210, 0.35), transparent 32%),
+    radial-gradient(circle at 8% 92%, rgba(232, 180, 190, 0.28), transparent 30%),
+    var(--color-bg);
   color: var(--color-text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -131,6 +134,17 @@ input, textarea { font-family: inherit; }
   overflow: hidden;
 }
 
+.hero::after {
+  content: '';
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  right: -90px;
+  top: -180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0));
+}
+
 .hero::before {
   content: '';
   position: absolute;
@@ -146,12 +160,13 @@ input, textarea { font-family: inherit; }
   letter-spacing: -0.02em;
   position: relative;
   z-index: 1;
+  text-shadow: 0 2px 10px rgba(84, 25, 43, 0.15);
 }
 
 /* ─── Navigation ────────────────────────────────────────────── */
 .navbar {
   height: var(--nav-height);
-  background: var(--color-primary-pale);
+  background: linear-gradient(180deg, rgba(255, 246, 248, 0.92), rgba(248, 229, 235, 0.92));
   border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
@@ -161,6 +176,7 @@ input, textarea { font-family: inherit; }
   top: 0;
   z-index: 100;
   backdrop-filter: blur(8px);
+  box-shadow: 0 6px 18px rgba(125, 48, 72, 0.07);
 }
 
 .navbar-links {
@@ -284,12 +300,12 @@ input, textarea { font-family: inherit; }
 /* ─── Section Headers ───────────────────────────────────────── */
 .section-title {
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: 1.46rem;
   font-weight: 600;
   color: var(--color-text);
   margin-bottom: var(--space-md);
   padding-bottom: var(--space-sm);
-  border-bottom: 1.5px solid var(--color-border);
+  border-bottom: 1px solid rgba(232, 200, 208, 0.9);
 }
 
 .section-subtitle {
@@ -315,13 +331,17 @@ input, textarea { font-family: inherit; }
   gap: var(--space-md);
   padding: var(--space-sm);
   border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.75);
   cursor: pointer;
-  transition: background var(--transition), transform var(--transition);
+  transition: background var(--transition), transform var(--transition), border-color var(--transition), box-shadow var(--transition);
 }
 
 .card-item:hover {
-  background: var(--color-primary-pale);
-  transform: translateX(4px);
+  background: #fff;
+  border-color: var(--color-border);
+  transform: translateX(4px) translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 .card-thumb {
@@ -369,12 +389,15 @@ input, textarea { font-family: inherit; }
   cursor: pointer;
   border-radius: var(--radius-md);
   overflow: hidden;
-  transition: transform var(--transition), box-shadow var(--transition);
+  border: 1px solid rgba(232, 200, 208, 0.78);
+  background: #fff;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
 
 .card-grid-item:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
+  border-color: rgba(196, 122, 138, 0.65);
 }
 
 .card-grid-thumb {
@@ -385,7 +408,7 @@ input, textarea { font-family: inherit; }
 }
 
 .card-grid-info {
-  padding: var(--space-sm) 0;
+  padding: var(--space-sm);
 }
 
 /* Upcoming (Se acerca) cards */
@@ -395,7 +418,9 @@ input, textarea { font-family: inherit; }
   gap: var(--space-md);
 }
 
-.upcoming-item { cursor: pointer; }
+.upcoming-item {
+  cursor: pointer;
+}
 
 .upcoming-date {
   font-family: var(--font-ui);
@@ -422,7 +447,8 @@ input, textarea { font-family: inherit; }
 }
 
 /* ─── Sidebar ───────────────────────────────────────────────── */
-.sidebar { }
+.sidebar {
+}
 
 .sidebar-categories {
   display: flex;
@@ -438,10 +464,13 @@ input, textarea { font-family: inherit; }
   border-bottom: 1px solid var(--color-border);
   cursor: pointer;
   text-align: right;
-  transition: color var(--transition);
+  transition: color var(--transition), padding-right var(--transition);
 }
 
-.sidebar-cat-item:hover { color: var(--color-primary); }
+.sidebar-cat-item:hover {
+  color: var(--color-primary);
+  padding-right: 4px;
+}
 
 .sidebar-show-more {
   display: flex;
@@ -453,16 +482,19 @@ input, textarea { font-family: inherit; }
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--color-border);
+  background: rgba(232, 200, 208, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-text-soft);
   cursor: pointer;
-  transition: background var(--transition);
+  transition: background var(--transition), transform var(--transition);
 }
 
-.show-more-btn:hover { background: var(--color-primary-pale); }
+.show-more-btn:hover {
+  background: var(--color-primary-pale);
+  transform: translateY(-1px);
+}
 
 /* ─── Buttons ───────────────────────────────────────────────── */
 .btn {
@@ -499,6 +531,7 @@ input, textarea { font-family: inherit; }
 
 .btn-outline:hover {
   background: var(--color-primary-pale);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-full { width: 100%; justify-content: center; }
@@ -750,10 +783,15 @@ input, textarea { font-family: inherit; }
   cursor: pointer;
   aspect-ratio: 4/3;
   background: var(--color-primary-pale);
-  transition: transform var(--transition);
+  border: 1px solid rgba(232, 200, 208, 0.75);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
 
-.media-thumb:hover { transform: scale(1.02); }
+.media-thumb:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-sm);
+  border-color: rgba(196, 122, 138, 0.7);
+}
 
 .media-thumb img {
   width: 100%;
@@ -867,6 +905,15 @@ input, textarea { font-family: inherit; }
   font-size: 0.78rem;
   font-weight: 600;
   border: 1px solid var(--color-border);
+  box-shadow: 0 2px 8px rgba(125, 48, 72, 0.08);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgba(125, 48, 72, 0.45);
+  outline-offset: 2px;
 }
 
 /* ─── Auth pages ─────────────────────────────────────────────── */
@@ -1111,6 +1158,199 @@ input, textarea { font-family: inherit; }
   background: var(--color-primary);
   color: #fff;
   border-radius: 2px;
+}
+
+/* ─── Calendar Component ───────────────────────────────────── */
+.calendar-card {
+  background:
+    radial-gradient(circle at 15% 0%, rgba(244, 214, 223, 0.55), rgba(255, 255, 255, 0) 45%),
+    var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 8px;
+  box-shadow: 0 10px 28px rgba(125, 48, 72, 0.14);
+  max-width: 265px;
+  margin-left: auto;
+}
+
+.calendar-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-xs);
+}
+
+.calendar-chip {
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  background: var(--color-primary-pale);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-weight: 700;
+}
+
+.calendar-date-text {
+  font-family: var(--font-body);
+  color: var(--color-text-soft);
+  font-size: 0.72rem;
+  margin-bottom: 4px;
+  text-transform: capitalize;
+}
+
+.calendar-wrapper {
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 2px;
+}
+
+.calendar-wrapper .react-calendar {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: var(--font-ui);
+}
+
+.calendar-wrapper .react-calendar__navigation {
+  margin-bottom: 2px;
+}
+
+.calendar-wrapper .react-calendar__navigation button {
+  min-width: 28px;
+  height: 24px;
+  border-radius: 7px;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.calendar-wrapper .react-calendar__navigation button:hover,
+.calendar-wrapper .react-calendar__navigation button:focus {
+  background: var(--color-primary-pale);
+}
+
+.calendar-wrapper .react-calendar__navigation__label {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.calendar-wrapper .react-calendar__month-view__weekdays {
+  color: var(--color-text-soft);
+  font-weight: 600;
+  font-size: 0.6rem;
+}
+
+.calendar-wrapper .react-calendar__month-view__weekdays__weekday {
+  text-transform: capitalize;
+}
+
+.calendar-wrapper .react-calendar__tile {
+  padding: 4px 1px;
+  font-size: 0.7rem;
+  color: var(--color-text);
+  border-radius: var(--radius-sm);
+  transition: background var(--transition), transform var(--transition);
+}
+
+.calendar-wrapper .react-calendar__tile:hover {
+  background: var(--color-primary-pale);
+  transform: translateY(-1px);
+}
+
+.calendar-wrapper .react-calendar__tile--active {
+  background: var(--color-primary-pale);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.calendar-wrapper .react-calendar__tile--now {
+  border: 2px solid var(--color-primary);
+}
+
+.calendar-wrapper .react-calendar__tile.event-day {
+  background: linear-gradient(135deg, var(--color-primary), #a54a63);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 8px 16px rgba(125, 48, 72, 0.25);
+}
+
+.calendar-wrapper .react-calendar__tile.event-day:hover {
+  background: linear-gradient(135deg, #8c3952, #b85470);
+}
+
+.calendar-legend {
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--color-text-soft);
+  font-size: 0.66rem;
+}
+
+.legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), #a54a63);
+  box-shadow: 0 0 0 4px rgba(125, 48, 72, 0.12);
+}
+
+/* Fiesta page: right column wider for a more horizontal calendar */
+.fiesta-layout {
+  grid-template-columns: minmax(0, 1fr) 270px;
+}
+
+.fiesta-sidebar {
+  width: 100%;
+}
+
+@media (max-width: 980px) {
+  .fiesta-layout {
+    grid-template-columns: 1fr 245px;
+  }
+}
+
+@media (max-width: 768px) {
+  .fiesta-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-date-text {
+    font-size: 0.7rem;
+  }
+
+  .calendar-wrapper .react-calendar__tile {
+    padding: 5px 2px;
+    font-size: 0.68rem;
+  }
+}
+
+/* ─── Fiesta Info Block ─────────────────────────────────────── */
+.fiesta-info-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-primary-pale);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--color-primary);
+}
+
+.fiesta-info-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-soft);
+}
+
+.fiesta-info-value {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-primary);
 }
 
 /* ─── Responsive tweaks ──────────────────────────────────────── */

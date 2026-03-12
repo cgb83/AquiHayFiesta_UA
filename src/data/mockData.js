@@ -19,8 +19,8 @@ export const FIESTAS = [
     subcategories: ['Amor', 'Amistad', 'Floral'],
     views: 2000,
     image: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400&q=80',
-    date: null,
-    location: null,
+    date: '2026-02-14',
+    location: 'España',
     featured: true,
   },
   {

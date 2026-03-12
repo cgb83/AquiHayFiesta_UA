@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import Sidebar from '../components/ui/Sidebar';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
 import { CreatePublicationModal } from '../components/modals/CreateModals';
 import { FIESTAS, CONTENT_ITEMS, formatViews } from '../data/mockData';
 import { useApp } from '../context/AppContext';
+
+
+import Calendar from '../components/ui/Calendar';
 
 function AudioWave() {
   return (
@@ -17,25 +19,6 @@ function AudioWave() {
     </div>
   );
 }
-
-function CalendarThumb() {
-  return (
-    <div className="calendar-thumb">
-      <div style={{ padding: 4, fontSize: '0.55rem', color: '#b08090', textAlign: 'right', paddingRight: 6 }}>
-        ✏ agenda
-      </div>
-      <div className="calendar-header">
-        {['L','M','X','J','V','S','D'].map(d => (
-          <div key={d} className="calendar-cell" style={{ fontWeight: 700 }}>{d}</div>
-        ))}
-        {[...Array(28)].map((_, i) => (
-          <div key={i} className={`calendar-cell ${i === 13 ? 'active' : ''}`}>{i + 1}</div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function FiestaPage({ slug, onNavigate }) {
   const { user, toggleSave, isSaved } = useApp();
   const [activeViewer, setActiveViewer] = useState(null); // { item, type }
@@ -71,12 +54,12 @@ export default function FiestaPage({ slug, onNavigate }) {
 
   return (
     <>
-      <div className="content-grid">
-        <div>
+      <div className="content-grid fiesta-layout">
+        <div className="fiesta-sidebar">
           {/* Header */}
           <div className="flex-between mb-md" style={{ alignItems: 'flex-start' }}>
             <div style={{ flex: 1 }}>
-              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 12 }}>
+              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 12, marginBottom: 'var(--space-md)' }}>
                 {fiesta.title}
                 {user && (
                   <button className={`bookmark-btn ${isSaved(fiesta.id) ? 'saved' : ''}`}
@@ -88,8 +71,22 @@ export default function FiestaPage({ slug, onNavigate }) {
               <p style={{ marginTop: 8, fontSize: '0.92rem', color: 'var(--color-text-soft)', maxWidth: 480 }}>
                 {fiesta.description}
               </p>
+              {/* Info block: date + location */}
+              <div style={{ display: 'flex', gap: 'var(--space-lg)', marginTop: 'var(--space-lg)', flexWrap: 'wrap' }}>
+                {fiesta.date && (
+                  <div className="fiesta-info-block">
+                    <span className="fiesta-info-label">📅 Fecha</span>
+                    <span className="fiesta-info-value">{fiesta.date}</span>
+                  </div>
+                )}
+                {fiesta.location && (
+                  <div className="fiesta-info-block">
+                    <span className="fiesta-info-label">📍 Lugar</span>
+                    <span className="fiesta-info-value">{fiesta.location}</span>
+                  </div>
+                )}
+              </div>
             </div>
-            <CalendarThumb />
           </div>
 
           {/* Content sections */}
@@ -153,6 +150,11 @@ export default function FiestaPage({ slug, onNavigate }) {
 
         {/* Sidebar */}
         <div>
+          {/* Calendar */}
+          <div className="mb-lg">
+            <Calendar fiesta={fiesta} />
+          </div>
+
           {/* Categories */}
           <div className="mb-lg">
             <h3 className="section-title" style={{ textAlign: 'right' }}>Categorías</h3>
