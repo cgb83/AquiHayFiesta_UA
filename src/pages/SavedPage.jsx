@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import Sidebar from '../components/ui/Sidebar';
-import { FIESTAS, CATEGORIES, formatViews } from '../data/mockData';
+import { formatViews } from '../data/mockData';
 import { useApp } from '../context/AppContext';
 
 export default function SavedPage({ onNavigate }) {
-  const { savedItems, toggleSave } = useApp();
+  const { savedItems, toggleSave, fiestas } = useApp();
   const [catFilter, setCatFilter] = useState('all');
 
-  const saved = FIESTAS.filter(f => savedItems.includes(f.id));
+  const saved = fiestas.filter(f => savedItems.includes(f.id));
   const filtered = catFilter === 'all' ? saved
     : saved.filter(f => f.category === catFilter);
 

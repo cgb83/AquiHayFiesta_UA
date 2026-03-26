@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { MOCK_USER } from '../data/mockData';
+import { fetchMe, updateProfile } from '../services/api';
 
 const STYLES = [
   { value: 'standard',       label: 'Modo estándar' },
@@ -11,22 +11,74 @@ const STYLES = [
 ];
 
 export default function ProfilePage() {
-  const { theme, setTheme } = useApp();
+  const { user, theme, setTheme, refreshCurrentUser } = useApp();
   const [form, setForm] = useState({
-    name: MOCK_USER.name,
-    email: MOCK_USER.email,
+    name: user?.name || '',
+    email: user?.email || '',
     password: '',
-    country: MOCK_USER.country,
-    city: MOCK_USER.city,
+    country: user?.country || '',
+    city: user?.city || '',
     currentPassword: '',
   });
+  const [downloadHistory, setDownloadHistory] = useState([]);
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
-  const handleSave = () => {
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  useEffect(() => {
+    setForm((prev) => ({
+      ...prev,
+      name: user?.name || '',
+      email: user?.email || '',
+      country: user?.country || '',
+      city: user?.city || '',
+    }));
+  }, [user]);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const response = await fetchMe();
+        const me = response.user || {};
+        setDownloadHistory(me.downloadHistory || []);
+      } catch {
+        setDownloadHistory([]);
+      }
+    };
+
+    loadProfile();
+  }, []);
+
+  const handleSave = async () => {
+    if (!form.currentPassword) {
+      setError('Introduce tu contraseña actual para guardar cambios.');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      setError('');
+      await updateProfile({
+        username: form.name,
+        email: form.email,
+        password: form.password || undefined,
+        currentPassword: form.currentPassword,
+        country: form.country,
+        city: form.city,
+        theme,
+      });
+
+      await refreshCurrentUser();
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+      setForm((prev) => ({ ...prev, password: '', currentPassword: '' }));
+    } catch (err) {
+      setError(err.message || 'No se pudieron guardar los cambios.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleClear = () => {
@@ -51,30 +103,41 @@ export default function ProfilePage() {
 
           <div style={{ height: 1, background: 'var(--color-border)', marginBottom: 'var(--space-md)' }} />
 
+          {error && (
+            <p role="alert" style={{ color: '#c0392b', marginBottom: 'var(--space-sm)' }}>
+              {error}
+            </p>
+          )}
+
           <div className="form-group">
-            <input className="form-input" placeholder="Nombre de usuario"
+            <label className="form-label" htmlFor="profile-name">Nombre de usuario</label>
+            <input id="profile-name" className="form-input" placeholder="Nombre de usuario"
               value={form.name} onChange={e => set('name', e.target.value)} />
           </div>
           <div className="form-group">
-            <input className="form-input" placeholder="Correo electrónico" type="email"
+            <label className="form-label" htmlFor="profile-email">Correo electronico</label>
+            <input id="profile-email" className="form-input" placeholder="Correo electrónico" type="email"
               value={form.email} onChange={e => set('email', e.target.value)} />
           </div>
           <div className="form-group">
-            <input className="form-input" placeholder="Nueva contraseña" type="password"
+            <label className="form-label" htmlFor="profile-password">Nueva contraseña</label>
+            <input id="profile-password" className="form-input" placeholder="Nueva contraseña" type="password"
               value={form.password} onChange={e => set('password', e.target.value)} />
             <div className="form-hint">*Si no se rellena, se mantendrá la contraseña actual</div>
           </div>
 
           <div className="form-row form-group">
-            <input className="form-input" placeholder="País"
+            <label className="sr-only" htmlFor="profile-country">Pais</label>
+            <input id="profile-country" className="form-input" placeholder="País"
               value={form.country} onChange={e => set('country', e.target.value)} />
-            <input className="form-input" placeholder="Ciudad"
+            <label className="sr-only" htmlFor="profile-city">Ciudad</label>
+            <input id="profile-city" className="form-input" placeholder="Ciudad"
               value={form.city} onChange={e => set('city', e.target.value)} />
           </div>
 
           <div className="form-group">
-            <label className="form-label">Escribe tu contraseña para verificar los cambios:</label>
-            <input className="form-input" placeholder="Contraseña actual" type="password"
+            <label className="form-label" htmlFor="profile-current-password">Escribe tu contraseña para verificar los cambios:</label>
+            <input id="profile-current-password" className="form-input" placeholder="Contraseña actual" type="password"
               value={form.currentPassword} onChange={e => set('currentPassword', e.target.value)} />
           </div>
 
@@ -82,7 +145,8 @@ export default function ProfilePage() {
           <div className="mt-lg">
             <h3 className="section-title">Estilo</h3>
             <div style={{ height: 1, background: 'var(--color-border)', marginBottom: 'var(--space-md)' }} />
-            <select className="style-select" value={theme}
+            <label className="sr-only" htmlFor="profile-theme">Estilo visual</label>
+            <select id="profile-theme" className="style-select" value={theme}
               onChange={e => setTheme(e.target.value)}>
               {STYLES.map(s => (
                 <option key={s.value} value={s.value}>{s.label}</option>
@@ -92,8 +156,9 @@ export default function ProfilePage() {
 
           <button className="btn btn-primary btn-full mt-lg"
             onClick={handleSave}
+            disabled={saving}
             style={{ justifyContent: 'center', gap: 8 }}>
-            💾 {saved ? '¡Guardado!' : 'Guardar cambios'}
+            💾 {saving ? 'Guardando...' : (saved ? '¡Guardado!' : 'Guardar cambios')}
           </button>
         </div>
 
@@ -103,12 +168,15 @@ export default function ProfilePage() {
           <div style={{ height: 1, background: 'var(--color-border)', marginBottom: 'var(--space-md)' }} />
 
           <div className="download-history">
-            {MOCK_USER.downloadHistory.map((item, i) => (
+            {downloadHistory.map((item, i) => (
               <div key={i} className="download-item">
-                <span className="download-name">{item.name}</span>
-                <span className="download-date">{item.date}</span>
+                <span className="download-name">{item.filename}</span>
+                <span className="download-date">{new Date(item.downloadedAt).toLocaleDateString('es-ES')}</span>
               </div>
             ))}
+            {downloadHistory.length === 0 && (
+              <p className="text-muted">Aun no hay descargas registradas.</p>
+            )}
           </div>
 
           <div className="sidebar-show-more">

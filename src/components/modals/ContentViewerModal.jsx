@@ -1,8 +1,40 @@
-export default function ContentViewerModal({ item, type, onClose }) {
+import { useState, useRef } from 'react';
+import { useModalAccessibility } from './useModalAccessibility';
+
+export default function ContentViewerModal({ item, type, onClose, onDownload }) {
+  const modalRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  useModalAccessibility({ modalRef, isOpen: true, onClose });
+
+  const handleDownload = async () => {
+    if (!onDownload) return;
+
+    try {
+      setLoading(true);
+      setError('');
+      await onDownload(item);
+    } catch (err) {
+      setError(err.message || 'No se pudo descargar el contenido.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" style={{ maxWidth: 660 }} onClick={e => e.stopPropagation()}>
+      <div
+        ref={modalRef}
+        className="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="content-viewer-title"
+        style={{ maxWidth: 660 }}
+        onClick={e => e.stopPropagation()}
+        tabIndex={-1}
+      >
         <button style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', marginBottom: 8 }}
+          aria-label="Cerrar visor"
           onClick={onClose}>← </button>
 
         <div className="content-viewer">
@@ -35,17 +67,18 @@ export default function ContentViewerModal({ item, type, onClose }) {
 
           {/* Info */}
           <div className="content-viewer-info">
-            <div className="content-viewer-title">{item.title}</div>
+            <div id="content-viewer-title" className="content-viewer-title">{item.title}</div>
             <p className="content-viewer-desc">
               En este tutorial aprenderás a preparar un regalo muy personal y agradable para aquel al que quieras.
             </p>
+            {error && <p role="alert" style={{ color: '#c0392b' }}>{error}</p>}
           </div>
         </div>
 
         {/* Download */}
         <div style={{ textAlign: 'right', marginTop: 16 }}>
-          <button className="btn btn-outline" style={{ gap: 6 }}>
-            ⬇ Descargar
+          <button className="btn btn-outline" style={{ gap: 6 }} onClick={handleDownload} disabled={loading}>
+            ⬇ {loading ? 'Descargando...' : 'Descargar'}
           </button>
         </div>
       </div>

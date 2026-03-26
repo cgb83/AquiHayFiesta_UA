@@ -1,9 +1,11 @@
 import Sidebar from '../components/ui/Sidebar';
-import { FIESTAS, CATEGORIES, formatViews } from '../data/mockData';
+import { formatViews } from '../data/mockData';
+import { useApp } from '../context/AppContext';
 
 export default function CategoryPage({ categoryId, onNavigate }) {
-  const cat = CATEGORIES.find(c => c.id === categoryId);
-  const fiestas = FIESTAS.filter(f => f.category === categoryId);
+  const { categories, fiestas } = useApp();
+  const cat = categories.find(c => c.id === categoryId);
+  const fiestasByCategory = fiestas.filter(f => f.category === categoryId);
 
   return (
     <div className="content-grid">
@@ -19,10 +21,10 @@ export default function CategoryPage({ categoryId, onNavigate }) {
           <div style={{ height: 1, background: 'var(--color-border)', marginBottom: 16 }} />
 
           <div className="card-list">
-            {fiestas.length === 0 && (
+            {fiestasByCategory.length === 0 && (
               <p style={{ color: 'var(--color-muted)' }}>No hay fiestas en esta categoría aún.</p>
             )}
-            {fiestas.map(f => (
+            {fiestasByCategory.map(f => (
               <div key={f.id} className="card-item"
                 onClick={() => onNavigate('fiesta', f.slug)}>
                 <img className="card-thumb" src={f.image} alt={f.title} />

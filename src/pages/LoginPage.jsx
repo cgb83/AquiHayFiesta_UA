@@ -1,42 +1,78 @@
 import { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { MOCK_USER } from '../data/mockData';
+import { loginUser } from '../services/api';
+
+const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
 
 export default function LoginPage({ onNavigate }) {
   const { login } = useApp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    if (!email || !password) { setError('Rellena todos los campos.'); return; }
-    // Mock auth — any credentials work, or use sara@gmail.com
-    login({ ...MOCK_USER, email });
-    onNavigate('home');
+  const handleLogin = async () => {
+    const emailValue = email.trim().toLowerCase();
+
+    if (!emailValue || !password) {
+      setError('Rellena todos los campos.');
+      return;
+    }
+
+    if (!EMAIL_REGEX.test(emailValue)) {
+      setError('Introduce un correo valido.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError('');
+
+      const response = await loginUser({ email: emailValue, password });
+      login(response.user, response.token);
+      onNavigate('home');
+    } catch (err) {
+      setError(err.message || 'No se pudo iniciar sesion.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleClear = () => { setEmail(''); setPassword(''); setError(''); };
+  const handleClear = () => {
+    setEmail('');
+    setPassword('');
+    setError('');
+  };
 
   return (
     <div className="auth-bg">
       <div className="auth-card">
         <h2 className="auth-title">Inicia Sesión</h2>
 
-        {error && <p style={{ color: '#c0392b', fontSize: '0.85rem', textAlign: 'center', marginBottom: 12 }}>{error}</p>}
+        {error && <p role="alert" style={{ color: '#c0392b', fontSize: '0.85rem', textAlign: 'center', marginBottom: 12 }}>{error}</p>}
 
         <div className="form-group">
+          <label className="form-label" htmlFor="login-email">Correo electronico</label>
           <input className="form-input" placeholder="Correo electrónico" type="email"
-            value={email} onChange={e => setEmail(e.target.value)} />
+            id="login-email"
+            aria-invalid={Boolean(error)}
+            value={email} onChange={e => setEmail(e.target.value)} disabled={loading} />
         </div>
         <div className="form-group">
+          <label className="form-label" htmlFor="login-password">Contraseña</label>
           <input className="form-input" placeholder="Contraseña" type="password"
+            id="login-password"
+            aria-invalid={Boolean(error)}
             value={password} onChange={e => setPassword(e.target.value)}
+            disabled={loading}
             onKeyDown={e => e.key === 'Enter' && handleLogin()} />
         </div>
 
         <div className="form-row mt-md">
-          <button className="btn btn-outline w-full" onClick={handleClear}>Borrar</button>
-          <button className="btn btn-primary w-full" onClick={handleLogin}>Entrar</button>
+          <button className="btn btn-outline w-full" onClick={handleClear} disabled={loading}>Borrar</button>
+          <button className="btn btn-primary w-full" onClick={handleLogin} disabled={loading}>
+            {loading ? 'Entrando...' : 'Entrar'}
+          </button>
         </div>
 
         <div className="auth-links mt-md">

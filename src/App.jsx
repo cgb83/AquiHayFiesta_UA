@@ -22,11 +22,29 @@ function AppInner() {
   const { user } = useApp();
   // route = { page, param } e.g. { page: 'fiesta', param: 'san-valentin' }
   const [route, setRoute] = useState({ page: 'home', param: null });
+  const [authModal, setAuthModal] = useState(null); // 'login' | 'register' | null
+
+  const closeAuthModal = () => setAuthModal(null);
+
+  const handleAuthNavigate = (page, param = null) => {
+    if (page === 'login' || page === 'register') {
+      setAuthModal(page);
+      return;
+    }
+    closeAuthModal();
+    setRoute({ page, param });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const navigate = (page, param = null) => {
+    if (page === 'login' || page === 'register') {
+      setAuthModal(page);
+      return;
+    }
+
     // Guard auth-required pages
     if ((page === 'saved' || page === 'manage' || page === 'profile') && !user) {
-      setRoute({ page: 'login', param: null });
+      setAuthModal('login');
       return;
     }
     setRoute({ page, param });
@@ -34,17 +52,13 @@ function AppInner() {
   };
 
   const isShell = SHELL_PAGES.includes(route.page);
-  const isAuth  = route.page === 'login' || route.page === 'register';
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${authModal ? 'modal-open' : ''}`}>
       {/* Hero only on shell pages */}
       {isShell && <Hero />}
 
-      {/* Navbar on all except pure auth pages */}
-      {!isAuth && (
-        <Navbar onNavigate={navigate} currentPage={route.page} />
-      )}
+      <Navbar onNavigate={navigate} currentPage={route.page} />
 
       {/* Main content */}
       <main style={{ flex: 1 }}>
@@ -66,13 +80,28 @@ function AppInner() {
             {route.page === 'profile'  && <ProfilePage />}
           </div>
         )}
-
-        {route.page === 'login'    && <LoginPage    onNavigate={navigate} />}
-        {route.page === 'register' && <RegisterPage onNavigate={navigate} />}
       </main>
 
       {/* Footer on all shell pages */}
       {isShell && <Footer />}
+
+      {authModal && (
+        <div className="auth-modal-overlay" onClick={closeAuthModal}>
+          <div
+            className="auth-modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-label={authModal === 'login' ? 'Iniciar sesion' : 'Crear cuenta'}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button className="auth-modal-close" onClick={closeAuthModal} aria-label="Cerrar">
+              ✕
+            </button>
+            {authModal === 'login' && <LoginPage onNavigate={handleAuthNavigate} />}
+            {authModal === 'register' && <RegisterPage onNavigate={handleAuthNavigate} />}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

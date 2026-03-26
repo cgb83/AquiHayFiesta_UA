@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:frontend": "vite",
+    "dev:backend": "npm --prefix aquihayfiesta-backend/aquihayfiesta-backend run dev",
     "build": "vite build",
     "preview": "vite preview"
   },

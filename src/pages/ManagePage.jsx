@@ -1,34 +1,6 @@
-import { useState } from 'react';
-import { CONTENT_ITEMS } from '../data/mockData';
+import { useEffect, useState } from 'react';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
-
-const MOCK_USER_CONTENT = {
-  'San Valentín': {
-    videos: [
-      { id: 'v1', title: 'DIY Regalo para...', image: 'https://images.unsplash.com/photo-1518895312237-a9e23508077d?w=200&q=70' },
-      { id: 'v2', title: 'Receta cupcakes en...', image: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=200&q=70' },
-      { id: 'v3', title: 'Ayúdame a preparar...', image: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=200&q=70' },
-      { id: 'v4', title: 'Cómo preparar....', image: 'https://images.unsplash.com/photo-1549032305-e816babf0eb2?w=200&q=70' },
-    ],
-    images: [
-      { id: 'i1', title: 'Ideas para regalar...', image: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=200&q=70' },
-      { id: 'i2', title: 'Te ayudamos a...', image: 'https://images.unsplash.com/photo-1549032305-e816babf0eb2?w=200&q=70' },
-      { id: 'i3', title: 'Cómo hacer paso...', image: 'https://images.unsplash.com/photo-1502672023488-70e25813eb80?w=200&q=70' },
-    ],
-    documents: [
-      { id: 'd1', title: 'Poemas de amor...' },
-      { id: 'd2', title: '10 ideas de regalos...' },
-      { id: 'd3', title: 'Ayúdame a preparar...' },
-    ],
-  },
-  'Fiesta de Ibiza': {
-    audios: [
-      { id: 'a1', title: 'Poemas de amor...' },
-      { id: 'a2', title: '10 ideas de regalos...' },
-      { id: 'a3', title: 'Ayúdame a preparar...' },
-    ],
-  },
-};
+import { deletePublication, fetchMyPublications, resolveMediaUrl } from '../services/api';
 
 function MediaGroup({ label, items, type, onView, onDelete }) {
   if (!items || items.length === 0) return null;
@@ -58,17 +30,66 @@ function MediaGroup({ label, items, type, onView, onDelete }) {
 }
 
 export default function ManagePage() {
-  const [content, setContent] = useState(MOCK_USER_CONTENT);
+  const [content, setContent] = useState({});
   const [viewer, setViewer] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleDelete = (sectionKey, itemId, type) => {
-    setContent(prev => ({
-      ...prev,
-      [sectionKey]: {
-        ...prev[sectionKey],
-        [type + 's']: (prev[sectionKey][type + 's'] || []).filter(i => i.id !== itemId),
-      }
-    }));
+  const loadContent = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      const response = await fetchMyPublications();
+      const grouped = response.grouped || {};
+
+      const normalized = Object.fromEntries(
+        Object.entries(grouped).map(([key, types]) => {
+          const normalizeItems = (items = []) =>
+            items.map((item) => ({
+              id: item._id,
+              title: item.title,
+              image: resolveMediaUrl(item.thumbnailUrl || item.fileUrl),
+            }));
+
+          return [
+            key,
+            {
+              videos: normalizeItems(types.videos),
+              images: normalizeItems(types.images),
+              documents: normalizeItems(types.documents),
+              audios: normalizeItems(types.audios),
+            },
+          ];
+        })
+      );
+
+      setContent(normalized);
+    } catch (err) {
+      setError(err.message || 'No se pudo cargar tu contenido.');
+      setContent({});
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadContent();
+  }, []);
+
+  const handleDelete = async (sectionKey, itemId, type) => {
+    try {
+      await deletePublication(itemId);
+      setContent(prev => ({
+        ...prev,
+        [sectionKey]: {
+          ...prev[sectionKey],
+          [type + 's']: (prev[sectionKey][type + 's'] || []).filter(i => i.id !== itemId),
+        }
+      }));
+    } catch (err) {
+      setError(err.message || 'No se pudo eliminar la publicación.');
+    }
   };
 
   const handleDeleteAll = (sectionKey) => {
@@ -80,6 +101,12 @@ export default function ManagePage() {
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700, marginBottom: 'var(--space-xl)' }}>
         Gestiona tu contenido
       </h2>
+
+      {loading && <p className="text-muted">Cargando publicaciones...</p>}
+      {error && <p role="alert" style={{ color: '#c0392b' }}>{error}</p>}
+      {!loading && Object.keys(content).length === 0 && (
+        <p className="text-muted">Todavia no tienes publicaciones creadas.</p>
+      )}
 
       {Object.entries(content).map(([sectionKey, types]) => (
         <div key={sectionKey} className="manage-section">

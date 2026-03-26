@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { CATEGORIES, FIESTAS, formatDate, formatViews } from '../../data/mockData';
+import { formatDate, formatViews } from '../../data/mockData';
+import { useApp } from '../../context/AppContext';
 import Calendar from './Calendar';
 
 export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
+  const { categories, fiestas } = useApp();
   const [showAll, setShowAll] = useState(false);
-  const displayed = showAll ? CATEGORIES : CATEGORIES.slice(0, 3);
-  const upcoming = FIESTAS.filter(f => f.upcoming);
+  const displayed = showAll ? categories : categories.slice(0, 3);
+  const upcoming = fiestas.filter(f => f.upcoming);
 
   return (
     <aside className="sidebar">
