@@ -8,12 +8,24 @@ Aplicacion web sobre eventos y festividades con:
 
 ## Estructura del repositorio
 
-- Frontend (raiz):
-	- `src/`
-	- `package.json`
-- Backend:
-	- `aquihayfiesta-backend/aquihayfiesta-backend/src/`
-	- `aquihayfiesta-backend/aquihayfiesta-backend/package.json`
+```
+AquiHayFiesta_UA/
+├── frontend/               # React + Vite
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── vite.config.js
+├── backend/                # Node.js + Express + MongoDB
+│   ├── src/
+│   │   ├── models/
+│   │   ├── routes/
+│   │   ├── seeds/
+│   │   └── server.js
+│   ├── uploads/
+│   ├── package.json
+│   └── config/
+└── README.md
+```
 
 ## Requisitos
 
@@ -23,31 +35,49 @@ Aplicacion web sobre eventos y festividades con:
 
 ## Configuracion
 
-1. Frontend (raiz):
-	 - Copiar `.env.example` a `.env`
-	 - Revisar `VITE_API_URL` (por defecto `http://localhost:5000/api`)
+### Frontend
+```bash
+cd frontend
+cp .env.example .env
+# Revisar VITE_API_URL (por defecto: http://localhost:5000/api)
+npm install
+npm run dev
+```
 
-2. Backend:
-	 - Ir a `aquihayfiesta-backend/aquihayfiesta-backend/`
-	 - Copiar `.env.example` a `.env`
-	 - Configurar `MONGODB_URI` y `JWT_SECRET`
+### Backend
+```bash
+cd backend
+cp .env.example .env
+# Configurar MONGODB_URI y JWT_SECRET
+npm install
+npm run dev
+```
 
 ## Comandos
 
-En la raiz del proyecto:
+### Frontend (`frontend/`)
+- `npm install` - Instalar dependencias
+- `npm run dev` - Iniciar servidor de desarrollo (Vite en localhost:5173)
+- `npm run build` - Build para producción
+- `npm run preview` - Ver build producción localmente
 
-- `npm install`
-- `npm run dev` (frontend)
-- `npm run dev:frontend` (frontend)
-- `npm run dev:backend` (backend)
-- `npm run build` (build frontend)
+### Backend (`backend/`)
+- `npm install` - Instalar dependencias
+- `npm run dev` - Iniciar servidor con nodemon (puerto 5000)
+- `npm start` - Iniciar servidor (sin hot reload)
+- `npm run seed` - Cargar datos de prueba en la BD (15 usuarios, 13 fiestas, 13 publicaciones)
 
-En backend (`aquihayfiesta-backend/aquihayfiesta-backend`):
+## Base de datos
 
-- `npm install`
-- `npm run dev`
-- `npm start`
-- `npm run seed` (carga 3 usuarios de prueba y 20 fiestas)
+Usuarios de prueba:
+- **Usuario normal**: `silvia@aquihayfiesta.es` / `Prueba123`
+- **Admin**: `admin.fiestas@aquihayfiesta.es` / `Admin123`
+
+Datos incluidos:
+- 15 usuarios normales + 2 admins
+- 10 fiestas oficiales (San Valentín, Halloween, Navidad, etc.)
+- 3 fiestas creadas por usuarios (Moros y Cristianos, Boda, Bando Murcia)
+- 13 publicaciones con distintos tipos de contenido
 
 ## Arranque rapido recomendado
 
