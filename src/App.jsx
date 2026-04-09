@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import Navbar from './components/layout/Navbar';
 import { Hero, Footer } from './components/layout/HeroFooter';
@@ -23,6 +23,7 @@ function AppInner() {
   // route = { page, param } e.g. { page: 'fiesta', param: 'san-valentin' }
   const [route, setRoute] = useState({ page: 'home', param: null });
   const [authModal, setAuthModal] = useState(null); // 'login' | 'register' | null
+  const [searchQuery, setSearchQuery] = useState('');
 
   const closeAuthModal = () => setAuthModal(null);
 
@@ -53,6 +54,19 @@ function AppInner() {
 
   const isShell = SHELL_PAGES.includes(route.page);
 
+  useEffect(() => {
+    if (!authModal) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        closeAuthModal();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [authModal]);
+
   return (
     <div className={`app-shell ${authModal ? 'modal-open' : ''}`}>
       {/* Hero only on shell pages */}
@@ -67,12 +81,12 @@ function AppInner() {
             {/* SearchBar shown on most pages except manage & profile */}
             {!['manage', 'profile'].includes(route.page) && (
               <SearchBar
-                onSearch={() => {}}
+                onSearch={setSearchQuery}
                 onCategory={(id) => id && navigate('category', id)}
               />
             )}
 
-            {route.page === 'home'     && <HomePage     onNavigate={navigate} />}
+            {route.page === 'home'     && <HomePage     onNavigate={navigate} searchQuery={searchQuery} />}
             {route.page === 'fiesta'   && <FiestaPage   slug={route.param} onNavigate={navigate} />}
             {route.page === 'category' && <CategoryPage categoryId={route.param} onNavigate={navigate} />}
             {route.page === 'saved'    && <SavedPage    onNavigate={navigate} />}

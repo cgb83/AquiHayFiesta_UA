@@ -4,17 +4,14 @@ import { CreateFiestaModal } from '../components/modals/CreateModals';
 import { formatViews } from '../data/mockData';
 import { useApp } from '../context/AppContext';
 
-export default function HomePage({ onNavigate }) {
+export default function HomePage({ onNavigate, searchQuery = '' }) {
   const { user, fiestas, fiestasLoading, fiestasError, reloadFiestas } = useApp();
   const [showCreate, setShowCreate] = useState(false);
-  const [search, setSearch] = useState('');
-  const [catFilter, setCatFilter] = useState('');
 
-  const searchValue = search.trim().toLowerCase();
+  const searchValue = searchQuery.trim().toLowerCase();
   const filteredFiestas = fiestas.filter((f) => {
-    const byCategory = !catFilter || f.category === catFilter;
     const bySearch = !searchValue || f.title.toLowerCase().includes(searchValue) || f.description.toLowerCase().includes(searchValue);
-    return byCategory && bySearch;
+    return bySearch;
   });
 
   const featured = filteredFiestas.filter(f => f.featured);

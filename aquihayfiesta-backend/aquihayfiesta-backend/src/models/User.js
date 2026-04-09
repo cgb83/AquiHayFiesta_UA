@@ -35,6 +35,11 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: '',
     },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+    },
     // Fiestas que el usuario ha guardado (referencia)
     savedFiestas: [
       {
