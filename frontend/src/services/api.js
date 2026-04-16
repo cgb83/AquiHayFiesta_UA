@@ -80,7 +80,10 @@ export async function createFiesta(data) {
   const formData = new FormData();
   formData.append('title', data.title);
   formData.append('description', data.description || '');
-  formData.append('category', data.category);
+  const categories = Array.isArray(data.categories) ? data.categories.filter(Boolean) : [];
+  const primaryCategory = categories[0] || data.category;
+  if (primaryCategory) formData.append('category', primaryCategory);
+  formData.append('categories', JSON.stringify(categories.length > 0 ? categories : [primaryCategory].filter(Boolean)));
   formData.append('subcategories', JSON.stringify(data.subcategories || []));
   if (data.startDate) formData.append('startDate', data.startDate);
   if (data.endDate) formData.append('endDate', data.endDate);
@@ -150,7 +153,9 @@ export async function fetchFiestas(params = {}) {
 }
 
 export async function fetchFiestaBySlug(slug) {
-  return request(`/fiestas/${slug}`);
+  return request(`/fiestas/${slug}`, {
+    headers: authHeaders(),
+  });
 }
 
 export async function fetchPublicationsByFiesta(slug) {

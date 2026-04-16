@@ -44,6 +44,11 @@ export default function LoginPage({ onNavigate }) {
     setError('');
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleLogin();
+  };
+
   return (
     <div className="auth-bg">
       <div className="auth-card">
@@ -51,29 +56,30 @@ export default function LoginPage({ onNavigate }) {
 
         {error && <p role="alert" style={{ color: '#c0392b', fontSize: '0.85rem', textAlign: 'center', marginBottom: 12 }}>{error}</p>}
 
-        <div className="form-group">
-          <label className="form-label" htmlFor="login-email">Correo electronico</label>
-          <input className="form-input" placeholder="Correo electrónico" type="email"
-            id="login-email"
-            aria-invalid={Boolean(error)}
-            value={email} onChange={e => setEmail(e.target.value)} disabled={loading} />
-        </div>
-        <div className="form-group">
-          <label className="form-label" htmlFor="login-password">Contraseña</label>
-          <input className="form-input" placeholder="Contraseña" type="password"
-            id="login-password"
-            aria-invalid={Boolean(error)}
-            value={password} onChange={e => setPassword(e.target.value)}
-            disabled={loading}
-            onKeyDown={e => e.key === 'Enter' && handleLogin()} />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="login-email">Correo electronico</label>
+            <input className="form-input" placeholder="Correo electrónico" type="email"
+              id="login-email"
+              aria-invalid={Boolean(error)}
+              value={email} onChange={e => setEmail(e.target.value)} disabled={loading} />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="login-password">Contraseña</label>
+            <input className="form-input" placeholder="Contraseña" type="password"
+              id="login-password"
+              aria-invalid={Boolean(error)}
+              value={password} onChange={e => setPassword(e.target.value)}
+              disabled={loading} />
+          </div>
 
-        <div className="form-row mt-md">
-          <button className="btn btn-outline w-full" onClick={handleClear} disabled={loading}>Borrar</button>
-          <button className="btn btn-primary w-full" onClick={handleLogin} disabled={loading}>
-            {loading ? 'Entrando...' : 'Entrar'}
-          </button>
-        </div>
+          <div className="form-row mt-md">
+            <button type="button" className="btn btn-outline w-full" onClick={handleClear} disabled={loading}>Borrar</button>
+            <button type="submit" className="btn btn-primary w-full" disabled={loading}>
+              {loading ? 'Entrando...' : 'Entrar'}
+            </button>
+          </div>
+        </form>
 
         <div className="auth-links mt-md">
           <p><button className="auth-link" onClick={() => {}}>¿Has olvidado tu contraseña?</button></p>

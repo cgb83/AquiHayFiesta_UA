@@ -60,6 +60,11 @@ export default function RegisterPage({ onNavigate }) {
 
   const handleClear = () => setForm({ username: '', email: '', password: '', confirm: '', country: '', city: '' });
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleCreate();
+  };
+
   return (
     <div className="auth-bg">
       <div className="auth-card">
@@ -67,51 +72,53 @@ export default function RegisterPage({ onNavigate }) {
 
         {error && <p role="alert" style={{ color: '#c0392b', fontSize: '0.85rem', textAlign: 'center', marginBottom: 12 }}>{error}</p>}
 
-        <div className="form-group">
-          <label className="form-label" htmlFor="register-username">Usuario</label>
-          <input className="form-input" placeholder="Usuario"
-            id="register-username"
-            aria-invalid={Boolean(error)}
-            value={form.username} onChange={e => set('username', e.target.value)} disabled={loading} />
-        </div>
-        <div className="form-group">
-          <label className="form-label" htmlFor="register-email">Correo electronico</label>
-          <input className="form-input" placeholder="Correo electrónico" type="email"
-            id="register-email"
-            aria-invalid={Boolean(error)}
-            value={form.email} onChange={e => set('email', e.target.value)} disabled={loading} />
-        </div>
-        <div className="form-group">
-          <label className="form-label" htmlFor="register-password">Contraseña</label>
-          <input className="form-input" placeholder="Contraseña" type="password"
-            id="register-password"
-            aria-invalid={Boolean(error)}
-            value={form.password} onChange={e => set('password', e.target.value)} disabled={loading} />
-        </div>
-        <div className="form-group">
-          <label className="form-label" htmlFor="register-confirm">Confirmar contraseña</label>
-          <input className="form-input" placeholder="Confirmar contraseña" type="password"
-            id="register-confirm"
-            aria-invalid={Boolean(error)}
-            value={form.confirm} onChange={e => set('confirm', e.target.value)} disabled={loading} />
-        </div>
-        <div className="form-row form-group">
-          <label className="sr-only" htmlFor="register-country">Pais</label>
-          <input className="form-input" placeholder="País"
-            id="register-country"
-            value={form.country} onChange={e => set('country', e.target.value)} disabled={loading} />
-          <label className="sr-only" htmlFor="register-city">Ciudad</label>
-          <input className="form-input" placeholder="Ciudad"
-            id="register-city"
-            value={form.city} onChange={e => set('city', e.target.value)} disabled={loading} />
-        </div>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="register-username">Usuario</label>
+            <input className="form-input" placeholder="Usuario"
+              id="register-username"
+              aria-invalid={Boolean(error)}
+              value={form.username} onChange={e => set('username', e.target.value)} disabled={loading} />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="register-email">Correo electronico</label>
+            <input className="form-input" placeholder="Correo electrónico" type="email"
+              id="register-email"
+              aria-invalid={Boolean(error)}
+              value={form.email} onChange={e => set('email', e.target.value)} disabled={loading} />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="register-password">Contraseña</label>
+            <input className="form-input" placeholder="Contraseña" type="password"
+              id="register-password"
+              aria-invalid={Boolean(error)}
+              value={form.password} onChange={e => set('password', e.target.value)} disabled={loading} />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="register-confirm">Confirmar contraseña</label>
+            <input className="form-input" placeholder="Confirmar contraseña" type="password"
+              id="register-confirm"
+              aria-invalid={Boolean(error)}
+              value={form.confirm} onChange={e => set('confirm', e.target.value)} disabled={loading} />
+          </div>
+          <div className="form-row form-group">
+            <label className="sr-only" htmlFor="register-country">Pais</label>
+            <input className="form-input" placeholder="País"
+              id="register-country"
+              value={form.country} onChange={e => set('country', e.target.value)} disabled={loading} />
+            <label className="sr-only" htmlFor="register-city">Ciudad</label>
+            <input className="form-input" placeholder="Ciudad"
+              id="register-city"
+              value={form.city} onChange={e => set('city', e.target.value)} disabled={loading} />
+          </div>
 
-        <div className="form-row mt-md">
-          <button className="btn btn-outline w-full" onClick={handleClear} disabled={loading}>Borrar</button>
-          <button className="btn btn-primary w-full" onClick={handleCreate} disabled={loading}>
-            {loading ? 'Creando...' : 'Crear'}
-          </button>
-        </div>
+          <div className="form-row mt-md">
+            <button type="button" className="btn btn-outline w-full" onClick={handleClear} disabled={loading}>Borrar</button>
+            <button type="submit" className="btn btn-primary w-full" disabled={loading}>
+              {loading ? 'Creando...' : 'Crear'}
+            </button>
+          </div>
+        </form>
 
         <div className="auth-links mt-md">
           <p>¿Ya tienes cuenta?{' '}

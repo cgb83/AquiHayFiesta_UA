@@ -777,6 +777,35 @@ input, textarea { font-family: inherit; }
   margin-top: 4px;
 }
 
+.category-multi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+.category-pill {
+  border: 1.5px solid var(--color-border);
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--color-text-soft);
+  background: #fff;
+  transition: all var(--transition);
+}
+
+.category-pill:hover {
+  border-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.category-pill.is-active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-pale);
+  color: var(--color-primary);
+  box-shadow: 0 2px 8px rgba(125, 48, 72, 0.16);
+}
+
 /* ─── Footer ─────────────────────────────────────────────────── */
 .footer {
   background: var(--color-primary-pale);

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const ALLOWED_CATEGORIES = ['amor', 'noche', 'disfraces', 'familia', 'musica', 'gastronomia'];
 
 const fiestaSchema = new mongoose.Schema(
   {
@@ -29,7 +30,16 @@ const fiestaSchema = new mongoose.Schema(
     category: {
       type: String,
       required: [true, 'La categoría es obligatoria'],
-      enum: ['amor', 'noche', 'disfraces', 'familia', 'musica', 'gastronomia'],
+      enum: ALLOWED_CATEGORIES,
+    },
+    categories: {
+      type: [
+        {
+          type: String,
+          enum: ALLOWED_CATEGORIES,
+        },
+      ],
+      default: [],
     },
     // Subcategorías (etiquetas adicionales)
     subcategories: [
@@ -64,6 +74,12 @@ const fiestaSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    viewedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
     // Si aparece en la sección "Destacado" del home
     featured: {
       type: Boolean,
@@ -94,8 +110,32 @@ fiestaSchema.pre('save', function (next) {
   next();
 });
 
+fiestaSchema.pre('validate', function (next) {
+  const uniqueCategories = Array.from(new Set((this.categories || []).filter(Boolean)));
+
+  if (uniqueCategories.length === 0 && this.category) {
+    uniqueCategories.push(this.category);
+  }
+
+  if (!this.category && uniqueCategories.length > 0) {
+    this.category = uniqueCategories[0];
+  }
+
+  this.categories = uniqueCategories;
+  next();
+});
+
 // ── Método: incrementar visitas ──────────────────────────────────
-fiestaSchema.methods.incrementViews = function () {
+fiestaSchema.methods.incrementViews = function (userId = null) {
+  if (!userId) return Promise.resolve(this);
+
+  const alreadyViewed = this.viewedBy.some(
+    (viewerId) => viewerId.toString() === userId.toString()
+  );
+
+  if (alreadyViewed) return Promise.resolve(this);
+
+  this.viewedBy.push(userId);
   this.views += 1;
   return this.save();
 };

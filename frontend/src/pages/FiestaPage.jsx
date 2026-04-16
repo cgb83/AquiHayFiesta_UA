@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
 import { CreatePublicationModal } from '../components/modals/CreateModals';
-import { CONTENT_ITEMS, formatViews } from '../data/mockData';
+import { formatDownloads, formatViews } from '../data/mockData';
 import { useApp } from '../context/AppContext';
-import { fetchPublicationsByFiesta, registerDownload, resolveMediaUrl } from '../services/api';
+import { fetchFiestaBySlug, fetchPublicationsByFiesta, registerDownload, resolveMediaUrl } from '../services/api';
 
 
 import Calendar from '../components/ui/Calendar';
@@ -24,11 +24,35 @@ export default function FiestaPage({ slug, onNavigate }) {
   const { user, fiestas, toggleSave, isSaved } = useApp();
   const [activeViewer, setActiveViewer] = useState(null); // { item, type }
   const [showPublish, setShowPublish] = useState(false);
-  const [content, setContent] = useState(() => CONTENT_ITEMS[slug] || { videos: [], images: [], documents: [], audios: [] });
+  const [content, setContent] = useState({ videos: [], images: [], documents: [], audios: [] });
   const [contentLoading, setContentLoading] = useState(false);
   const [contentError, setContentError] = useState('');
+  const [fiestaDetail, setFiestaDetail] = useState(null);
 
-  const fiesta = fiestas.find(f => f.slug === slug);
+  const fiesta = fiestaDetail || fiestas.find(f => f.slug === slug);
+
+  const loadFiestaDetail = useCallback(async () => {
+    try {
+      const response = await fetchFiestaBySlug(slug);
+      if (!response?.fiesta) return;
+
+      const data = response.fiesta;
+      setFiestaDetail({
+        id: data._id,
+        slug: data.slug,
+        title: data.title,
+        description: data.description || '',
+        category: data.category,
+        subcategories: data.subcategories || [],
+        views: data.views || 0,
+        image: resolveMediaUrl(data.coverImage || ''),
+        date: data.startDate ? String(data.startDate).slice(0, 10) : null,
+        location: data.location?.city || data.location?.country || null,
+      });
+    } catch {
+      // Keep fallback from context list.
+    }
+  }, [slug]);
 
   const loadContent = useCallback(async () => {
     if (!fiesta) return;
@@ -39,17 +63,12 @@ export default function FiestaPage({ slug, onNavigate }) {
       const response = await fetchPublicationsByFiesta(slug);
       const publications = response.publications || [];
 
-      if (publications.length === 0) {
-        setContent(CONTENT_ITEMS[slug] || { videos: [], images: [], documents: [], audios: [] });
-        return;
-      }
-
       const nextContent = { videos: [], images: [], documents: [], audios: [] };
       publications.forEach((pub) => {
         const item = {
           id: pub._id,
           title: pub.title,
-          views: pub.views || pub.downloads || 0,
+          downloads: pub.downloads || 0,
           image: resolveMediaUrl(pub.thumbnailUrl || pub.fileUrl),
           fileUrl: resolveMediaUrl(pub.fileUrl),
           fromApi: true,
@@ -62,7 +81,7 @@ export default function FiestaPage({ slug, onNavigate }) {
       });
       setContent(nextContent);
     } catch {
-      setContent(CONTENT_ITEMS[slug] || { videos: [], images: [], documents: [], audios: [] });
+      setContent({ videos: [], images: [], documents: [], audios: [] });
       setContentError('No se pudo cargar el contenido desde la API.');
     } finally {
       setContentLoading(false);
@@ -70,13 +89,18 @@ export default function FiestaPage({ slug, onNavigate }) {
   }, [slug, fiesta]);
 
   useEffect(() => {
+    loadFiestaDetail();
+  }, [loadFiestaDetail]);
+
+  useEffect(() => {
     loadContent();
   }, [loadContent]);
 
-  const upcomingFiestas = useMemo(
-    () => fiestas.filter((f) => f.upcoming),
-    [fiestas]
-  );
+  const exploreFiestas = useMemo(() => {
+    const candidates = fiestas.filter((f) => f.slug !== slug);
+    const shuffled = [...candidates].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 3);
+  }, [fiestas, slug]);
 
   if (!fiesta) return <div className="page-content"><p>Fiesta no encontrada.</p></div>;
 
@@ -85,12 +109,41 @@ export default function FiestaPage({ slug, onNavigate }) {
       if (item.fromApi) {
         const response = await registerDownload(item.id);
         const url = resolveMediaUrl(response.fileUrl || item.fileUrl);
-        window.open(url, '_blank', 'noopener,noreferrer');
+        const anchor = document.createElement('a');
+        anchor.href = url;
+        anchor.setAttribute('download', '');
+        anchor.setAttribute('target', '_blank');
+        anchor.rel = 'noopener noreferrer';
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        setContent((prev) => {
+          const updateType = (typeList) =>
+            typeList.map((entry) =>
+              entry.id === item.id
+                ? { ...entry, downloads: (entry.downloads || 0) + 1 }
+                : entry
+            );
+
+          return {
+            videos: updateType(prev.videos),
+            images: updateType(prev.images),
+            documents: updateType(prev.documents),
+            audios: updateType(prev.audios),
+          };
+        });
         return;
       }
 
       if (item.fileUrl) {
-        window.open(item.fileUrl, '_blank', 'noopener,noreferrer');
+        const anchor = document.createElement('a');
+        anchor.href = item.fileUrl;
+        anchor.setAttribute('download', '');
+        anchor.setAttribute('target', '_blank');
+        anchor.rel = 'noopener noreferrer';
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
       }
     } catch (error) {
       setContentError(error.message || 'No se pudo registrar la descarga.');
@@ -116,7 +169,7 @@ export default function FiestaPage({ slug, onNavigate }) {
         )}
       </div>
       <div className="media-label">{item.title}</div>
-      <div className="text-muted" style={{ fontSize: '0.72rem' }}>{formatViews(item.views)}</div>
+      <div className="text-muted" style={{ fontSize: '0.72rem' }}>{formatDownloads(item.downloads || 0)}</div>
     </div>
   );
 
@@ -211,6 +264,14 @@ export default function FiestaPage({ slug, onNavigate }) {
             </div>
           )}
 
+          {!contentLoading &&
+            content.videos.length === 0 &&
+            content.images.length === 0 &&
+            content.documents.length === 0 &&
+            content.audios.length === 0 && (
+              <p className="text-muted">No hay publicaciones todavia para esta fiesta.</p>
+            )}
+
           {/* Subcategories */}
           {fiesta.subcategories?.length > 0 && (
             <div className="flex gap-sm" style={{ flexWrap: 'wrap', marginTop: 8 }}>
@@ -240,7 +301,7 @@ export default function FiestaPage({ slug, onNavigate }) {
           <div>
             <h3 className="section-title" style={{ textAlign: 'right' }}>Explorar fiestas</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {upcomingFiestas.map(f => (
+              {exploreFiestas.map(f => (
                 <div key={f.id} style={{ cursor: 'pointer' }} onClick={() => onNavigate('fiesta', f.slug)}>
                   <img src={f.image} alt={f.title}
                     style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 8 }} />

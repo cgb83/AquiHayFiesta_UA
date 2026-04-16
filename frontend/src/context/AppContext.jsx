@@ -27,6 +27,11 @@ const normalizeFiesta = (fiesta) => ({
   title: fiesta.title,
   description: fiesta.description || '',
   category: fiesta.category,
+  categories: Array.isArray(fiesta.categories)
+    ? fiesta.categories
+    : fiesta.category
+      ? [fiesta.category]
+      : [],
   subcategories: fiesta.subcategories || [],
   views: fiesta.views || 0,
   image: resolveMediaUrl(fiesta.coverImage || fiesta.image || ''),

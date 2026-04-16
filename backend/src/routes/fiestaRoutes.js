@@ -1,6 +1,6 @@
 const express = require('express');
 const router  = express.Router();
-const { protect } = require('../middleware/auth');
+const { protect, optionalProtect } = require('../middleware/auth');
 const upload  = require('../middleware/upload');
 const {
   getFiestas,
@@ -13,7 +13,7 @@ const {
 
 // Públicas
 router.get('/',      getFiestas);
-router.get('/:slug', getFiestaBySlug);
+router.get('/:slug', optionalProtect, getFiestaBySlug);
 
 // Privadas
 router.post  ('/',          protect, upload.single('coverImage'), createFiesta);

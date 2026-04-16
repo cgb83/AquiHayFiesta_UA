@@ -3,11 +3,24 @@ import { formatDate, formatViews } from '../../data/mockData';
 import { useApp } from '../../context/AppContext';
 import Calendar from './Calendar';
 
+const DEFAULT_FIESTA_IMAGE = 'https://picsum.photos/seed/ahf-fiesta/640/360';
+
 export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
   const { categories, fiestas } = useApp();
   const [showAll, setShowAll] = useState(false);
   const displayed = showAll ? categories : categories.slice(0, 3);
-  const upcoming = fiestas.filter(f => f.upcoming);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const limit = new Date(today);
+  limit.setDate(limit.getDate() + 15);
+
+  const upcoming = fiestas
+    .filter((f) => {
+      if (!f.date) return false;
+      const eventDate = new Date(`${f.date}T00:00:00`);
+      return !Number.isNaN(eventDate.getTime()) && eventDate >= today && eventDate <= limit;
+    })
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
 
   return (
     <aside className="sidebar">
@@ -44,6 +57,9 @@ export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
       <div>
         <h3 className="section-title" style={{ textAlign: 'right' }}>Se acerca...</h3>
         <div className="upcoming-list">
+          {upcoming.length === 0 && (
+            <p className="text-muted" style={{ textAlign: 'right' }}>No hay fiestas en los próximos 15 días.</p>
+          )}
           {upcoming.map(f => (
             <div
               key={f.id}
@@ -51,7 +67,15 @@ export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
               onClick={() => onNavigate?.('fiesta', f.slug)}
             >
               <div className="upcoming-date">{formatDate(f.date)}</div>
-              <img className="upcoming-thumb" src={f.image} alt={f.title} />
+              <img
+                className="upcoming-thumb"
+                src={f.image}
+                alt={f.title}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = DEFAULT_FIESTA_IMAGE;
+                }}
+              />
               <div className="upcoming-title">{f.title}</div>
               <div className="text-muted">{formatViews(f.views)}</div>
             </div>

@@ -2,13 +2,22 @@ import { useRef, useState } from 'react';
 import { useModalAccessibility } from './useModalAccessibility';
 import { createFiesta, createPublication } from '../../services/api';
 
+const CATEGORY_OPTIONS = [
+  { id: 'amor', label: 'Amor' },
+  { id: 'noche', label: 'Noche' },
+  { id: 'disfraces', label: 'Disfraces' },
+  { id: 'familia', label: 'Familia' },
+  { id: 'musica', label: 'Musica' },
+  { id: 'gastronomia', label: 'Gastronomia' },
+];
+
 export function CreateFiestaModal({ onClose, onCreated }) {
   const modalRef = useRef(null);
   const fileInputRef = useRef(null);
   const [form, setForm] = useState({
     title: '',
     description: '',
-    category: 'familia',
+    categories: ['familia'],
     startDate: '',
     endDate: '',
     city: '',
@@ -23,8 +32,8 @@ export function CreateFiestaModal({ onClose, onCreated }) {
   useModalAccessibility({ modalRef, isOpen: true, onClose });
 
   const handleSubmit = async () => {
-    if (!form.title.trim() || !form.category) {
-      setError('Titulo y categoria son obligatorios.');
+    if (!form.title.trim() || form.categories.length === 0) {
+      setError('Titulo y al menos una categoria son obligatorios.');
       return;
     }
 
@@ -39,6 +48,16 @@ export function CreateFiestaModal({ onClose, onCreated }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const toggleCategory = (categoryId) => {
+    setForm((prev) => {
+      const exists = prev.categories.includes(categoryId);
+      if (exists) {
+        return { ...prev, categories: prev.categories.filter((item) => item !== categoryId) };
+      }
+      return { ...prev, categories: [...prev.categories, categoryId] };
+    });
   };
 
   return (
@@ -86,15 +105,23 @@ export function CreateFiestaModal({ onClose, onCreated }) {
         </div>
 
         <div className="form-group mb-md">
-          <label className="form-label" htmlFor="fiesta-category">Categoria</label>
-          <select id="fiesta-category" className="form-input" value={form.category} onChange={e => set('category', e.target.value)} disabled={loading}>
-            <option value="amor">Amor</option>
-            <option value="noche">Noche</option>
-            <option value="disfraces">Disfraces</option>
-            <option value="familia">Familia</option>
-            <option value="musica">Musica</option>
-            <option value="gastronomia">Gastronomia</option>
-          </select>
+          <label className="form-label">Categorias (puedes elegir varias)</label>
+          <div className="category-multi-grid">
+            {CATEGORY_OPTIONS.map((category) => {
+              const active = form.categories.includes(category.id);
+              return (
+                <button
+                  key={category.id}
+                  type="button"
+                  className={`category-pill ${active ? 'is-active' : ''}`}
+                  onClick={() => toggleCategory(category.id)}
+                  disabled={loading}
+                >
+                  {category.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div className="form-row mb-md">

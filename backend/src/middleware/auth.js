@@ -44,6 +44,30 @@ const protect = async (req, res, next) => {
   }
 };
 
+// ── Middleware: autenticar si hay token, sin bloquear si no lo hay ─────────
+const optionalProtect = async (req, res, next) => {
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+
+  if (!token) return next();
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id);
+    if (user) req.user = user;
+  } catch {
+    // Ignore invalid token on optional middleware.
+  }
+
+  next();
+};
+
 // ── Helper: generar token JWT ────────────────────────────────────
 const generateToken = (userId) => {
   return jwt.sign(
@@ -53,4 +77,4 @@ const generateToken = (userId) => {
   );
 };
 
-module.exports = { protect, generateToken };
+module.exports = { protect, optionalProtect, generateToken };

@@ -5,7 +5,9 @@ import { useApp } from '../context/AppContext';
 export default function CategoryPage({ categoryId, onNavigate }) {
   const { categories, fiestas } = useApp();
   const cat = categories.find(c => c.id === categoryId);
-  const fiestasByCategory = fiestas.filter(f => f.category === categoryId);
+  const fiestasByCategory = fiestas.filter(
+    (f) => f.category === categoryId || (Array.isArray(f.categories) && f.categories.includes(categoryId))
+  );
 
   return (
     <div className="content-grid">

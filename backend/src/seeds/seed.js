@@ -353,6 +353,96 @@ const buildPublications = (fiestasBySlug, normalUsersByName) => {
       fileName: 'recetas-murcia.pdf',
       username: 'carlos',
     },
+    {
+      fiestaSlug: 'san-valentin',
+      title: 'Playlist romantica para cenar',
+      description: 'Selección de canciones para una noche especial.',
+      contentType: 'audio',
+      fileUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+      thumbnailUrl: '',
+      fileName: 'playlist-romantica.mp3',
+      username: 'maria',
+    },
+    {
+      fiestaSlug: 'feria-de-sevilla',
+      title: 'Guia de casetas y horarios',
+      description: 'Documento práctico para organizar el día en la feria.',
+      contentType: 'document',
+      fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+      thumbnailUrl: '',
+      fileName: 'guia-feria-sevilla.pdf',
+      username: 'elena',
+    },
+    {
+      fiestaSlug: 'halloween',
+      title: 'Fotos de decoracion casera',
+      description: 'Ideas rápidas para montar una casa del terror.',
+      contentType: 'image',
+      fileUrl: 'https://images.unsplash.com/photo-1509557965875-b88c97052f0e?w=1200&q=80',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1509557965875-b88c97052f0e?w=400&q=80',
+      fileName: 'decoracion-halloween.jpg',
+      username: 'diego',
+    },
+    {
+      fiestaSlug: 'nochevieja',
+      title: 'Video resumen de campanadas',
+      description: 'Momentos destacados para despedir el año.',
+      contentType: 'video',
+      fileUrl: 'https://samplelib.com/lib/preview/mp4/sample-15s.mp4',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1467810563316-b5476525c0f9?w=400&q=80',
+      fileName: 'resumen-campanadas.mp4',
+      username: 'lucia',
+    },
+    {
+      fiestaSlug: 'dia-del-padre',
+      title: 'Carta para papa en PDF',
+      description: 'Plantilla para escribir una dedicatoria especial.',
+      contentType: 'document',
+      fileUrl: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
+      thumbnailUrl: '',
+      fileName: 'carta-dia-padre.pdf',
+      username: 'ana',
+    },
+    {
+      fiestaSlug: 'dia-de-la-madre',
+      title: 'Galeria de recuerdos familiares',
+      description: 'Album de fotos con momentos en familia.',
+      contentType: 'image',
+      fileUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=1200&q=80',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80',
+      fileName: 'galeria-dia-madre.jpg',
+      username: 'nuria',
+    },
+    {
+      fiestaSlug: 'san-fermin',
+      title: 'Audio ambiente de encierro',
+      description: 'Sonido ambiente para vivir la fiesta desde casa.',
+      contentType: 'audio',
+      fileUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
+      thumbnailUrl: '',
+      fileName: 'audio-encierro.mp3',
+      username: 'pedro',
+    },
+    {
+      fiestaSlug: 'bando-de-la-huerta-murcia',
+      title: 'Fotos de trajes regionales',
+      description: 'Colección de imágenes del desfile huertano.',
+      contentType: 'image',
+      fileUrl: 'https://images.unsplash.com/photo-1464219222984-216ebffaaf85?w=1200&q=80',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1464219222984-216ebffaaf85?w=400&q=80',
+      fileName: 'trajes-huertanos.jpg',
+      username: 'carlos',
+    },
+    {
+      fiestaSlug: 'moros-y-cristianos-albatera',
+      title: 'Marchas festeras en audio',
+      description: 'Selección de marchas para comparsas.',
+      contentType: 'audio',
+      fileUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
+      thumbnailUrl: '',
+      fileName: 'marchas-festeras.mp3',
+      username: 'silvia',
+    },
   ];
 
   return specs.map((spec, index) => ({
@@ -364,7 +454,6 @@ const buildPublications = (fiestasBySlug, normalUsersByName) => {
     fileUrl: spec.fileUrl,
     fileName: spec.fileName,
     thumbnailUrl: spec.thumbnailUrl,
-    views: 40 + index * 8,
     downloads: 5 + index,
   }));
 };
@@ -377,8 +466,9 @@ async function seed() {
     await Fiesta.deleteMany({});
     await User.deleteMany({});
 
-    const admins = await User.insertMany(adminsData);
-    const normalUsers = await User.insertMany(normalUsersData);
+    // Use create() to ensure password hashing middleware runs.
+    const admins = await User.create(adminsData);
+    const normalUsers = await User.create(normalUsersData);
 
     const normalUsersByName = Object.fromEntries(
       normalUsers.map((user) => [user.username, user])

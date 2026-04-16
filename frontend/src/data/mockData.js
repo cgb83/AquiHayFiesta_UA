@@ -224,6 +224,9 @@ export const MOCK_USER = {
 export const formatViews = (n) =>
   n >= 1000 ? `${(n / 1000).toFixed(0)}k veces visto` : `${n} veces visto`;
 
+export const formatDownloads = (n) =>
+  n >= 1000 ? `${(n / 1000).toFixed(0)}k descargas` : `${n} descargas`;
+
 export const formatDate = (iso) => {
   if (!iso) return null;
   const [y, m, d] = iso.split('-');

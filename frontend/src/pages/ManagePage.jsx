@@ -2,6 +2,23 @@ import { useEffect, useState } from 'react';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
 import { deletePublication, fetchMyPublications, resolveMediaUrl } from '../services/api';
 
+function ConfirmDialog({ title, message, onCancel, onConfirm, loading }) {
+  return (
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="confirm-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+        <p>{title}</p>
+        <div style={{ color: 'var(--color-text-soft)', marginBottom: 'var(--space-lg)', fontSize: '0.92rem' }}>{message}</div>
+        <div className="confirm-buttons">
+          <button className="confirm-btn" type="button" onClick={onCancel} disabled={loading}>Cancelar</button>
+          <button className="confirm-btn" type="button" onClick={onConfirm} disabled={loading}>
+            {loading ? 'Procesando...' : 'Confirmar'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function MediaGroup({ label, items, type, onView, onDelete }) {
   if (!items || items.length === 0) return null;
   return (
@@ -34,6 +51,8 @@ export default function ManagePage() {
   const [viewer, setViewer] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [confirmDialog, setConfirmDialog] = useState(null);
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   const loadContent = async () => {
     try {
@@ -78,22 +97,55 @@ export default function ManagePage() {
   }, []);
 
   const handleDelete = async (sectionKey, itemId, type) => {
-    try {
-      await deletePublication(itemId);
-      setContent(prev => ({
-        ...prev,
-        [sectionKey]: {
-          ...prev[sectionKey],
-          [type + 's']: (prev[sectionKey][type + 's'] || []).filter(i => i.id !== itemId),
+    setConfirmDialog({
+      title: 'Borrar publicacion',
+      message: 'Esta accion no se puede deshacer. ¿Quieres continuar?',
+      onConfirm: async () => {
+        try {
+          setConfirmLoading(true);
+          await deletePublication(itemId);
+          setContent(prev => ({
+            ...prev,
+            [sectionKey]: {
+              ...prev[sectionKey],
+              [type + 's']: (prev[sectionKey][type + 's'] || []).filter(i => i.id !== itemId),
+            }
+          }));
+          setConfirmDialog(null);
+        } catch (err) {
+          setError(err.message || 'No se pudo eliminar la publicación.');
+        } finally {
+          setConfirmLoading(false);
         }
-      }));
-    } catch (err) {
-      setError(err.message || 'No se pudo eliminar la publicación.');
-    }
+      },
+    });
   };
 
   const handleDeleteAll = (sectionKey) => {
-    setContent(prev => ({ ...prev, [sectionKey]: {} }));
+    const section = content[sectionKey] || {};
+    const allIds = [
+      ...(section.videos || []),
+      ...(section.images || []),
+      ...(section.documents || []),
+      ...(section.audios || []),
+    ].map((item) => item.id);
+
+    setConfirmDialog({
+      title: 'Borrar seccion completa',
+      message: 'Se eliminaran todos los archivos de esta seccion. Esta accion no se puede deshacer.',
+      onConfirm: async () => {
+        try {
+          setConfirmLoading(true);
+          await Promise.all(allIds.map((id) => deletePublication(id)));
+          setContent((prev) => ({ ...prev, [sectionKey]: {} }));
+          setConfirmDialog(null);
+        } catch (err) {
+          setError(err.message || 'No se pudo borrar toda la sección.');
+        } finally {
+          setConfirmLoading(false);
+        }
+      },
+    });
   };
 
   return (
@@ -130,6 +182,18 @@ export default function ManagePage() {
           item={viewer.item}
           type={viewer.type}
           onClose={() => setViewer(null)}
+        />
+      )}
+
+      {confirmDialog && (
+        <ConfirmDialog
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          loading={confirmLoading}
+          onCancel={() => {
+            if (!confirmLoading) setConfirmDialog(null);
+          }}
+          onConfirm={confirmDialog.onConfirm}
         />
       )}
     </>

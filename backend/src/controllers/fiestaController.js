@@ -1,4 +1,5 @@
 const Fiesta = require('../models/Fiesta');
+const ALLOWED_CATEGORIES = ['amor', 'noche', 'disfraces', 'familia', 'musica', 'gastronomia'];
 
 // ── GET /api/fiestas ─────────────────────────────────────────────
 // Listar todas las fiestas (con filtros opcionales)
@@ -8,14 +9,23 @@ const getFiestas = async (req, res) => {
 
     // Construir filtro dinámico
     const filter = {};
-    if (category)           filter.category = category;
+    if (category) {
+      filter.$or = [{ category }, { categories: category }];
+    }
     if (featured === 'true') filter.featured = true;
     if (upcoming === 'true') filter.upcoming = true;
     if (search) {
-      filter.$or = [
+      const searchFilter = [
         { title:       { $regex: search, $options: 'i' } },
         { description: { $regex: search, $options: 'i' } },
       ];
+
+      if (filter.$or) {
+        filter.$and = [{ $or: filter.$or }, { $or: searchFilter }];
+        delete filter.$or;
+      } else {
+        filter.$or = searchFilter;
+      }
     }
 
     const fiestas = await Fiesta.find(filter)
@@ -38,8 +48,8 @@ const getFiestaBySlug = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Fiesta no encontrada.' });
     }
 
-    // Incrementar visitas
-    await fiesta.incrementViews();
+    // Incrementar solo 1 visita por usuario autenticado.
+    await fiesta.incrementViews(req.user?._id || null);
 
     res.json({ success: true, fiesta });
   } catch (error) {
@@ -50,12 +60,25 @@ const getFiestaBySlug = async (req, res) => {
 // ── POST /api/fiestas  (requiere login) ──────────────────────────
 const createFiesta = async (req, res) => {
   try {
-    const { title, description, category, subcategories, startDate, endDate, location } = req.body;
+    const { title, description, category, categories, subcategories, startDate, endDate, location } = req.body;
+
+    const parsedCategories = categories
+      ? JSON.parse(categories)
+      : category
+        ? [category]
+        : [];
+
+    const safeCategories = Array.from(new Set(parsedCategories.filter((item) => ALLOWED_CATEGORIES.includes(item))));
+
+    if (safeCategories.length === 0) {
+      return res.status(400).json({ success: false, message: 'Debes seleccionar al menos una categoria.' });
+    }
 
     const fiesta = await Fiesta.create({
       title,
       description,
-      category,
+      category: safeCategories[0],
+      categories: safeCategories,
       subcategories: subcategories ? JSON.parse(subcategories) : [],
       startDate:  startDate  || null,
       endDate:    endDate    || null,
