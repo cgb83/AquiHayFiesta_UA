@@ -2,6 +2,8 @@ import Sidebar from '../components/ui/Sidebar';
 import { formatViews } from '../data/mockData';
 import { useApp } from '../context/AppContext';
 
+const DEFAULT_FIESTA_IMAGE = 'https://picsum.photos/seed/ahf-fiesta/640/360';
+
 export default function CategoryPage({ categoryId, onNavigate }) {
   const { categories, fiestas } = useApp();
   const cat = categories.find(c => c.id === categoryId);
@@ -29,7 +31,8 @@ export default function CategoryPage({ categoryId, onNavigate }) {
             {fiestasByCategory.map(f => (
               <div key={f.id} className="card-item"
                 onClick={() => onNavigate('fiesta', f.slug)}>
-                <img className="card-thumb" src={f.image} alt={f.title} />
+                <img className="card-thumb" src={f.image} alt={f.title}
+                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_FIESTA_IMAGE; }} />
                 <div className="card-info">
                   <div className="card-title">{f.title}</div>
                   <div className="card-views">{formatViews(f.views)}</div>

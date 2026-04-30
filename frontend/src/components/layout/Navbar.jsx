@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { deleteMyAccount } from '../../services/api';
 
 export default function Navbar({ onNavigate, currentPage }) {
   const { user, logout, lang, setLang } = useApp();
@@ -8,6 +9,7 @@ export default function Navbar({ onNavigate, currentPage }) {
   const [userOpen, setUserOpen] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const navRef = useRef(null);
   const langRef = useRef(null);
   const userRef = useRef(null);
@@ -130,12 +132,28 @@ export default function Navbar({ onNavigate, currentPage }) {
 
       {/* Delete account confirm */}
       {showDeleteConfirm && (
-        <div className="modal-overlay" onClick={() => setShowDeleteConfirm(false)}>
+        <div className="modal-overlay" onClick={() => { if (!deleteLoading) setShowDeleteConfirm(false); }}>
           <div className="confirm-modal" role="dialog" aria-modal="true" aria-label="Confirmar borrado de cuenta" onClick={e => e.stopPropagation()} tabIndex={-1}>
             <p>¿Estás seguro de que quieres eliminar tu cuenta?</p>
+            <p style={{ fontSize: '0.88rem', color: 'var(--color-text-soft)' }}>Esta acción no se puede deshacer.</p>
             <div className="confirm-buttons">
-              <button type="button" className="confirm-btn" onClick={() => { logout(); setShowDeleteConfirm(false); nav('home'); }}>Sí</button>
-              <button type="button" className="confirm-btn" onClick={() => setShowDeleteConfirm(false)}>No</button>
+              <button type="button" className="confirm-btn" disabled={deleteLoading}
+                onClick={async () => {
+                  try {
+                    setDeleteLoading(true);
+                    await deleteMyAccount();
+                  } catch {
+                    // Si la llamada falla, el usuario ya no existe o el token caducó — limpiar igualmente
+                  } finally {
+                    logout();
+                    setDeleteLoading(false);
+                    setShowDeleteConfirm(false);
+                    nav('home');
+                  }
+                }}>
+                {deleteLoading ? 'Eliminando...' : 'Sí, eliminar'}
+              </button>
+              <button type="button" className="confirm-btn" disabled={deleteLoading} onClick={() => setShowDeleteConfirm(false)}>No</button>
             </div>
           </div>
         </div>

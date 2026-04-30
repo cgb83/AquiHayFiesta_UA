@@ -68,6 +68,7 @@ export default function LoginPage({ onNavigate }) {
             <label className="form-label" htmlFor="login-password">Contraseña</label>
             <input className="form-input" placeholder="Contraseña" type="password"
               id="login-password"
+              autoComplete="current-password"
               aria-invalid={Boolean(error)}
               value={password} onChange={e => setPassword(e.target.value)}
               disabled={loading} />

@@ -21,6 +21,7 @@ export default function ProfilePage() {
     currentPassword: '',
   });
   const [downloadHistory, setDownloadHistory] = useState([]);
+  const [showAllDownloads, setShowAllDownloads] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -82,7 +83,7 @@ export default function ProfilePage() {
   };
 
   const handleClear = () => {
-    setForm({ name: '', email: '', password: '', country: '', city: '', currentPassword: '' });
+    setForm(prev => ({ ...prev, password: '', currentPassword: '' }));
   };
 
   return (
@@ -97,7 +98,7 @@ export default function ProfilePage() {
           <div className="flex-between mb-md">
             <h3 className="section-title" style={{ marginBottom: 0, borderBottom: 'none' }}>Perfil</h3>
             <button className="btn btn-outline" style={{ fontSize: '0.82rem' }} onClick={handleClear}>
-              Limpiar campos
+              Limpiar contraseñas
             </button>
           </div>
 
@@ -122,6 +123,7 @@ export default function ProfilePage() {
           <div className="form-group">
             <label className="form-label" htmlFor="profile-password">Nueva contraseña</label>
             <input id="profile-password" className="form-input" placeholder="Nueva contraseña" type="password"
+              autoComplete="new-password"
               value={form.password} onChange={e => set('password', e.target.value)} />
             <div className="form-hint">*Si no se rellena, se mantendrá la contraseña actual</div>
           </div>
@@ -138,6 +140,7 @@ export default function ProfilePage() {
           <div className="form-group">
             <label className="form-label" htmlFor="profile-current-password">Escribe tu contraseña para verificar los cambios:</label>
             <input id="profile-current-password" className="form-input" placeholder="Contraseña actual" type="password"
+              autoComplete="current-password"
               value={form.currentPassword} onChange={e => set('currentPassword', e.target.value)} />
           </div>
 
@@ -168,7 +171,7 @@ export default function ProfilePage() {
           <div style={{ height: 1, background: 'var(--color-border)', marginBottom: 'var(--space-md)' }} />
 
           <div className="download-history">
-            {downloadHistory.map((item, i) => (
+            {(showAllDownloads ? downloadHistory : downloadHistory.slice(0, 5)).map((item, i) => (
               <div key={i} className="download-item">
                 <span className="download-name">{item.filename}</span>
                 <span className="download-date">{new Date(item.downloadedAt).toLocaleDateString('es-ES')}</span>
@@ -179,9 +182,15 @@ export default function ProfilePage() {
             )}
           </div>
 
-          <div className="sidebar-show-more">
-            <button className="show-more-btn" title="Ver más">▼</button>
-          </div>
+          {downloadHistory.length > 5 && (
+            <div className="sidebar-show-more">
+              <button className="show-more-btn"
+                title={showAllDownloads ? 'Ver menos' : 'Ver más'}
+                onClick={() => setShowAllDownloads(o => !o)}>
+                {showAllDownloads ? '▲' : '▼'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>

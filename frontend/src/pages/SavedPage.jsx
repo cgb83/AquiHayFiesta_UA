@@ -4,10 +4,10 @@ import { formatViews } from '../data/mockData';
 import { useApp } from '../context/AppContext';
 
 export default function SavedPage({ onNavigate }) {
-  const { savedItems, toggleSave, fiestas } = useApp();
+  const { savedItems, toggleSave, isSaved, fiestas } = useApp();
   const [catFilter, setCatFilter] = useState('all');
 
-  const saved = fiestas.filter(f => savedItems.includes(f.id));
+  const saved = fiestas.filter(f => isSaved(f.id));
   const filtered = catFilter === 'all' ? saved
     : saved.filter(f => f.category === catFilter);
 
@@ -40,8 +40,8 @@ export default function SavedPage({ onNavigate }) {
                 </div>
                 <button className="saved-bookmark"
                   onClick={() => toggleSave(f.id)}
-                  title="Quitar de guardados">
-                  🔖
+                  aria-label="Quitar de guardados">
+                  ❤️
                 </button>
               </div>
             ))}
