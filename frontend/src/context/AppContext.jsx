@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { CATEGORIES, FIESTAS } from '../data/mockData';
-import { fetchFiestas, fetchMe, resolveMediaUrl } from '../services/api';
+import { fetchFiestas, fetchMe, resolveMediaUrl, toggleSaveFiesta } from '../services/api';
 
 const AppContext = createContext(null);
 
@@ -45,7 +45,7 @@ export function AppProvider({ children }) {
   const [user, setUser] = useState(() => parseJSON(STORAGE_KEYS.user, null));
   const [lang, setLang] = useState(() => localStorage.getItem(STORAGE_KEYS.lang) || 'ES');
   const [theme, setTheme] = useState(() => localStorage.getItem(STORAGE_KEYS.theme) || 'standard');
-  const [savedItems, setSavedItems] = useState(() => parseJSON(STORAGE_KEYS.savedItems, [1, 3]));
+  const [savedItems, setSavedItems] = useState(() => parseJSON(STORAGE_KEYS.savedItems, []));
   const [fiestas, setFiestas] = useState(FIESTAS);
   const [fiestasLoading, setFiestasLoading] = useState(false);
   const [fiestasError, setFiestasError] = useState('');
@@ -65,21 +65,32 @@ export function AppProvider({ children }) {
 
   const login = (userData, token) => {
     const normalizedUser = {
-      id: userData.id,
-      name: userData.name || userData.username || '',
-      email: userData.email || '',
+      id:      userData.id,
+      name:    userData.name || userData.username || '',
+      email:   userData.email || '',
       country: userData.country || '',
-      city: userData.city || '',
+      city:    userData.city || '',
+      role:    userData.role || 'user',
     };
     setUser(normalizedUser);
     localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(normalizedUser));
     if (token) localStorage.setItem(STORAGE_KEYS.token, token);
+
+    // Inicializar fiestas guardadas desde los datos del servidor
+    if (Array.isArray(userData.savedFiestas)) {
+      const ids = userData.savedFiestas.map(f =>
+        typeof f === 'object' ? String(f._id || f.id) : String(f)
+      );
+      setSavedItems(ids);
+    }
   };
 
   const logout = () => {
     setUser(null);
+    setSavedItems([]);
     localStorage.removeItem(STORAGE_KEYS.user);
     localStorage.removeItem(STORAGE_KEYS.token);
+    localStorage.removeItem(STORAGE_KEYS.savedItems);
   };
 
   const refreshCurrentUser = async () => {
@@ -92,12 +103,14 @@ export function AppProvider({ children }) {
       const me = response.user || {};
       login(
         {
-          id: me._id || me.id,
-          username: me.username,
-          name: me.username,
-          email: me.email,
-          country: me.country,
-          city: me.city,
+          id:           me._id || me.id,
+          username:     me.username,
+          name:         me.username,
+          email:        me.email,
+          country:      me.country,
+          city:         me.city,
+          role:         me.role,
+          savedFiestas: me.savedFiestas || [],
         },
         token
       );
@@ -108,13 +121,30 @@ export function AppProvider({ children }) {
     }
   };
 
-  const toggleSave = (id) => {
+  const toggleSave = async (id) => {
+    if (!id) return;
+    const strId = String(id);
+
+    // Actualización optimista para respuesta inmediata en UI
     setSavedItems(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+      prev.includes(strId) ? prev.filter(x => x !== strId) : [...prev, strId]
     );
+
+    try {
+      const response = await toggleSaveFiesta(strId);
+      // Sincronizar con el estado real de la BD
+      if (Array.isArray(response.savedFiestas)) {
+        setSavedItems(response.savedFiestas.map(String));
+      }
+    } catch {
+      // Si falla la API, revertir el cambio optimista
+      setSavedItems(prev =>
+        prev.includes(strId) ? prev.filter(x => x !== strId) : [...prev, strId]
+      );
+    }
   };
 
-  const isSaved = (id) => savedItems.includes(id);
+  const isSaved = (id) => savedItems.includes(String(id));
 
   const loadFiestas = async () => {
     try {

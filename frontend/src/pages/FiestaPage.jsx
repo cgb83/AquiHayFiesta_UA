@@ -184,8 +184,9 @@ export default function FiestaPage({ slug, onNavigate }) {
                 {fiesta.title}
                 {user && (
                   <button className={`bookmark-btn ${isSaved(fiesta.id) ? 'saved' : ''}`}
-                    onClick={() => toggleSave(fiesta.id)}>
-                    {isSaved(fiesta.id) ? '🔖' : '🔖'}
+                    onClick={() => toggleSave(fiesta.id)}
+                    aria-label={isSaved(fiesta.id) ? 'Quitar de guardados' : 'Guardar fiesta'}>
+                    {isSaved(fiesta.id) ? '❤️' : '🤍'}
                   </button>
                 )}
               </h1>

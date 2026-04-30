@@ -139,6 +139,13 @@ export async function deleteMyAccount() {
   });
 }
 
+export async function toggleSaveFiesta(id) {
+  return request(`/fiestas/${id}/save`, {
+    method: 'POST',
+    headers: authHeaders(),
+  });
+}
+
 export async function fetchFiestas(params = {}) {
   const query = new URLSearchParams();
 
