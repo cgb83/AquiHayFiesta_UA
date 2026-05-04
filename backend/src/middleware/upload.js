@@ -1,5 +1,6 @@
 const multer = require('multer');
-const path   = require('path');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../config/cloudinary');
 
 // ── Tipos de archivo permitidos ──────────────────────────────────
 const ALLOWED_TYPES = {
@@ -12,15 +13,13 @@ const ALLOWED_TYPES = {
 
 const ALL_ALLOWED = Object.values(ALLOWED_TYPES).flat();
 
-// ── Dónde y cómo guardar los archivos ───────────────────────────
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // carpeta en la raíz del backend
-  },
-  filename: (req, file, cb) => {
-    // Nombre único: timestamp + nombre original sin espacios
-    const uniqueName = `${Date.now()}-${file.originalname.replace(/\s+/g, '_')}`;
-    cb(null, uniqueName);
+// ── Configuración de Cloudinary Storage ──────────────────────────
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'aquihayfiesta_ua',
+    format: async (req, file) => 'png', 
+    public_id: (req, file) => `${file.fieldname}-${Date.now()}`,
   },
 });
 
@@ -35,8 +34,8 @@ const fileFilter = (req, file, cb) => {
 
 // ── Configuración de multer ──────────────────────────────────────
 const upload = multer({
-  storage,
-  fileFilter,
+  storage: storage,
+  fileFilter: fileFilter,
   limits: {
     fileSize: 50 * 1024 * 1024, // 50 MB máximo
   },
