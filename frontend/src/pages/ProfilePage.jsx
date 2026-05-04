@@ -167,7 +167,7 @@ export default function ProfilePage() {
 
         {/* Right: download history */}
         <div>
-          <h3 className="section-title" style={{ textAlign: 'right' }}>Historial descargas</h3>
+          <h3 className="section-title" style={{ textAlign: 'right' }}>Historial de descargas</h3>
           <div style={{ height: 1, background: 'var(--color-border)', marginBottom: 'var(--space-md)' }} />
 
           <div className="download-history">

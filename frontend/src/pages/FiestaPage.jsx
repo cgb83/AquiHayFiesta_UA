@@ -306,7 +306,9 @@ export default function FiestaPage({ slug, onNavigate }) {
             <h3 className="section-title" style={{ textAlign: 'right' }}>Explorar fiestas</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {exploreFiestas.map(f => (
-                <div key={f.id} style={{ cursor: 'pointer' }} onClick={() => onNavigate('fiesta', f.slug)}>
+                <div key={f.id} role="button" tabIndex={0} style={{ cursor: 'pointer' }}
+                  onClick={() => onNavigate('fiesta', f.slug)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
                   <img src={f.image} alt={f.title}
                     style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 8 }}
                     onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_FIESTA_IMAGE; }} />
@@ -314,7 +316,8 @@ export default function FiestaPage({ slug, onNavigate }) {
                   <div className="text-muted">{formatViews(f.views)}</div>
                 </div>
               ))}
-              <button className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '6px 12px' }}>Ver más</button>
+              <button className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '6px 12px' }}
+                onClick={() => onNavigate('home')}>Ver más</button>
             </div>
           </div>
         </div>

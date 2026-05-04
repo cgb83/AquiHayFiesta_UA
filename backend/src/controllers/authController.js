@@ -165,17 +165,21 @@ const updateProfile = async (req, res) => {
 
     await user.save();
 
+    const populatedUser = await User.findById(user._id).populate('savedFiestas', '_id');
+
     res.json({
       success: true,
       message: 'Perfil actualizado correctamente.',
       user: {
-        id:       user._id,
-        username: user.username,
-        email:    user.email,
-        country:  user.country,
-        city:     user.city,
-        theme:    user.theme,
-        language: user.language,
+        id:           user._id,
+        username:     user.username,
+        email:        user.email,
+        country:      user.country,
+        city:         user.city,
+        role:         user.role,
+        savedFiestas: (populatedUser.savedFiestas || []).map(f => String(f._id)),
+        theme:        user.theme,
+        language:     user.language,
       },
     });
   } catch (error) {

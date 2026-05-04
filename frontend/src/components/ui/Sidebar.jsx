@@ -64,7 +64,10 @@ export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
             <div
               key={f.id}
               className="upcoming-item"
+              role="button"
+              tabIndex={0}
               onClick={() => onNavigate?.('fiesta', f.slug)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate?.('fiesta', f.slug); } }}
             >
               <div className="upcoming-date">{formatDate(f.date)}</div>
               <img

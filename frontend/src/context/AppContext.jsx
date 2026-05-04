@@ -64,6 +64,12 @@ export function AppProvider({ children }) {
   }, [theme]);
 
   const login = (userData, token) => {
+    if (userData.theme) {
+      setTheme(userData.theme);
+    }
+    if (userData.language) {
+      setLang(userData.language);
+    }
     const normalizedUser = {
       id:      userData.id,
       name:    userData.name || userData.username || '',
@@ -71,6 +77,8 @@ export function AppProvider({ children }) {
       country: userData.country || '',
       city:    userData.city || '',
       role:    userData.role || 'user',
+      theme:   userData.theme || theme,
+      language: userData.language || lang,
     };
     setUser(normalizedUser);
     localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(normalizedUser));
@@ -111,6 +119,8 @@ export function AppProvider({ children }) {
           city:         me.city,
           role:         me.role,
           savedFiestas: me.savedFiestas || [],
+          theme:        me.theme,
+          language:     me.language,
         },
         token
       );
