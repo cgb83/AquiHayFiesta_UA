@@ -30,14 +30,17 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-export function loginUser(c) { return request('/auth/login', { method: 'POST', body: JSON.stringify(c) }); }
-export function registerUser(d) { return request('/auth/register', { method: 'POST', body: JSON.stringify(d) }); }
-export function fetchMe() { return request('/auth/me', { headers: authHeaders() }); }
-export function updateProfile(d) { return request('/auth/profile', { method: 'PUT', headers: authHeaders(), body: JSON.stringify(d) }); }
-export function deleteMyAccount() { return request('/auth/delete', { method: 'DELETE', headers: authHeaders() }); }
+// --- Autenticación ---
+export const loginUser = (c) => request('/auth/login', { method: 'POST', body: JSON.stringify(c) });
+export const registerUser = (d) => request('/auth/register', { method: 'POST', body: JSON.stringify(d) });
+export const fetchMe = () => request('/auth/me', { headers: authHeaders() });
+export const updateProfile = (d) => request('/auth/profile', { method: 'PUT', headers: authHeaders(), body: JSON.stringify(d) });
+export const deleteMyAccount = () => request('/auth/delete', { method: 'DELETE', headers: authHeaders() });
 
-export function fetchFiestas(p = {}) { return request(`/fiestas?${new URLSearchParams(p)}`); }
-export function fetchFiestaBySlug(s) { return request(`/fiestas/${s}`, { headers: authHeaders() }); }
+// --- Fiestas ---
+export const fetchFiestas = (p = {}) => request(`/fiestas?${new URLSearchParams(p)}`);
+export const fetchFiestaBySlug = (s) => request(`/fiestas/${s}`, { headers: authHeaders() });
+export const fetchMyFiestas = () => request('/fiestas/my', { headers: authHeaders() }); // AÑADIDA
 
 export async function createFiesta(data) {
   const formData = new FormData();
@@ -47,17 +50,23 @@ export async function createFiesta(data) {
   formData.append('categories', JSON.stringify(categories));
   if (data.startDate) formData.append('startDate', data.startDate);
   if (data.endDate) formData.append('endDate', data.endDate);
-  formData.append('location', JSON.stringify({ city: data.city || '', country: data.country || 'España' }));
+  formData.append('location', JSON.stringify({ 
+    address: data.address || '',
+    city: data.city || '', 
+    country: data.country || 'España' 
+  }));
   if (data.coverImage) formData.append('coverImage', data.coverImage);
   return request('/fiestas', { method: 'POST', headers: authHeaders(), body: formData });
 }
 
-export function updateFiesta(id, d) { return request(`/fiestas/${id}`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(d) }); }
-export function deleteFiesta(id) { return request(`/fiestas/${id}`, { method: 'DELETE', headers: authHeaders() }); }
-export function toggleSaveFiesta(id) { return request(`/fiestas/${id}/save`, { method: 'POST', headers: authHeaders() }); }
+export const updateFiesta = (id, d) => request(`/fiestas/${id}`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(d) });
+export const deleteFiesta = (id) => request(`/fiestas/${id}`, { method: 'DELETE', headers: authHeaders() });
+export const toggleSaveFiesta = (id) => request(`/fiestas/${id}/save`, { method: 'POST', headers: authHeaders() });
 
-export function fetchPublicationsByFiesta(s) { return request(`/publications?fiesta=${s}`); }
-export function fetchMyPublications() { return request('/publications/my', { headers: authHeaders() }); }
+// --- Publicaciones ---
+export const fetchAllPublications = () => request('/publications'); // AÑADIDA
+export const fetchPublicationsByFiesta = (s) => request(`/publications?fiesta=${s}`);
+export const fetchMyPublications = () => request('/publications/my', { headers: authHeaders() });
 
 export async function createPublication(data) {
   const formData = new FormData();
@@ -68,126 +77,19 @@ export async function createPublication(data) {
   return request('/publications', { method: 'POST', headers: authHeaders(), body: formData });
 }
 
-export async function fetchMe() {
-  return request('/auth/me', {
-    headers: authHeaders(),
-  });
-}
+export const updatePublication = (id, d) => request(`/publications/${id}`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(d) }); // AÑADIDA
+export const deletePublication = (id) => request(`/publications/${id}`, { method: 'DELETE', headers: authHeaders() });
+export const registerDownload = (id) => request(`/publications/${id}/download`, { method: 'POST', headers: authHeaders() });
 
-export async function updateProfile(data) {
-  return request('/auth/profile', {
-    method: 'PUT',
-    headers: authHeaders(),
-    body: JSON.stringify(data),
-  });
-}
-
-export async function deleteMyAccount() {
-  return request('/auth/delete', {
-    method: 'DELETE',
-    headers: authHeaders(),
-  });
-}
-
-export async function toggleSaveFiesta(id) {
-  return request(`/fiestas/${id}/save`, {
-    method: 'POST',
-    headers: authHeaders(),
-  });
-}
-
-export async function fetchMyFiestas() {
-  return request('/fiestas/my', {
-    headers: authHeaders(),
-  });
-}
-
-export async function updateFiesta(id, data) {
-  return request(`/fiestas/${id}`, {
-    method: 'PUT',
-    headers: authHeaders(),
-    body: JSON.stringify(data),
-  });
-}
-
-export async function deleteFiesta(id) {
-  return request(`/fiestas/${id}`, {
-    method: 'DELETE',
-    headers: authHeaders(),
-  });
-}
-
-export async function fetchFiestas(params = {}) {
-  const query = new URLSearchParams();
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
-      query.set(key, value);
-    }
-  });
-
-  const suffix = query.toString() ? `?${query.toString()}` : '';
-  return request(`/fiestas${suffix}`);
-}
-
-export async function fetchFiestaBySlug(slug) {
-  return request(`/fiestas/${slug}`, {
-    headers: authHeaders(),
-  });
-}
-
-export async function fetchPublicationsByFiesta(slug) {
-  const query = new URLSearchParams({ fiesta: slug });
-  return request(`/publications?${query.toString()}`);
-}
-
-export async function fetchMyPublications() {
-  return request('/publications/my', {
-    headers: authHeaders(),
-  });
-}
-
-export async function fetchAllPublications() {
-  return request('/publications', {
-    headers: authHeaders(),
-  });
-}
-
-export async function updatePublication(id, data) {
-  return request(`/publications/${id}`, {
-    method: 'PUT',
-    headers: authHeaders(),
-    body: JSON.stringify(data),
-  });
-}
-
-export async function deletePublication(id) {
-  return request(`/publications/${id}`, {
-    method: 'DELETE',
-    headers: authHeaders(),
-  });
-}
-
-export async function registerDownload(id) {
-  return request(`/publications/${id}/download`, {
-    method: 'POST',
-    headers: authHeaders(),
-  });
-}
-
+// --- Subida Genérica (para TestUpload.jsx) ---
 export async function uploadFile(file) {
   const formData = new FormData();
   formData.append('file', file);
-
-  return request('/upload', {
-    method: 'POST',
-    headers: authHeaders(),
-    body: formData,
-  });
+  // Usamos la ruta de publicaciones como ejemplo de subida
+  return request('/publications', { method: 'POST', headers: authHeaders(), body: formData });
 }
-export function deletePublication(id) { return request(`/publications/${id}`, { method: 'DELETE', headers: authHeaders() }); }
-export function registerDownload(id) { return request(`/publications/${id}/download`, { method: 'POST', headers: authHeaders() }); }
 
+// --- Utilidades ---
 export function resolveMediaUrl(path = '') {
   if (!path) return '';
   if (/^https?:\/\//i.test(path )) return path;
