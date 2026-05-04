@@ -11,6 +11,17 @@ const CATEGORY_OPTIONS = [
   { id: 'gastronomia', label: 'Gastronomia' },
 ];
 
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const FILE_TYPES = [
+  ...IMAGE_TYPES,
+  'video/mp4', 'video/webm', 'video/quicktime',
+  'audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg',
+  'application/pdf', 'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+];
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+
 export function CreateFiestaModal({ onClose, onCreated }) {
   const modalRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -35,6 +46,17 @@ export function CreateFiestaModal({ onClose, onCreated }) {
     if (!form.title.trim() || form.categories.length === 0) {
       setError('Titulo y al menos una categoria son obligatorios.');
       return;
+    }
+
+    if (coverImage) {
+      if (!IMAGE_TYPES.includes(coverImage.type)) {
+        setError('La portada debe ser una imagen JPG, PNG, WEBP o GIF.');
+        return;
+      }
+      if (coverImage.size > MAX_IMAGE_SIZE) {
+        setError('La portada no puede superar 10MB.');
+        return;
+      }
     }
 
     try {
@@ -95,6 +117,7 @@ export function CreateFiestaModal({ onClose, onCreated }) {
             <button id="fiesta-cover" className="btn btn-outline w-full" onClick={() => fileInputRef.current?.click()} disabled={loading}>
               {coverImage ? `Archivo: ${coverImage.name}` : 'Subir Archivo'}
             </button>
+            <div className="form-hint">JPG, PNG, WEBP o GIF. Max 10MB.</div>
           </div>
         </div>
 
@@ -329,6 +352,16 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
       return;
     }
 
+    if (!FILE_TYPES.includes(file.type)) {
+      setError('Tipo de archivo no permitido.');
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      setError('El archivo no puede superar 50MB.');
+      return;
+    }
+
     try {
       setLoading(true);
       setError('');
@@ -394,6 +427,7 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
           <button id="publication-content" className="btn btn-outline w-full" onClick={() => fileInputRef.current?.click()} disabled={loading}>
             {file ? `Archivo: ${file.name}` : 'Subir Archivo'}
           </button>
+          <div className="form-hint">Imagen, video, audio o PDF/DOCX. Max 50MB.</div>
         </div>
 
         <button className="btn btn-primary btn-full" style={{ marginTop: 8 }}

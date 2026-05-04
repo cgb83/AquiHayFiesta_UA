@@ -69,13 +69,14 @@ function AppInner() {
 
   return (
     <div className={`app-shell ${authModal ? 'modal-open' : ''}`}>
+      <a className="skip-link" href="#main-content">Saltar al contenido</a>
       {/* Hero only on shell pages */}
       {isShell && <Hero />}
 
       <Navbar onNavigate={navigate} currentPage={route.page} />
 
       {/* Main content */}
-      <main style={{ flex: 1 }}>
+      <main id="main-content" style={{ flex: 1 }}>
         {isShell && (
           <div className="page-content">
             {/* SearchBar shown on most pages except manage & profile */}
