@@ -5,8 +5,8 @@ const cloudinary = require('../config/cloudinary');
 // ── Tipos de archivo permitidos ──────────────────────────────────
 const ALLOWED_TYPES = {
   image:    ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
-  video:    ['video/mp4', 'video/webm', 'video/quicktime'],
-  audio:    ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg'],
+  video:    ['video/mp4', 'video/webm', 'video/quicktime', 'video/avi', 'video/x-msvideo'],
+  audio:    ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/x-wav'],
   document: ['application/pdf', 'application/msword',
              'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
 };
@@ -18,7 +18,7 @@ const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'aquihayfiesta_ua',
-    format: async (req, file) => 'png', 
+    resource_type: 'auto', // Acepta cualquier tipo (imagen, video, audio, PDF)
     public_id: (req, file) => `${file.fieldname}-${Date.now()}`,
   },
 });
@@ -37,7 +37,7 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 50 * 1024 * 1024, // 50 MB máximo
+    fileSize: 500 * 1024 * 1024, // 500 MB máximo (para videos)
   },
 });
 
