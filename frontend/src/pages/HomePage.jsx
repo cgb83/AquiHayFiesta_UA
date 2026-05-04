@@ -49,18 +49,19 @@ export default function HomePage({ onNavigate, searchQuery = '' }) {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const activeFiestas = searchResults !== null ? searchResults : fiestas;
+  const hasSearch = searchResults !== null;
+  const recommendationSource = fiestas;
 
   const featured = useMemo(
-    () => [...activeFiestas].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5),
-    [activeFiestas]
+    () => [...recommendationSource].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5),
+    [recommendationSource]
   );
 
   const noPerder = useMemo(() => {
     const featuredIds = new Set(featured.map((f) => f.id));
-    const candidates = activeFiestas.filter((f) => !featuredIds.has(f.id));
+    const candidates = recommendationSource.filter((f) => !featuredIds.has(f.id));
     return shuffle(candidates).slice(0, 4);
-  }, [featured, activeFiestas]);
+  }, [featured, recommendationSource]);
 
   return (
     <>
@@ -88,6 +89,37 @@ export default function HomePage({ onNavigate, searchQuery = '' }) {
       <div className="content-grid">
         {/* Main column */}
         <div>
+          {hasSearch && (
+            <div className="mb-lg">
+              <h3 className="section-title">Resultados</h3>
+              {!searchLoading && searchResults.length === 0 && (
+                <p style={{ color: 'var(--color-muted)' }}>No hay resultados con tu busqueda.</p>
+              )}
+              <div className="card-list">
+                {searchResults.map(f => (
+                  <div key={f.id} className="card-item"
+                    role="button" tabIndex={0}
+                    onClick={() => onNavigate('fiesta', f.slug)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
+                    <img
+                      className="card-thumb"
+                      src={f.image}
+                      alt={f.title}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = DEFAULT_FIESTA_IMAGE;
+                      }}
+                    />
+                    <div className="card-info">
+                      <div className="card-title">{f.title}</div>
+                      <div className="card-views">{formatViews(f.views)}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Featured */}
           <div className="mb-lg">
             <h3 className="section-title">Destacado</h3>

@@ -221,8 +221,12 @@ export const MOCK_USER = {
   ],
 };
 
-export const formatViews = (n) =>
-  n >= 1000 ? `${(n / 1000).toFixed(0)}k veces visto` : n === 1 ? '1 vez visto' : `${n} veces visto`;
+export const formatViews = (n) => {
+  const formatter = new Intl.NumberFormat('es-ES');
+  const value = Number.isFinite(n) ? n : 0;
+  const label = value === 1 ? 'vez visto' : 'veces visto';
+  return `${formatter.format(value)} ${label}`;
+};
 
 export const formatDownloads = (n) =>
   n >= 1000 ? `${(n / 1000).toFixed(0)}k descargas` : `${n} descargas`;
