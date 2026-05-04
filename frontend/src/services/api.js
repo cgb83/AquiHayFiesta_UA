@@ -85,8 +85,8 @@ export const registerDownload = (id) => request(`/publications/${id}/download`, 
 export async function uploadFile(file) {
   const formData = new FormData();
   formData.append('file', file);
-  // Usamos la ruta de publicaciones como ejemplo de subida
-  return request('/publications', { method: 'POST', headers: authHeaders(), body: formData });
+  // Usamos la ruta de upload dedicada
+  return request('/upload', { method: 'POST', headers: authHeaders(), body: formData });
 }
 
 // --- Utilidades ---
