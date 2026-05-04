@@ -87,7 +87,8 @@ function MediaGroup({ label, items, type, onView, onDelete, onEdit }) {
               aria-label="Editar publicación">✏
             </button>
             <button className="manage-delete-btn"
-              onClick={e => { e.stopPropagation(); onDelete(item.id, type); }}>
+              onClick={e => { e.stopPropagation(); onDelete(item.id, type); }}
+              aria-label="Borrar publicacion">
               🗑
             </button>
           </div>

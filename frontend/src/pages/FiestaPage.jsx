@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+const DEFAULT_FIESTA_IMAGE = 'https://picsum.photos/seed/ahf-fiesta/640/360';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
 import { CreatePublicationModal } from '../components/modals/CreateModals';
 import { formatDownloads, formatViews } from '../data/mockData';
@@ -21,7 +22,7 @@ function AudioWave() {
   );
 }
 export default function FiestaPage({ slug, onNavigate }) {
-  const { user, fiestas, toggleSave, isSaved } = useApp();
+  const { user, fiestas, toggleSave, isSaved, updateFiestaViews } = useApp();
   const [activeViewer, setActiveViewer] = useState(null); // { item, type }
   const [showPublish, setShowPublish] = useState(false);
   const [content, setContent] = useState({ videos: [], images: [], documents: [], audios: [] });
@@ -37,6 +38,7 @@ export default function FiestaPage({ slug, onNavigate }) {
       if (!response?.fiesta) return;
 
       const data = response.fiesta;
+      const views = data.views || 0;
       setFiestaDetail({
         id: data._id,
         slug: data.slug,
@@ -44,11 +46,12 @@ export default function FiestaPage({ slug, onNavigate }) {
         description: data.description || '',
         category: data.category,
         subcategories: data.subcategories || [],
-        views: data.views || 0,
+        views,
         image: resolveMediaUrl(data.coverImage || ''),
         date: data.startDate ? String(data.startDate).slice(0, 10) : null,
         location: data.location?.city || data.location?.country || null,
       });
+      updateFiestaViews(data._id, views);
     } catch {
       // Keep fallback from context list.
     }
@@ -305,7 +308,8 @@ export default function FiestaPage({ slug, onNavigate }) {
               {exploreFiestas.map(f => (
                 <div key={f.id} style={{ cursor: 'pointer' }} onClick={() => onNavigate('fiesta', f.slug)}>
                   <img src={f.image} alt={f.title}
-                    style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 8 }} />
+                    style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 8 }}
+                    onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_FIESTA_IMAGE; }} />
                   <div style={{ fontSize: '0.85rem', fontWeight: 500, marginTop: 4 }}>{f.title}</div>
                   <div className="text-muted">{formatViews(f.views)}</div>
                 </div>

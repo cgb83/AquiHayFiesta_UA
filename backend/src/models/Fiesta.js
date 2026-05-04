@@ -74,12 +74,6 @@ const fiestaSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    viewedBy: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      },
-    ],
     // Si aparece en la sección "Destacado" del home
     featured: {
       type: Boolean,
@@ -126,16 +120,7 @@ fiestaSchema.pre('validate', function (next) {
 });
 
 // ── Método: incrementar visitas ──────────────────────────────────
-fiestaSchema.methods.incrementViews = function (userId = null) {
-  if (!userId) return Promise.resolve(this);
-
-  const alreadyViewed = this.viewedBy.some(
-    (viewerId) => viewerId.toString() === userId.toString()
-  );
-
-  if (alreadyViewed) return Promise.resolve(this);
-
-  this.viewedBy.push(userId);
+fiestaSchema.methods.incrementViews = function () {
   this.views += 1;
   return this.save();
 };

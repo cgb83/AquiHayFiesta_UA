@@ -146,6 +146,10 @@ export function AppProvider({ children }) {
 
   const isSaved = (id) => savedItems.includes(String(id));
 
+  const updateFiestaViews = (id, views) => {
+    setFiestas(prev => prev.map(f => String(f.id) === String(id) ? { ...f, views } : f));
+  };
+
   const loadFiestas = async () => {
     try {
       setFiestasLoading(true);
@@ -196,6 +200,7 @@ export function AppProvider({ children }) {
       fiestasLoading,
       fiestasError,
       reloadFiestas: loadFiestas,
+      updateFiestaViews,
       authLoading,
       refreshCurrentUser,
     }}>

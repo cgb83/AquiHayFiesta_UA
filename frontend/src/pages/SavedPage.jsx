@@ -1,13 +1,19 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Sidebar from '../components/ui/Sidebar';
 import { formatViews } from '../data/mockData';
 import { useApp } from '../context/AppContext';
 
 export default function SavedPage({ onNavigate }) {
-  const { savedItems, toggleSave, isSaved, fiestas } = useApp();
+  const { savedItems, toggleSave, isSaved, fiestas, categories } = useApp();
   const [catFilter, setCatFilter] = useState('all');
 
   const saved = fiestas.filter(f => isSaved(f.id));
+
+  const availableCats = useMemo(() => {
+    const ids = new Set(saved.map(f => f.category).filter(Boolean));
+    return categories.filter(c => ids.has(c.id));
+  }, [saved, categories]);
+
   const filtered = catFilter === 'all' ? saved
     : saved.filter(f => f.category === catFilter);
 
@@ -18,9 +24,25 @@ export default function SavedPage({ onNavigate }) {
           Guardados
         </h2>
 
-        {/* Filter: Todos */}
+        {/* Filtros de categoría */}
+        {availableCats.length > 0 && (
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 'var(--space-md)' }}>
+            <button
+              className={`category-pill ${catFilter === 'all' ? 'is-active' : ''}`}
+              onClick={() => setCatFilter('all')}>
+              Todos
+            </button>
+            {availableCats.map(c => (
+              <button key={c.id}
+                className={`category-pill ${catFilter === c.id ? 'is-active' : ''}`}
+                onClick={() => setCatFilter(c.id)}>
+                {c.label}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="mb-lg">
-          <h3 className="section-title">Todos</h3>
           <div style={{ height: 1, background: 'var(--color-border)', marginBottom: 16 }} />
 
           {filtered.length === 0 && (

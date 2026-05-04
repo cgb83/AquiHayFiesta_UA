@@ -806,6 +806,27 @@ input, textarea { font-family: inherit; }
   box-shadow: 0 2px 8px rgba(125, 48, 72, 0.16);
 }
 
+.category-pill:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 720px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .category-multi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .category-multi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ─── Footer ─────────────────────────────────────────────────── */
 .footer {
   background: var(--color-primary-pale);

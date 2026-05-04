@@ -49,7 +49,7 @@ const getFiestaBySlug = async (req, res) => {
     }
 
     // Incrementar solo 1 visita por usuario autenticado.
-    await fiesta.incrementViews(req.user?._id || null);
+    await fiesta.incrementViews();
 
     res.json({ success: true, fiesta });
   } catch (error) {

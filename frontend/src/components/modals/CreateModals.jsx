@@ -106,7 +106,7 @@ export function CreateFiestaModal({ onClose, onCreated }) {
 
         <div className="form-group mb-md">
           <label className="form-label">Categorias (puedes elegir varias)</label>
-          <div className="category-multi-grid">
+          <div className="category-multi-grid" role="group" aria-label="Categorias">
             {CATEGORY_OPTIONS.map((category) => {
               const active = form.categories.includes(category.id);
               return (
@@ -116,6 +116,7 @@ export function CreateFiestaModal({ onClose, onCreated }) {
                   className={`category-pill ${active ? 'is-active' : ''}`}
                   onClick={() => toggleCategory(category.id)}
                   disabled={loading}
+                  aria-pressed={active}
                 >
                   {category.label}
                 </button>
@@ -254,11 +255,12 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
 
         <div className="form-group mb-md">
           <label className="form-label">Categorías</label>
-          <div className="category-multi-grid">
+          <div className="category-multi-grid" role="group" aria-label="Categorias">
             {CATEGORY_OPTIONS.map(cat => (
               <button key={cat.id} type="button"
                 className={`category-pill ${form.categories.includes(cat.id) ? 'is-active' : ''}`}
-                onClick={() => toggleCategory(cat.id)} disabled={loading}>
+                onClick={() => toggleCategory(cat.id)} disabled={loading}
+                aria-pressed={form.categories.includes(cat.id)}>
                 {cat.label}
               </button>
             ))}

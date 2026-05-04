@@ -65,7 +65,7 @@ npm run dev
 - `npm install` - Instalar dependencias
 - `npm run dev` - Iniciar servidor con nodemon (puerto 5000)
 - `npm start` - Iniciar servidor (sin hot reload)
-- `npm run seed` - Cargar datos de prueba en la BD (15 usuarios, 13 fiestas, 13 publicaciones)
+- `npm run seed` - Cargar datos de prueba en la BD (15 usuarios, 13 fiestas, 22 publicaciones)
 
 ## Base de datos
 
@@ -77,12 +77,16 @@ Datos incluidos:
 - 15 usuarios normales + 2 admins
 - 10 fiestas oficiales (San Valentín, Halloween, Navidad, etc.)
 - 3 fiestas creadas por usuarios (Moros y Cristianos, Boda, Bando Murcia)
-- 13 publicaciones con distintos tipos de contenido
+- 22 publicaciones con distintos tipos de contenido
 
 ## Arranque rapido recomendado
 
-1. Terminal A (backend): `npm run dev:backend`
-2. Terminal B (frontend): `npm run dev:frontend`
+1. Terminal A (backend):
+	- `cd backend`
+	- `npm run dev`
+2. Terminal B (frontend):
+	- `cd frontend`
+	- `npm run dev`
 3. Abrir la URL que muestre Vite (normalmente `http://localhost:5173` o `http://localhost:5174`)
 4. Comprobar backend en `http://localhost:5000/api/health`
 
@@ -95,6 +99,5 @@ Datos incluidos:
 
 ## Siguientes pasos recomendados
 
-- Conectar listados y detalle de fiestas a la API (`/api/fiestas`).
-- Conectar guardados/publicaciones al backend para eliminar datos mock.
-- Añadir tests de integracion de autenticacion.
+- Preparar el despliegue (frontend y backend) en una plataforma gratuita.
+- Añadir tests basicos de autenticacion y API.
