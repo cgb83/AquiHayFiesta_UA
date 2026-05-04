@@ -1,7 +1,8 @@
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const { cloudinary } = require('../config/cloudinary');
+const cloudinary = require('../config/cloudinary');
 
+// ── Tipos de archivo permitidos ──────────────────────────────────
 const ALLOWED_TYPES = {
   image:    ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
   video:    ['video/mp4', 'video/webm', 'video/quicktime'],
@@ -12,14 +13,17 @@ const ALLOWED_TYPES = {
 
 const ALL_ALLOWED = Object.values(ALLOWED_TYPES).flat();
 
+// ── Configuración de Cloudinary Storage ──────────────────────────
 const storage = new CloudinaryStorage({
-  cloudinary,
+  cloudinary: cloudinary,
   params: {
-    folder: 'aquihayfiesta',
-    resource_type: 'auto', // acepta imagen, video, audio, pdf...
+    folder: 'aquihayfiesta_ua',
+    format: async (req, file) => 'png', 
+    public_id: (req, file) => `${file.fieldname}-${Date.now()}`,
   },
 });
 
+// ── Filtro de tipos ──────────────────────────────────────────────
 const fileFilter = (req, file, cb) => {
   if (ALL_ALLOWED.includes(file.mimetype)) {
     cb(null, true);
@@ -28,10 +32,13 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+// ── Configuración de multer ──────────────────────────────────────
 const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 50 * 1024 * 1024 },
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 50 * 1024 * 1024, // 50 MB máximo
+  },
 });
 
 module.exports = upload;
