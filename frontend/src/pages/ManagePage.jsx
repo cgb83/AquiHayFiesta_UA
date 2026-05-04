@@ -5,7 +5,6 @@ import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
 import { deletePublication, updatePublication, deleteFiesta, fetchMyPublications, fetchMyFiestas, fetchFiestas, fetchAllPublications, resolveMediaUrl } from '../services/api';
 import TestUpload from '../components/TestUpload';
-import { deletePublication, updatePublication, deleteFiesta, fetchMyPublications, fetchMyFiestas, resolveMediaUrl } from '../services/api';
 
 function ConfirmDialog({ title, message, onCancel, onConfirm, loading }) {
   return (
