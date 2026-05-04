@@ -1101,6 +1101,27 @@ textarea:focus-visible {
   width: 100%; height: 100%; object-fit: cover;
 }
 
+.manage-edit-btn {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.manage-edit-btn:hover {
+  background: var(--color-primary-pale);
+  transform: scale(1.1);
+}
+
 .manage-delete-btn {
   position: absolute;
   top: 4px;

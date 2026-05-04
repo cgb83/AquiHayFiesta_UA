@@ -125,7 +125,26 @@ const updateFiesta = async (req, res) => {
       return res.status(403).json({ success: false, message: 'No tienes permiso para editar esta fiesta.' });
     }
 
-    const updated = await Fiesta.findByIdAndUpdate(req.params.id, req.body, {
+    const { title, description, categories, startDate, endDate, location } = req.body;
+
+    const parsedCategories = Array.isArray(categories) ? categories : [];
+    const safeCategories = Array.from(new Set(parsedCategories.filter(c => ALLOWED_CATEGORIES.includes(c))));
+
+    if (safeCategories.length === 0) {
+      return res.status(400).json({ success: false, message: 'Debes seleccionar al menos una categoría.' });
+    }
+
+    const updateData = {
+      title,
+      description,
+      category: safeCategories[0],
+      categories: safeCategories,
+      startDate: startDate || null,
+      endDate:   endDate   || null,
+      location:  location  || {},
+    };
+
+    const updated = await Fiesta.findByIdAndUpdate(req.params.id, updateData, {
       new: true,
       runValidators: true,
     });

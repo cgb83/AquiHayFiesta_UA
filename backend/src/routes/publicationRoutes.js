@@ -5,6 +5,7 @@ const upload  = require('../middleware/upload');
 const {
   getPublications,
   createPublication,
+  updatePublication,
   deletePublication,
   getMyPublications,
   registerDownload,
@@ -16,6 +17,7 @@ router.get('/', getPublications);
 // Privadas
 router.get   ('/my',              protect, getMyPublications);
 router.post  ('/',                protect, upload.single('file'), createPublication);
+router.put   ('/:id',             protect, updatePublication);
 router.delete('/:id',             protect, deletePublication);
 router.post  ('/:id/download',    protect, registerDownload);
 

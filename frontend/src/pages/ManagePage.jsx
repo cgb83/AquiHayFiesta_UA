@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
 import { EditFiestaModal } from '../components/modals/CreateModals';
-import { deletePublication, deleteFiesta, fetchMyPublications, fetchMyFiestas, resolveMediaUrl } from '../services/api';
+import { deletePublication, updatePublication, deleteFiesta, fetchMyPublications, fetchMyFiestas, resolveMediaUrl } from '../services/api';
 
 function ConfirmDialog({ title, message, onCancel, onConfirm, loading }) {
   return (
@@ -20,7 +20,53 @@ function ConfirmDialog({ title, message, onCancel, onConfirm, loading }) {
   );
 }
 
-function MediaGroup({ label, items, type, onView, onDelete }) {
+function EditPublicationModal({ item, onClose, onSaved }) {
+  const [title, setTitle]       = useState(item.title || '');
+  const [description, setDesc]  = useState(item.description || '');
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState('');
+
+  const handleSave = async () => {
+    if (!title.trim()) { setError('El título es obligatorio.'); return; }
+    try {
+      setLoading(true);
+      setError('');
+      await updatePublication(item.id, { title: title.trim(), description: description.trim() });
+      onSaved(item.id, title.trim(), description.trim());
+      onClose();
+    } catch (err) {
+      setError(err.message || 'No se pudo guardar.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" role="dialog" aria-modal="true"
+        style={{ maxWidth: 420 }} onClick={e => e.stopPropagation()} tabIndex={-1}>
+        <button className="modal-close" onClick={onClose} aria-label="Cerrar">✕</button>
+        <h2 className="modal-title">Editar publicación</h2>
+        {error && <p role="alert" style={{ color: '#c0392b', marginBottom: 12 }}>{error}</p>}
+        <div className="form-group mb-md">
+          <label className="form-label" htmlFor="ep-title">Título</label>
+          <input id="ep-title" className="form-input" value={title}
+            onChange={e => setTitle(e.target.value)} disabled={loading} />
+        </div>
+        <div className="form-group mb-md">
+          <label className="form-label" htmlFor="ep-desc">Descripción</label>
+          <input id="ep-desc" className="form-input" value={description}
+            onChange={e => setDesc(e.target.value)} disabled={loading} />
+        </div>
+        <button className="btn btn-primary btn-full" onClick={handleSave} disabled={loading}>
+          {loading ? 'Guardando...' : 'Guardar cambios'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function MediaGroup({ label, items, type, onView, onDelete, onEdit }) {
   if (!items || items.length === 0) return null;
   return (
     <div className="mb-md">
@@ -36,6 +82,10 @@ function MediaGroup({ label, items, type, onView, onDelete }) {
             ) : (
               <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-primary-pale)', fontSize: '1.8rem' }}>🎵</div>
             )}
+            <button className="manage-edit-btn"
+              onClick={e => { e.stopPropagation(); onEdit(item, type); }}
+              aria-label="Editar publicación">✏
+            </button>
             <button className="manage-delete-btn"
               onClick={e => { e.stopPropagation(); onDelete(item.id, type); }}>
               🗑
@@ -52,6 +102,7 @@ export default function ManagePage() {
   const [myFiestas, setMyFiestas] = useState([]);
   const [fiestaLoading, setFiestaLoading] = useState(false);
   const [editFiesta, setEditFiesta] = useState(null);
+  const [editPublication, setEditPublication] = useState(null);
   const [viewer, setViewer] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -124,6 +175,25 @@ export default function ManagePage() {
     loadMyFiestas();
     loadContent();
   }, []);
+
+  const handleEditPublicationSaved = (id, newTitle, newDesc) => {
+    setContent(prev => {
+      const next = { ...prev };
+      Object.keys(next).forEach(section => {
+        ['videos', 'images', 'documents', 'audios'].forEach(typeKey => {
+          if (next[section][typeKey]) {
+            next[section] = {
+              ...next[section],
+              [typeKey]: next[section][typeKey].map(item =>
+                item.id === id ? { ...item, title: newTitle, description: newDesc } : item
+              ),
+            };
+          }
+        });
+      });
+      return next;
+    });
+  };
 
   const handleDeleteFiesta = (fiestaId) => {
     setConfirmDialog({
@@ -260,12 +330,20 @@ export default function ManagePage() {
             </button>
           </div>
 
-          <MediaGroup label="Vídeos"     items={types.videos}    type="video"    onView={(i,t) => setViewer({item:i,type:t})} onDelete={(id,t) => handleDelete(sectionKey, id, 'video')} />
-          <MediaGroup label="Imágenes"   items={types.images}    type="image"    onView={(i,t) => setViewer({item:i,type:t})} onDelete={(id,t) => handleDelete(sectionKey, id, 'image')} />
-          <MediaGroup label="Documentos" items={types.documents} type="document" onView={(i,t) => setViewer({item:i,type:t})} onDelete={(id,t) => handleDelete(sectionKey, id, 'document')} />
-          <MediaGroup label="Audios"     items={types.audios}    type="audio"    onView={(i,t) => setViewer({item:i,type:t})} onDelete={(id,t) => handleDelete(sectionKey, id, 'audio')} />
+          <MediaGroup label="Vídeos"     items={types.videos}    type="video"    onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'video')} />
+          <MediaGroup label="Imágenes"   items={types.images}    type="image"    onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'image')} />
+          <MediaGroup label="Documentos" items={types.documents} type="document" onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'document')} />
+          <MediaGroup label="Audios"     items={types.audios}    type="audio"    onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'audio')} />
         </div>
       ))}
+
+      {editPublication && (
+        <EditPublicationModal
+          item={editPublication}
+          onClose={() => setEditPublication(null)}
+          onSaved={handleEditPublicationSaved}
+        />
+      )}
 
       {editFiesta && (
         <EditFiestaModal

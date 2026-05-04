@@ -197,6 +197,14 @@ export async function fetchMyPublications() {
   });
 }
 
+export async function updatePublication(id, data) {
+  return request(`/publications/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
 export async function deletePublication(id) {
   return request(`/publications/${id}`, {
     method: 'DELETE',

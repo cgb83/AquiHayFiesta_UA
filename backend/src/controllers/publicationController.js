@@ -78,6 +78,33 @@ const createPublication = async (req, res) => {
   }
 };
 
+// ── PUT /api/publications/:id  (solo el autor) ───────────────────
+const updatePublication = async (req, res) => {
+  try {
+    const publication = await Publication.findById(req.params.id);
+    if (!publication) {
+      return res.status(404).json({ success: false, message: 'Publicación no encontrada.' });
+    }
+
+    if (publication.createdBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ success: false, message: 'No tienes permiso para editar esta publicación.' });
+    }
+
+    const { title, description } = req.body;
+    if (!title?.trim()) {
+      return res.status(400).json({ success: false, message: 'El título es obligatorio.' });
+    }
+
+    publication.title       = title.trim();
+    publication.description = description?.trim() || '';
+    await publication.save();
+
+    res.json({ success: true, message: 'Publicación actualizada.', publication });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error al actualizar la publicación.' });
+  }
+};
+
 // ── DELETE /api/publications/:id  (solo el autor) ────────────────
 const deletePublication = async (req, res) => {
   try {
@@ -148,4 +175,4 @@ const registerDownload = async (req, res) => {
   }
 };
 
-module.exports = { getPublications, createPublication, deletePublication, getMyPublications, registerDownload };
+module.exports = { getPublications, createPublication, updatePublication, deletePublication, getMyPublications, registerDownload };

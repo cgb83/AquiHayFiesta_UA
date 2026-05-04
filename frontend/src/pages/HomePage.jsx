@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Sidebar from '../components/ui/Sidebar';
 import { CreateFiestaModal } from '../components/modals/CreateModals';
 import { formatViews } from '../data/mockData';
 import { useApp } from '../context/AppContext';
+import { fetchFiestas, resolveMediaUrl } from '../services/api';
 
 const DEFAULT_FIESTA_IMAGE = 'https://picsum.photos/seed/ahf-fiesta/640/360';
 
@@ -18,30 +19,58 @@ function shuffle(list) {
 export default function HomePage({ onNavigate, searchQuery = '' }) {
   const { user, fiestas, fiestasLoading, fiestasError, reloadFiestas } = useApp();
   const [showCreate, setShowCreate] = useState(false);
+  const [searchResults, setSearchResults] = useState(null);
+  const [searchLoading, setSearchLoading] = useState(false);
 
-  const searchValue = searchQuery.trim().toLowerCase();
-  const filteredFiestas = fiestas.filter((f) => {
-    const bySearch = !searchValue || f.title.toLowerCase().includes(searchValue) || f.description.toLowerCase().includes(searchValue);
-    return bySearch;
-  });
+  useEffect(() => {
+    const query = searchQuery.trim();
+    if (!query) { setSearchResults(null); return; }
+
+    const timer = setTimeout(async () => {
+      try {
+        setSearchLoading(true);
+        const response = await fetchFiestas({ search: query });
+        setSearchResults((response.fiestas || []).map(f => ({
+          id: f._id,
+          slug: f.slug,
+          title: f.title,
+          description: f.description || '',
+          category: f.category,
+          views: f.views || 0,
+          image: resolveMediaUrl(f.coverImage || ''),
+        })));
+      } catch {
+        setSearchResults([]);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const activeFiestas = searchResults !== null ? searchResults : fiestas;
 
   const featured = useMemo(
-    () => [...filteredFiestas].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5),
-    [filteredFiestas]
+    () => [...activeFiestas].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5),
+    [activeFiestas]
   );
 
   const noPerder = useMemo(() => {
     const featuredIds = new Set(featured.map((f) => f.id));
-    const candidates = filteredFiestas.filter((f) => !featuredIds.has(f.id));
+    const candidates = activeFiestas.filter((f) => !featuredIds.has(f.id));
     return shuffle(candidates).slice(0, 4);
-  }, [featured, filteredFiestas]);
+  }, [featured, activeFiestas]);
 
   return (
     <>
-      {fiestasError && (
+      {fiestasError && !searchQuery && (
         <p role="status" style={{ marginBottom: 'var(--space-md)', color: 'var(--color-text-soft)' }}>
           {fiestasError}
         </p>
+      )}
+      {searchLoading && (
+        <p style={{ marginBottom: 'var(--space-md)', color: 'var(--color-muted)' }}>Buscando...</p>
       )}
 
       <div className="flex-between mb-lg">
