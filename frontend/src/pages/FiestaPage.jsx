@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-const DEFAULT_FIESTA_IMAGE = 'https://picsum.photos/seed/ahf-fiesta/640/360';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
 import { CreatePublicationModal } from '../components/modals/CreateModals';
 import { formatDownloads, formatViews } from '../data/mockData';
 import { useApp } from '../context/AppContext';
 import { fetchFiestaBySlug, fetchPublicationsByFiesta, registerDownload, resolveMediaUrl } from '../services/api';
-
 
 import Calendar from '../components/ui/Calendar';
 
@@ -22,13 +20,14 @@ function AudioWave() {
   );
 }
 export default function FiestaPage({ slug, onNavigate }) {
-  const { user, fiestas, toggleSave, isSaved, updateFiestaViews } = useApp();
+  const { user, fiestas, toggleSave, isSaved } = useApp();
   const [activeViewer, setActiveViewer] = useState(null); // { item, type }
   const [showPublish, setShowPublish] = useState(false);
   const [content, setContent] = useState({ videos: [], images: [], documents: [], audios: [] });
   const [contentLoading, setContentLoading] = useState(false);
   const [contentError, setContentError] = useState('');
   const [fiestaDetail, setFiestaDetail] = useState(null);
+  const lastDetailSlugRef = useRef(null);
 
   const fiesta = fiestaDetail || fiestas.find(f => f.slug === slug);
 
@@ -38,7 +37,6 @@ export default function FiestaPage({ slug, onNavigate }) {
       if (!response?.fiesta) return;
 
       const data = response.fiesta;
-      const views = data.views || 0;
       setFiestaDetail({
         id: data._id,
         slug: data.slug,
@@ -46,12 +44,11 @@ export default function FiestaPage({ slug, onNavigate }) {
         description: data.description || '',
         category: data.category,
         subcategories: data.subcategories || [],
-        views,
+        views: data.views || 0,
         image: resolveMediaUrl(data.coverImage || ''),
         date: data.startDate ? String(data.startDate).slice(0, 10) : null,
         location: data.location?.city || data.location?.country || null,
       });
-      updateFiestaViews(data._id, views);
     } catch {
       // Keep fallback from context list.
     }
@@ -92,8 +89,10 @@ export default function FiestaPage({ slug, onNavigate }) {
   }, [slug, fiesta]);
 
   useEffect(() => {
+    if (lastDetailSlugRef.current === slug) return;
+    lastDetailSlugRef.current = slug;
     loadFiestaDetail();
-  }, [loadFiestaDetail]);
+  }, [loadFiestaDetail, slug]);
 
   useEffect(() => {
     loadContent();
@@ -306,18 +305,14 @@ export default function FiestaPage({ slug, onNavigate }) {
             <h3 className="section-title" style={{ textAlign: 'right' }}>Explorar fiestas</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {exploreFiestas.map(f => (
-                <div key={f.id} role="button" tabIndex={0} style={{ cursor: 'pointer' }}
-                  onClick={() => onNavigate('fiesta', f.slug)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
+                <div key={f.id} style={{ cursor: 'pointer' }} onClick={() => onNavigate('fiesta', f.slug)}>
                   <img src={f.image} alt={f.title}
-                    style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 8 }}
-                    onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_FIESTA_IMAGE; }} />
+                    style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 8 }} />
                   <div style={{ fontSize: '0.85rem', fontWeight: 500, marginTop: 4 }}>{f.title}</div>
                   <div className="text-muted">{formatViews(f.views)}</div>
                 </div>
               ))}
-              <button className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '6px 12px' }}
-                onClick={() => onNavigate('home')}>Ver más</button>
+              <button className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '6px 12px' }}>Ver más</button>
             </div>
           </div>
         </div>
