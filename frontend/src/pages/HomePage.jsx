@@ -66,7 +66,9 @@ export default function HomePage({ onNavigate, searchQuery = '' }) {
             <div className="card-list">
               {featured.map(f => (
                 <div key={f.id} className="card-item"
-                  onClick={() => onNavigate('fiesta', f.slug)}>
+                  role="button" tabIndex={0}
+                  onClick={() => onNavigate('fiesta', f.slug)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
                   <img
                     className="card-thumb"
                     src={f.image}
@@ -94,7 +96,9 @@ export default function HomePage({ onNavigate, searchQuery = '' }) {
             <div className="card-grid">
               {noPerder.map(f => (
                 <div key={f.id} className="card-grid-item"
-                  onClick={() => onNavigate('fiesta', f.slug)}>
+                  role="button" tabIndex={0}
+                  onClick={() => onNavigate('fiesta', f.slug)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
                   <img
                     className="card-grid-thumb"
                     src={f.image}

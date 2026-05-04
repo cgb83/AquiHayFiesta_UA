@@ -29,17 +29,18 @@ export default function SavedPage({ onNavigate }) {
 
           <div className="card-list">
             {filtered.map(f => (
-              <div key={f.id} className="saved-item">
-                <img className="card-thumb" src={f.image} alt={f.title}
-                  onClick={() => onNavigate('fiesta', f.slug)}
-                  style={{ cursor: 'pointer' }} />
-                <div className="card-info" style={{ cursor: 'pointer' }}
-                  onClick={() => onNavigate('fiesta', f.slug)}>
+              <div key={f.id} className="saved-item"
+                role="button" tabIndex={0}
+                style={{ cursor: 'pointer' }}
+                onClick={() => onNavigate('fiesta', f.slug)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
+                <img className="card-thumb" src={f.image} alt={f.title} />
+                <div className="card-info">
                   <div className="card-title">{f.title}</div>
                   <div className="card-views">{formatViews(f.views)}</div>
                 </div>
                 <button className="saved-bookmark"
-                  onClick={() => toggleSave(f.id)}
+                  onClick={(e) => { e.stopPropagation(); toggleSave(f.id); }}
                   aria-label="Quitar de guardados">
                   ❤️
                 </button>

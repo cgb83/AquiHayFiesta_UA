@@ -30,7 +30,9 @@ export default function CategoryPage({ categoryId, onNavigate }) {
             )}
             {fiestasByCategory.map(f => (
               <div key={f.id} className="card-item"
-                onClick={() => onNavigate('fiesta', f.slug)}>
+                role="button" tabIndex={0}
+                onClick={() => onNavigate('fiesta', f.slug)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
                 <img className="card-thumb" src={f.image} alt={f.title}
                 onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = DEFAULT_FIESTA_IMAGE; }} />
                 <div className="card-info">

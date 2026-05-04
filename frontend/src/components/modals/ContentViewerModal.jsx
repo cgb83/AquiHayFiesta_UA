@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { useModalAccessibility } from './useModalAccessibility';
 
-export default function ContentViewerModal({ item, type, onClose, onDownload }) {
+export default function ContentViewerModal({ item, type, onClose, onDownload, canDownload = true }) {
   const modalRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -9,7 +9,6 @@ export default function ContentViewerModal({ item, type, onClose, onDownload }) 
 
   const handleDownload = async () => {
     if (!onDownload) return;
-
     try {
       setLoading(true);
       setError('');
@@ -35,10 +34,11 @@ export default function ContentViewerModal({ item, type, onClose, onDownload }) 
       >
         <button style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', marginBottom: 8 }}
           aria-label="Cerrar visor"
-          onClick={onClose}>← </button>
+          onClick={onClose}>←
+        </button>
 
         <div className="content-viewer">
-          {/* Media preview */}
+          {/* Vista previa del contenido */}
           <div className="content-viewer-media">
             {(type === 'video' || type === 'image') && item.image && (
               <div style={{ position: 'relative' }}>
@@ -52,9 +52,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload }) 
               </div>
             )}
             {type === 'document' && (
-              <div className="doc-thumb" style={{ width: '100%', aspectRatio: '4/3' }}>
-                📄
-              </div>
+              <div className="doc-thumb" style={{ width: '100%', aspectRatio: '4/3' }}>📄</div>
             )}
             {type === 'audio' && (
               <div className="audio-thumb" style={{ width: '100%' }}>
@@ -68,18 +66,25 @@ export default function ContentViewerModal({ item, type, onClose, onDownload }) 
           {/* Info */}
           <div className="content-viewer-info">
             <div id="content-viewer-title" className="content-viewer-title">{item.title}</div>
-            <p className="content-viewer-desc">
-              En este tutorial aprenderás a preparar un regalo muy personal y agradable para aquel al que quieras.
-            </p>
+            {item.description && (
+              <p className="content-viewer-desc">{item.description}</p>
+            )}
             {error && <p role="alert" style={{ color: '#c0392b' }}>{error}</p>}
           </div>
         </div>
 
-        {/* Download */}
+        {/* Descarga: solo si el usuario está logueado */}
         <div style={{ textAlign: 'right', marginTop: 16 }}>
-          <button className="btn btn-outline" style={{ gap: 6 }} onClick={handleDownload} disabled={loading}>
-            ⬇ {loading ? 'Descargando...' : 'Descargar'}
-          </button>
+          {canDownload ? (
+            <button className="btn btn-outline" style={{ gap: 6 }}
+              onClick={handleDownload} disabled={loading}>
+              ⬇ {loading ? 'Descargando...' : 'Descargar'}
+            </button>
+          ) : (
+            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-soft)' }}>
+              <em>Inicia sesión para descargar este contenido.</em>
+            </p>
+          )}
         </div>
       </div>
     </div>

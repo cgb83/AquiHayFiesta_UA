@@ -320,7 +320,8 @@ export default function FiestaPage({ slug, onNavigate }) {
         <ContentViewerModal
           item={activeViewer.item}
           type={activeViewer.type}
-          onDownload={handleDownload}
+          onDownload={user ? handleDownload : undefined}
+          canDownload={Boolean(user)}
           onClose={() => setActiveViewer(null)}
         />
       )}

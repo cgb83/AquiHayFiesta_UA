@@ -1122,6 +1122,39 @@ textarea:focus-visible {
   transform: scale(1.1);
 }
 
+/* ─── Manage: Mis Fiestas list ───────────────────────────────── */
+.manage-fiesta-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.manage-fiesta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.manage-fiesta-thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.manage-fiesta-thumb--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-pale);
+  font-size: 1.4rem;
+}
+
 /* ─── Category page ──────────────────────────────────────────── */
 .category-header {
   margin-bottom: var(--space-lg);

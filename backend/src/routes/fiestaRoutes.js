@@ -5,6 +5,7 @@ const upload  = require('../middleware/upload');
 const {
   getFiestas,
   getFiestaBySlug,
+  getMyFiestas,
   createFiesta,
   updateFiesta,
   deleteFiesta,
@@ -12,13 +13,16 @@ const {
 } = require('../controllers/fiestaController');
 
 // Públicas
-router.get('/',      getFiestas);
+router.get('/', getFiestas);
+
+// /my debe ir antes de /:slug para que Express no lo interprete como slug
+router.get('/my',    protect, getMyFiestas);
 router.get('/:slug', optionalProtect, getFiestaBySlug);
 
 // Privadas
-router.post  ('/',          protect, upload.single('coverImage'), createFiesta);
-router.put   ('/:id',       protect, updateFiesta);
-router.delete('/:id',       protect, deleteFiesta);
-router.post  ('/:id/save',  protect, toggleSaveFiesta);
+router.post  ('/',         protect, upload.single('coverImage'), createFiesta);
+router.put   ('/:id',      protect, upload.single('coverImage'), updateFiesta);
+router.delete('/:id',      protect, deleteFiesta);
+router.post  ('/:id/save', protect, toggleSaveFiesta);
 
 module.exports = router;

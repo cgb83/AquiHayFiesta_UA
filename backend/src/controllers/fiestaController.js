@@ -101,6 +101,17 @@ const createFiesta = async (req, res) => {
   }
 };
 
+// ── GET /api/fiestas/my  (fiestas del usuario logueado) ──────────
+const getMyFiestas = async (req, res) => {
+  try {
+    const fiestas = await Fiesta.find({ createdBy: req.user._id })
+      .sort({ createdAt: -1 });
+    res.json({ success: true, count: fiestas.length, fiestas });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error al obtener tus fiestas.' });
+  }
+};
+
 // ── PUT /api/fiestas/:id  (solo el creador) ──────────────────────
 const updateFiesta = async (req, res) => {
   try {
@@ -169,4 +180,4 @@ const toggleSaveFiesta = async (req, res) => {
   }
 };
 
-module.exports = { getFiestas, getFiestaBySlug, createFiesta, updateFiesta, deleteFiesta, toggleSaveFiesta };
+module.exports = { getFiestas, getFiestaBySlug, getMyFiestas, createFiesta, updateFiesta, deleteFiesta, toggleSaveFiesta };

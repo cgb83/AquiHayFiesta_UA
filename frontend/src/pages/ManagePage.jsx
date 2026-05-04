@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
-import { deletePublication, fetchMyPublications, resolveMediaUrl } from '../services/api';
+import { EditFiestaModal } from '../components/modals/CreateModals';
+import { deletePublication, deleteFiesta, fetchMyPublications, fetchMyFiestas, resolveMediaUrl } from '../services/api';
 
 function ConfirmDialog({ title, message, onCancel, onConfirm, loading }) {
   return (
@@ -48,11 +49,38 @@ function MediaGroup({ label, items, type, onView, onDelete }) {
 
 export default function ManagePage() {
   const [content, setContent] = useState({});
+  const [myFiestas, setMyFiestas] = useState([]);
+  const [fiestaLoading, setFiestaLoading] = useState(false);
+  const [editFiesta, setEditFiesta] = useState(null);
   const [viewer, setViewer] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [confirmLoading, setConfirmLoading] = useState(false);
+
+  const loadMyFiestas = async () => {
+    try {
+      setFiestaLoading(true);
+      const response = await fetchMyFiestas();
+      const normalized = (response.fiestas || []).map(f => ({
+        id: f._id,
+        slug: f.slug,
+        title: f.title,
+        description: f.description || '',
+        category: f.category,
+        categories: f.categories || [],
+        startDate: f.startDate || null,
+        endDate: f.endDate || null,
+        location: f.location || {},
+        image: resolveMediaUrl(f.coverImage || ''),
+      }));
+      setMyFiestas(normalized);
+    } catch {
+      // silently fail — show empty list
+    } finally {
+      setFiestaLoading(false);
+    }
+  };
 
   const loadContent = async () => {
     try {
@@ -93,8 +121,29 @@ export default function ManagePage() {
   };
 
   useEffect(() => {
+    loadMyFiestas();
     loadContent();
   }, []);
+
+  const handleDeleteFiesta = (fiestaId) => {
+    setConfirmDialog({
+      title: 'Borrar fiesta',
+      message: 'Se eliminará la fiesta y no se puede deshacer. ¿Continuar?',
+      onConfirm: async () => {
+        try {
+          setConfirmLoading(true);
+          await deleteFiesta(fiestaId);
+          setMyFiestas(prev => prev.filter(f => f.id !== fiestaId));
+          setConfirmDialog(null);
+        } catch (err) {
+          setError(err.message || 'No se pudo eliminar la fiesta.');
+          setConfirmDialog(null);
+        } finally {
+          setConfirmLoading(false);
+        }
+      },
+    });
+  };
 
   const handleDelete = async (sectionKey, itemId, type) => {
     setConfirmDialog({
@@ -154,6 +203,47 @@ export default function ManagePage() {
         Gestiona tu contenido
       </h2>
 
+      {/* ── Mis Fiestas ─────────────────────────────── */}
+      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 700, marginBottom: 'var(--space-md)' }}>
+        Mis Fiestas
+      </h3>
+
+      {fiestaLoading && <p className="text-muted">Cargando fiestas...</p>}
+      {!fiestaLoading && myFiestas.length === 0 && (
+        <p className="text-muted" style={{ marginBottom: 'var(--space-xl)' }}>Todavía no has creado ninguna fiesta.</p>
+      )}
+
+      {myFiestas.length > 0 && (
+        <div className="manage-fiesta-list" style={{ marginBottom: 'var(--space-xl)' }}>
+          {myFiestas.map(f => (
+            <div key={f.id} className="manage-fiesta-item">
+              {f.image
+                ? <img src={f.image} alt={f.title} className="manage-fiesta-thumb" />
+                : <div className="manage-fiesta-thumb manage-fiesta-thumb--empty">🎉</div>
+              }
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 600, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.title}</div>
+                {f.location?.city && <div className="text-muted" style={{ fontSize: '0.8rem' }}>📍 {f.location.city}</div>}
+              </div>
+              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                <button className="btn btn-outline" style={{ fontSize: '0.78rem', padding: '4px 10px' }}
+                  onClick={() => setEditFiesta(f)}>
+                  Editar
+                </button>
+                <button className="btn btn-outline" style={{ fontSize: '0.78rem', padding: '4px 10px', color: '#c0392b', borderColor: '#c0392b' }}
+                  onClick={() => handleDeleteFiesta(f.id)}>
+                  Borrar
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 700, marginBottom: 'var(--space-md)' }}>
+        Mis Publicaciones
+      </h3>
+
       {loading && <p className="text-muted">Cargando publicaciones...</p>}
       {error && <p role="alert" style={{ color: '#c0392b' }}>{error}</p>}
       {!loading && Object.keys(content).length === 0 && (
@@ -176,6 +266,14 @@ export default function ManagePage() {
           <MediaGroup label="Audios"     items={types.audios}    type="audio"    onView={(i,t) => setViewer({item:i,type:t})} onDelete={(id,t) => handleDelete(sectionKey, id, 'audio')} />
         </div>
       ))}
+
+      {editFiesta && (
+        <EditFiestaModal
+          fiesta={editFiesta}
+          onClose={() => setEditFiesta(null)}
+          onUpdated={() => { setEditFiesta(null); loadMyFiestas(); }}
+        />
+      )}
 
       {viewer && (
         <ContentViewerModal

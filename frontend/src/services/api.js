@@ -146,6 +146,27 @@ export async function toggleSaveFiesta(id) {
   });
 }
 
+export async function fetchMyFiestas() {
+  return request('/fiestas/my', {
+    headers: authHeaders(),
+  });
+}
+
+export async function updateFiesta(id, data) {
+  return request(`/fiestas/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(data),
+  });
+}
+
+export async function deleteFiesta(id) {
+  return request(`/fiestas/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders(),
+  });
+}
+
 export async function fetchFiestas(params = {}) {
   const query = new URLSearchParams();
 
