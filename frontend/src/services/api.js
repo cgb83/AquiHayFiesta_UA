@@ -197,6 +197,12 @@ export async function fetchMyPublications() {
   });
 }
 
+export async function fetchAllPublications() {
+  return request('/publications', {
+    headers: authHeaders(),
+  });
+}
+
 export async function updatePublication(id, data) {
   return request(`/publications/${id}`, {
     method: 'PUT',

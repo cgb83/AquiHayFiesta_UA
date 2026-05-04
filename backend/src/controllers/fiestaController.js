@@ -120,8 +120,8 @@ const updateFiesta = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Fiesta no encontrada.' });
     }
 
-    // Solo el creador puede editar
-    if (fiesta.createdBy?.toString() !== req.user._id.toString()) {
+    // Solo el creador o un admin puede editar
+    if (fiesta.createdBy?.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(403).json({ success: false, message: 'No tienes permiso para editar esta fiesta.' });
     }
 
@@ -163,7 +163,7 @@ const deleteFiesta = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Fiesta no encontrada.' });
     }
 
-    if (fiesta.createdBy?.toString() !== req.user._id.toString()) {
+    if (fiesta.createdBy?.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
       return res.status(403).json({ success: false, message: 'No tienes permiso para eliminar esta fiesta.' });
     }
 

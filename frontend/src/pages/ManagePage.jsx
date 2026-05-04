@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
 import { EditFiestaModal } from '../components/modals/CreateModals';
-import { deletePublication, updatePublication, deleteFiesta, fetchMyPublications, fetchMyFiestas, resolveMediaUrl } from '../services/api';
+import { useApp } from '../context/AppContext';
+import { useToast } from '../context/ToastContext';
+import { deletePublication, updatePublication, deleteFiesta, fetchMyPublications, fetchMyFiestas, fetchFiestas, fetchAllPublications, resolveMediaUrl } from '../services/api';
 
 function ConfirmDialog({ title, message, onCancel, onConfirm, loading }) {
   return (
@@ -99,6 +101,10 @@ function MediaGroup({ label, items, type, onView, onDelete, onEdit }) {
 }
 
 export default function ManagePage() {
+  const { user } = useApp();
+  const { addToast } = useToast();
+  const isAdmin = user?.role === 'admin';
+
   const [content, setContent] = useState({});
   const [myFiestas, setMyFiestas] = useState([]);
   const [fiestaLoading, setFiestaLoading] = useState(false);
@@ -110,23 +116,25 @@ export default function ManagePage() {
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [confirmLoading, setConfirmLoading] = useState(false);
 
+  const normalizeFiestaItem = (f) => ({
+    id: f._id,
+    slug: f.slug,
+    title: f.title,
+    description: f.description || '',
+    category: f.category,
+    categories: f.categories || [],
+    startDate: f.startDate || null,
+    endDate: f.endDate || null,
+    location: f.location || {},
+    image: resolveMediaUrl(f.coverImage || ''),
+  });
+
   const loadMyFiestas = async () => {
     try {
       setFiestaLoading(true);
-      const response = await fetchMyFiestas();
-      const normalized = (response.fiestas || []).map(f => ({
-        id: f._id,
-        slug: f.slug,
-        title: f.title,
-        description: f.description || '',
-        category: f.category,
-        categories: f.categories || [],
-        startDate: f.startDate || null,
-        endDate: f.endDate || null,
-        location: f.location || {},
-        image: resolveMediaUrl(f.coverImage || ''),
-      }));
-      setMyFiestas(normalized);
+      const response = isAdmin ? await fetchFiestas() : await fetchMyFiestas();
+      const list = response.fiestas || [];
+      setMyFiestas(list.map(normalizeFiestaItem));
     } catch {
       // silently fail — show empty list
     } finally {
@@ -134,38 +142,49 @@ export default function ManagePage() {
     }
   };
 
+  const normalizeItems = (items = []) =>
+    items.map((item) => ({
+      id: item._id,
+      title: item.title,
+      description: item.description || '',
+      image: resolveMediaUrl(item.thumbnailUrl || item.fileUrl),
+    }));
+
   const loadContent = async () => {
     try {
       setLoading(true);
       setError('');
 
-      const response = await fetchMyPublications();
-      const grouped = response.grouped || {};
+      let grouped = {};
+
+      if (isAdmin) {
+        const response = await fetchAllPublications();
+        const publications = response.publications || [];
+        publications.forEach(pub => {
+          const key = pub.fiesta?.title || 'Sin fiesta';
+          if (!grouped[key]) grouped[key] = { videos: [], images: [], documents: [], audios: [] };
+          grouped[key][pub.contentType + 's'].push(pub);
+        });
+      } else {
+        const response = await fetchMyPublications();
+        grouped = response.grouped || {};
+      }
 
       const normalized = Object.fromEntries(
-        Object.entries(grouped).map(([key, types]) => {
-          const normalizeItems = (items = []) =>
-            items.map((item) => ({
-              id: item._id,
-              title: item.title,
-              image: resolveMediaUrl(item.thumbnailUrl || item.fileUrl),
-            }));
-
-          return [
-            key,
-            {
-              videos: normalizeItems(types.videos),
-              images: normalizeItems(types.images),
-              documents: normalizeItems(types.documents),
-              audios: normalizeItems(types.audios),
-            },
-          ];
-        })
+        Object.entries(grouped).map(([key, types]) => [
+          key,
+          {
+            videos:    normalizeItems(types.videos),
+            images:    normalizeItems(types.images),
+            documents: normalizeItems(types.documents),
+            audios:    normalizeItems(types.audios),
+          },
+        ])
       );
 
       setContent(normalized);
     } catch (err) {
-      setError(err.message || 'No se pudo cargar tu contenido.');
+      setError(err.message || 'No se pudo cargar el contenido.');
       setContent({});
     } finally {
       setLoading(false);
@@ -175,7 +194,7 @@ export default function ManagePage() {
   useEffect(() => {
     loadMyFiestas();
     loadContent();
-  }, []);
+  }, [isAdmin]);
 
   const handleEditPublicationSaved = (id, newTitle, newDesc) => {
     setContent(prev => {
@@ -206,8 +225,9 @@ export default function ManagePage() {
           await deleteFiesta(fiestaId);
           setMyFiestas(prev => prev.filter(f => f.id !== fiestaId));
           setConfirmDialog(null);
+          addToast('Fiesta eliminada correctamente.');
         } catch (err) {
-          setError(err.message || 'No se pudo eliminar la fiesta.');
+          addToast(err.message || 'No se pudo eliminar la fiesta.', 'error');
           setConfirmDialog(null);
         } finally {
           setConfirmLoading(false);
@@ -218,8 +238,8 @@ export default function ManagePage() {
 
   const handleDelete = async (sectionKey, itemId, type) => {
     setConfirmDialog({
-      title: 'Borrar publicacion',
-      message: 'Esta accion no se puede deshacer. ¿Quieres continuar?',
+      title: 'Borrar publicación',
+      message: 'Esta acción no se puede deshacer. ¿Quieres continuar?',
       onConfirm: async () => {
         try {
           setConfirmLoading(true);
@@ -232,8 +252,9 @@ export default function ManagePage() {
             }
           }));
           setConfirmDialog(null);
+          addToast('Publicación eliminada.');
         } catch (err) {
-          setError(err.message || 'No se pudo eliminar la publicación.');
+          addToast(err.message || 'No se pudo eliminar la publicación.', 'error');
         } finally {
           setConfirmLoading(false);
         }
@@ -251,16 +272,17 @@ export default function ManagePage() {
     ].map((item) => item.id);
 
     setConfirmDialog({
-      title: 'Borrar seccion completa',
-      message: 'Se eliminaran todos los archivos de esta seccion. Esta accion no se puede deshacer.',
+      title: 'Borrar sección completa',
+      message: 'Se eliminarán todos los archivos de esta sección. Esta acción no se puede deshacer.',
       onConfirm: async () => {
         try {
           setConfirmLoading(true);
           await Promise.all(allIds.map((id) => deletePublication(id)));
           setContent((prev) => ({ ...prev, [sectionKey]: {} }));
           setConfirmDialog(null);
+          addToast('Sección eliminada correctamente.');
         } catch (err) {
-          setError(err.message || 'No se pudo borrar toda la sección.');
+          addToast(err.message || 'No se pudo borrar toda la sección.', 'error');
         } finally {
           setConfirmLoading(false);
         }
@@ -270,13 +292,20 @@ export default function ManagePage() {
 
   return (
     <>
-      <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700, marginBottom: 'var(--space-xl)' }}>
-        Gestiona tu contenido
-      </h2>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)', marginBottom: 'var(--space-xl)' }}>
+        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700 }}>
+          {isAdmin ? 'Panel de administración' : 'Gestiona tu contenido'}
+        </h2>
+        {isAdmin && (
+          <span style={{ background: 'var(--color-primary)', color: '#fff', fontSize: '0.72rem', fontWeight: 700, padding: '3px 10px', borderRadius: 20, letterSpacing: '0.05em' }}>
+            ADMIN
+          </span>
+        )}
+      </div>
 
-      {/* ── Mis Fiestas ─────────────────────────────── */}
+      {/* ── Fiestas ─────────────────────────────── */}
       <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 700, marginBottom: 'var(--space-md)' }}>
-        Mis Fiestas
+        {isAdmin ? 'Todas las fiestas' : 'Mis Fiestas'}
       </h3>
 
       {fiestaLoading && <p className="text-muted">Cargando fiestas...</p>}
@@ -312,13 +341,13 @@ export default function ManagePage() {
       )}
 
       <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 700, marginBottom: 'var(--space-md)' }}>
-        Mis Publicaciones
+        {isAdmin ? 'Todas las publicaciones' : 'Mis Publicaciones'}
       </h3>
 
       {loading && <p className="text-muted">Cargando publicaciones...</p>}
       {error && <p role="alert" style={{ color: '#c0392b' }}>{error}</p>}
       {!loading && Object.keys(content).length === 0 && (
-        <p className="text-muted">Todavia no tienes publicaciones creadas.</p>
+        <p className="text-muted">{isAdmin ? 'No hay publicaciones en la plataforma.' : 'Todavía no tienes publicaciones creadas.'}</p>
       )}
 
       {Object.entries(content).map(([sectionKey, types]) => (
@@ -342,7 +371,10 @@ export default function ManagePage() {
         <EditPublicationModal
           item={editPublication}
           onClose={() => setEditPublication(null)}
-          onSaved={handleEditPublicationSaved}
+          onSaved={(id, title, desc) => {
+            handleEditPublicationSaved(id, title, desc);
+            addToast('Publicación actualizada correctamente.');
+          }}
         />
       )}
 
@@ -350,7 +382,7 @@ export default function ManagePage() {
         <EditFiestaModal
           fiesta={editFiesta}
           onClose={() => setEditFiesta(null)}
-          onUpdated={() => { setEditFiesta(null); loadMyFiestas(); }}
+          onUpdated={() => { setEditFiesta(null); loadMyFiestas(); addToast('Fiesta actualizada correctamente.'); }}
         />
       )}
 

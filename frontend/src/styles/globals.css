@@ -1246,6 +1246,37 @@ textarea:focus-visible {
   font-size: 1.4rem;
 }
 
+/* ─── Toast notifications ────────────────────────────────────── */
+.toast-container {
+  position: fixed;
+  bottom: var(--space-xl);
+  right: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff;
+  box-shadow: var(--shadow-lg);
+  animation: toast-in 0.25s ease;
+  max-width: 320px;
+}
+
+.toast--success { background: #2e7d52; }
+.toast--error   { background: #c0392b; }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* ─── Category page ──────────────────────────────────────────── */
 .category-header {
   margin-bottom: var(--space-lg);

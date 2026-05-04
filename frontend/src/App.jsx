@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
+import { ToastProvider } from './context/ToastContext';
 import Navbar from './components/layout/Navbar';
 import { Hero, Footer } from './components/layout/HeroFooter';
 import SearchBar from './components/ui/SearchBar';
@@ -123,8 +124,10 @@ function AppInner() {
 
 export default function App() {
   return (
-    <AppProvider>
-      <AppInner />
-    </AppProvider>
+    <ToastProvider>
+      <AppProvider>
+        <AppInner />
+      </AppProvider>
+    </ToastProvider>
   );
 }
