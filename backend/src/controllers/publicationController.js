@@ -60,8 +60,8 @@ const createPublication = async (req, res) => {
       fiesta:      fiestaId,
       createdBy:   req.user._id,
       contentType,
-      fileUrl:     `/uploads/${req.file.filename}`,
-      fileName:    req.file.originalname,
+      fileUrl:  req.file.path,        // URL de Cloudinary
+      fileName: req.file.originalname,
     });
 
     res.status(201).json({

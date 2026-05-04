@@ -4,6 +4,8 @@ import { EditFiestaModal } from '../components/modals/CreateModals';
 import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
 import { deletePublication, updatePublication, deleteFiesta, fetchMyPublications, fetchMyFiestas, fetchFiestas, fetchAllPublications, resolveMediaUrl } from '../services/api';
+import TestUpload from '../components/TestUpload';
+import { deletePublication, updatePublication, deleteFiesta, fetchMyPublications, fetchMyFiestas, resolveMediaUrl } from '../services/api';
 
 function ConfirmDialog({ title, message, onCancel, onConfirm, loading }) {
   return (
@@ -303,7 +305,16 @@ export default function ManagePage() {
         )}
       </div>
 
+<<<<<<< HEAD
       {/* ── Fiestas ─────────────────────────────── */}
+=======
+      {/* ── Test Upload ─────────────────────────────── */}
+      <div style={{ marginBottom: 'var(--space-xl)' }}>
+        <TestUpload />
+      </div>
+
+      {/* ── Mis Fiestas ─────────────────────────────── */}
+>>>>>>> dbd58c8 (WIP: cambios en ManagePage)
       <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 700, marginBottom: 'var(--space-md)' }}>
         {isAdmin ? 'Todas las fiestas' : 'Mis Fiestas'}
       </h3>

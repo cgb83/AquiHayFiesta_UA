@@ -225,6 +225,17 @@ export async function registerDownload(id) {
   });
 }
 
+export async function uploadFile(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  return request('/upload', {
+    method: 'POST',
+    headers: authHeaders(),
+    body: formData,
+  });
+}
+
 export function resolveMediaUrl(path = '') {
   if (!path) return '';
   if (/^https?:\/\//i.test(path)) return path;
