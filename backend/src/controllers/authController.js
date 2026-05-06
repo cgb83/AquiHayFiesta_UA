@@ -1,4 +1,6 @@
-const User          = require('../models/User');
+const User        = require('../models/User');
+const Publication = require('../models/Publication');
+const Fiesta      = require('../models/Fiesta');
 const { generateToken } = require('../middleware/auth');
 
 // ── POST /api/auth/register ──────────────────────────────────────
@@ -194,7 +196,20 @@ const updateProfile = async (req, res) => {
 // ── DELETE /api/auth/delete  (ruta protegida) ────────────────────
 const deleteAccount = async (req, res) => {
   try {
-    await User.findByIdAndDelete(req.user._id);
+    const userId = req.user._id;
+    // Buscar las fiestas del usuario
+    const userFiestas = await Fiesta.find({ createdBy: userId }).select('_id');
+    const fiestaIds = userFiestas.map(f => f._id);
+    // Borrar publicaciones de esas fiestas (de cualquier usuario)
+    if (fiestaIds.length > 0) {
+      await Publication.deleteMany({ fiesta: { $in: fiestaIds } });
+    }
+    // Borrar sus propias publicaciones en fiestas ajenas
+    await Publication.deleteMany({ createdBy: userId });
+    // Borrar sus fiestas
+    await Fiesta.deleteMany({ createdBy: userId });
+    // Borrar el usuario
+    await User.findByIdAndDelete(userId);
     res.json({ success: true, message: 'Cuenta eliminada correctamente.' });
   } catch (error) {
     console.error('[auth/delete] Error:', error.message);
