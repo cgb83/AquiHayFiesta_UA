@@ -73,9 +73,7 @@ const updatePublication = async (req, res) => {
     publication.description = description?.trim() || '';
     await publication.save();
 
-    res.json({ success: true, message: 'Publicación actualizada.', publication });
-    const updated = await Publication.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json({ success: true, message: 'Publicación actualizada.', publication: updated });
+    return res.json({ success: true, message: 'Publicación actualizada correctamente.', publication });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error al actualizar la publicación.' });
   }
