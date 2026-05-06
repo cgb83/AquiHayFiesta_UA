@@ -63,7 +63,7 @@ export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
         <h3 className="section-title" style={{ textAlign: 'right' }}>Se acerca...</h3>
         <div className="upcoming-list">
           {upcoming.length === 0 && (
-            <p className="text-muted" style={{ textAlign: 'right' }}>No hay fiestas en los próximos 15 días.</p>
+            <p className="text-muted" style={{ textAlign: 'right' }}>No hay fiestas próximas.</p>
           )}
           {upcoming.map(f => (
             <div
