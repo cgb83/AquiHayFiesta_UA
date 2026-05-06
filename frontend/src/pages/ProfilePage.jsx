@@ -11,7 +11,7 @@ const STYLES = [
 ];
 
 export default function ProfilePage() {
-  const { user, theme, setTheme, refreshCurrentUser } = useApp();
+  const { user, theme, setTheme, lang, refreshCurrentUser } = useApp();
   const [form, setForm] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -70,6 +70,7 @@ export default function ProfilePage() {
         country: form.country,
         city: form.city,
         theme,
+        language: lang,
       });
 
       await refreshCurrentUser();

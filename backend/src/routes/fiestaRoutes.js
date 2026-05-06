@@ -9,16 +9,19 @@ const {
   updateFiesta,
   deleteFiesta,
   toggleSaveFiesta,
+  getMyFiestas,
 } = require('../controllers/fiestaController');
 
 // Públicas
 router.get('/',      getFiestas);
-router.get('/:slug', getFiestaBySlug); // Quitamos optionalProtect por si acaso
 
 // Privadas
-router.post  ('/',          protect, upload.single('coverImage'), createFiesta);
-router.put   ('/:id',       protect, updateFiesta);
+router.get  ('/my',         protect, getMyFiestas);
+router.post ('/',           protect, upload.single('coverImage'), createFiesta);
+router.put  ('/:id',        protect, updateFiesta);
 router.delete('/:id',       protect, deleteFiesta);
-router.post  ('/:id/save',  protect, toggleSaveFiesta);
+router.post ('/:id/save',   protect, toggleSaveFiesta);
+
+router.get('/:slug', getFiestaBySlug); // Quitamos optionalProtect por si acaso
 
 module.exports = router;

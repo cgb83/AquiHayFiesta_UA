@@ -96,11 +96,23 @@ const toggleSaveFiesta = async (req, res) => {
   }
 };
 
+const getMyFiestas = async (req, res) => {
+  try {
+    const fiestas = await Fiesta.find({ createdBy: req.user._id })
+      .populate('createdBy', 'username')
+      .sort({ createdAt: -1 });
+    res.json({ success: true, count: fiestas.length, fiestas });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error al obtener tus fiestas.' });
+  }
+};
+
 module.exports = { 
   getFiestas, 
   getFiestaBySlug, 
   createFiesta, 
   updateFiesta, 
   deleteFiesta, 
-  toggleSaveFiesta 
+  toggleSaveFiesta,
+  getMyFiestas,
 };
