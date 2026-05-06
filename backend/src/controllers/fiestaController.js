@@ -31,7 +31,7 @@ const getFiestaBySlug = async (req, res) => {
   try {
     const fiesta = await Fiesta.findOne({ slug: req.params.slug }).populate('createdBy', 'username');
     if (!fiesta) return res.status(404).json({ success: false, message: 'Fiesta no encontrada.' });
-    if (fiesta.incrementViews) await fiesta.incrementViews(req.user?._id || null);
+    await fiesta.incrementViews();
     res.json({ success: true, fiesta });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error al obtener la fiesta.' });
