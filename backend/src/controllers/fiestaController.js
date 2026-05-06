@@ -1,4 +1,5 @@
 const Fiesta = require('../models/Fiesta');
+const Publication = require('../models/Publication');
 const ALLOWED_CATEGORIES = ['amor', 'noche', 'disfraces', 'familia', 'musica', 'gastronomia'];
 
 const getFiestas = async (req, res) => {
@@ -85,6 +86,16 @@ const updateFiesta = async (req, res) => {
 
 const deleteFiesta = async (req, res) => {
   try {
+    const fiesta = await Fiesta.findById(req.params.id);
+    if (!fiesta) {
+      return res.status(404).json({ success: false, message: 'Fiesta no encontrada.' });
+    }
+    const isOwner = fiesta.createdBy?.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === 'admin';
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ success: false, message: 'No tienes permiso para eliminar esta fiesta.' });
+    }
+    await Publication.deleteMany({ fiesta: fiesta._id });
     await Fiesta.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: 'Fiesta eliminada correctamente.' });
   } catch (error) {
