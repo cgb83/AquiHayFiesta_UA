@@ -81,7 +81,7 @@ export const updatePublication = (id, d) => request(`/publications/${id}`, { met
 export const deletePublication = (id) => request(`/publications/${id}`, { method: 'DELETE', headers: authHeaders() });
 export const registerDownload = (id) => request(`/publications/${id}/download`, { method: 'POST', headers: authHeaders() });
 
-// --- Subida Genérica (para TestUpload.jsx) ---
+// --- Subida Genérica ---
 export async function uploadFile(file) {
   const formData = new FormData();
   formData.append('file', file);

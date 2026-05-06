@@ -4,7 +4,6 @@ import { EditFiestaModal } from '../components/modals/CreateModals';
 import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
 import { deletePublication, updatePublication, deleteFiesta, fetchMyPublications, fetchMyFiestas, fetchFiestas, fetchAllPublications, resolveMediaUrl } from '../services/api';
-import TestUpload from '../components/TestUpload';
 
 function ConfirmDialog({ title, message, onCancel, onConfirm, loading }) {
   return (
@@ -302,12 +301,6 @@ export default function ManagePage() {
             ADMIN
           </span>
         )}
-      </div>
-
-      {/* ── Fiestas ─────────────────────────────── */}
-      {/* ── Test Upload ─────────────────────────────── */}
-      <div style={{ marginBottom: 'var(--space-xl)' }}>
-        <TestUpload />
       </div>
 
       {/* ── Mis Fiestas ─────────────────────────────── */}
