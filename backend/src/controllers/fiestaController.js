@@ -65,7 +65,17 @@ const createFiesta = async (req, res) => {
 
 const updateFiesta = async (req, res) => {
   try {
-    // CORRECCIÓN: Eliminada la declaración duplicada
+    const fiesta = await Fiesta.findById(req.params.id);
+    if (!fiesta) {
+      return res.status(404).json({ success: false, message: 'Fiesta no encontrada.' });
+    }
+
+    const isOwner = fiesta.createdBy?.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === 'admin';
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ success: false, message: 'No tienes permiso para editar esta fiesta.' });
+    }
+
     const updatedFiesta = await Fiesta.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     res.json({ success: true, message: 'Fiesta actualizada.', fiesta: updatedFiesta });
   } catch (error) {
