@@ -11,16 +11,21 @@ export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
   const displayed = showAll ? categories : categories.slice(0, 3);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const limit = new Date(today);
-  limit.setDate(limit.getDate() + 15);
 
   const upcoming = fiestas
     .filter((f) => {
+      if (f.upcoming) return true;
       if (!f.date) return false;
       const eventDate = new Date(`${f.date}T00:00:00`);
-      return !Number.isNaN(eventDate.getTime()) && eventDate >= today && eventDate <= limit;
+      return !Number.isNaN(eventDate.getTime()) && eventDate >= today;
     })
-    .sort((a, b) => new Date(a.date) - new Date(b.date));
+    .sort((a, b) => {
+      if (!a.date && !b.date) return 0;
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return new Date(a.date) - new Date(b.date);
+    })
+    .slice(0, 5);
 
   return (
     <aside className="sidebar">
