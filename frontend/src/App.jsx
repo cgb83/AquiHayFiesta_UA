@@ -5,19 +5,20 @@ import Navbar from './components/layout/Navbar';
 import { Hero, Footer } from './components/layout/HeroFooter';
 import SearchBar from './components/ui/SearchBar';
 
-import HomePage     from './pages/HomePage';
-import FiestaPage   from './pages/FiestaPage';
-import CategoryPage from './pages/CategoryPage';
-import SavedPage    from './pages/SavedPage';
-import ManagePage   from './pages/ManagePage';
-import ProfilePage  from './pages/ProfilePage';
-import LoginPage    from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
+import HomePage        from './pages/HomePage';
+import FiestaPage      from './pages/FiestaPage';
+import CategoryPage    from './pages/CategoryPage';
+import SavedPage       from './pages/SavedPage';
+import ManagePage      from './pages/ManagePage';
+import CreateFiestaPage from './pages/CreateFiestaPage';
+import ProfilePage     from './pages/ProfilePage';
+import LoginPage       from './pages/LoginPage';
+import RegisterPage    from './pages/RegisterPage';
 
 import './styles/globals.css';
 
 // Pages that show the hero+searchbar shell
-const SHELL_PAGES = ['home', 'fiesta', 'category', 'saved', 'manage', 'profile'];
+const SHELL_PAGES = ['home', 'fiesta', 'category', 'saved', 'manage', 'create-fiesta', 'profile'];
 
 function AppInner() {
   const { user } = useApp();
@@ -45,7 +46,7 @@ function AppInner() {
     }
 
     // Guard auth-required pages
-    if ((page === 'saved' || page === 'manage' || page === 'profile') && !user) {
+    if ((page === 'saved' || page === 'manage' || page === 'create-fiesta' || page === 'profile') && !user) {
       setAuthModal('login');
       return;
     }
@@ -84,8 +85,8 @@ function AppInner() {
       <main id="main-content" style={{ flex: 1 }}>
         {isShell && (
           <div className="page-content">
-            {/* SearchBar shown on most pages except manage & profile */}
-            {!['manage', 'profile'].includes(route.page) && (
+            {/* SearchBar shown on most pages except manage, create-fiesta & profile */}
+            {!['manage', 'create-fiesta', 'profile'].includes(route.page) && (
               <SearchBar
                 key={route.page}
                 onSearch={setSearchQuery}
@@ -93,12 +94,13 @@ function AppInner() {
               />
             )}
 
-            {route.page === 'home'     && <HomePage     onNavigate={navigate} searchQuery={searchQuery} />}
-            {route.page === 'fiesta'   && <FiestaPage   slug={route.param} onNavigate={navigate} searchQuery={searchQuery} />}
-            {route.page === 'category' && <CategoryPage categoryId={route.param} onNavigate={navigate} />}
-            {route.page === 'saved'    && <SavedPage    onNavigate={navigate} />}
-            {route.page === 'manage'   && <ManagePage />}
-            {route.page === 'profile'  && <ProfilePage />}
+            {route.page === 'home'          && <HomePage     onNavigate={navigate} searchQuery={searchQuery} />}
+            {route.page === 'fiesta'        && <FiestaPage   slug={route.param} onNavigate={navigate} searchQuery={searchQuery} />}
+            {route.page === 'category'      && <CategoryPage categoryId={route.param} onNavigate={navigate} />}
+            {route.page === 'saved'         && <SavedPage    onNavigate={navigate} />}
+            {route.page === 'manage'        && <ManagePage />}
+            {route.page === 'create-fiesta' && <CreateFiestaPage onNavigate={navigate} />}
+            {route.page === 'profile'       && <ProfilePage />}
           </div>
         )}
       </main>

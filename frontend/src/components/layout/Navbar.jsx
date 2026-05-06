@@ -62,6 +62,8 @@ export default function Navbar({ onNavigate, currentPage }) {
               onClick={() => nav('saved')}>Guardados</button>
             <button type="button" className={`navbar-link ${currentPage === 'manage' ? 'active' : ''}`}
               onClick={() => nav('manage')}>Mis publicaciones</button>
+            <button type="button" className={`navbar-link ${currentPage === 'create-fiesta' ? 'active' : ''}`}
+              onClick={() => nav('create-fiesta')}>Crear Fiesta</button>
           </>}
         </div>
 
