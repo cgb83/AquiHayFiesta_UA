@@ -135,14 +135,13 @@ const getMe = async (req, res) => {
 // ── PUT /api/auth/profile  (ruta protegida) ──────────────────────
 const updateProfile = async (req, res) => {
   try {
-    const { username, email, password, country, city, theme, language } = req.body;
+    const { username, email, password, country, city, theme, language, currentPassword } = req.body;
 
     const user = await User.findById(req.user._id).select('+password');
     if (!user) return res.status(404).json({ success: false, message: 'Usuario no encontrado.' });
 
     // Si se quiere cambiar la contraseña, verificar la actual
     if (password) {
-      const { currentPassword } = req.body;
       if (!currentPassword) {
         return res.status(400).json({
           success: false,

@@ -53,8 +53,9 @@ export default function ProfilePage() {
   }, []);
 
   const handleSave = async () => {
-    if (!form.currentPassword) {
-      setError('Introduce tu contraseña actual para guardar cambios.');
+    // Si quiere cambiar contraseña, requiere la actual
+    if (form.password && !form.currentPassword) {
+      setError('Introduce tu contraseña actual para cambiar la contraseña.');
       return;
     }
 
@@ -65,7 +66,7 @@ export default function ProfilePage() {
         username: form.name,
         email: form.email,
         password: form.password || undefined,
-        currentPassword: form.currentPassword,
+        currentPassword: form.currentPassword || undefined,
         country: form.country,
         city: form.city,
         theme,

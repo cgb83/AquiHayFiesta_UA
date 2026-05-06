@@ -89,8 +89,6 @@ const deletePublication = async (req, res) => {
       return res.status(403).json({ success: false, message: 'No tienes permiso para eliminar esta publicación.' });
     }
 
-    if (!publication) return res.status(404).json({ success: false, message: 'Publicación no encontrada.' });
-    if (publication.createdBy.toString() !== req.user._id.toString()) return res.status(403).json({ success: false, message: 'No tienes permiso.' });
     await Publication.findByIdAndDelete(req.params.id);
     res.json({ success: true, message: 'Publicación eliminada correctamente.' });
   } catch (error) {
