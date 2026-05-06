@@ -40,26 +40,35 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
         <div className="content-viewer">
           {/* Vista previa del contenido */}
           <div className="content-viewer-media">
-            {(type === 'video' || type === 'image') && item.image && (
-              <div style={{ position: 'relative' }}>
-                <img src={item.image} alt={item.title}
-                  style={{ width: '100%', borderRadius: 8 }} />
-                {type === 'video' && (
-                  <div className="media-play" style={{ borderRadius: 8 }}>
-                    <div className="play-icon">▶</div>
-                  </div>
-                )}
+            {type === 'video' && item.fileUrl && (
+              <video
+                src={item.fileUrl}
+                controls
+                style={{ width: '100%', borderRadius: 8, maxHeight: 360 }}
+              >
+                Tu navegador no soporta la reproducción de vídeo.
+              </video>
+            )}
+            {type === 'image' && item.image && (
+              <img src={item.image} alt={item.title}
+                style={{ width: '100%', borderRadius: 8 }} />
+            )}
+            {type === 'audio' && item.fileUrl && (
+              <div style={{ padding: 'var(--space-lg)', background: 'var(--color-primary-pale)', borderRadius: 8 }}>
+                <div className="audio-waveform" style={{ marginBottom: 'var(--space-md)' }}>
+                  {[...Array(12)].map((_, i) => <span key={i} />)}
+                </div>
+                <audio
+                  src={item.fileUrl}
+                  controls
+                  style={{ width: '100%' }}
+                >
+                  Tu navegador no soporta la reproducción de audio.
+                </audio>
               </div>
             )}
             {type === 'document' && (
               <div className="doc-thumb" style={{ width: '100%', aspectRatio: '4/3' }}>📄</div>
-            )}
-            {type === 'audio' && (
-              <div className="audio-thumb" style={{ width: '100%' }}>
-                <div className="audio-waveform">
-                  {[...Array(12)].map((_, i) => <span key={i} />)}
-                </div>
-              </div>
             )}
           </div>
 
