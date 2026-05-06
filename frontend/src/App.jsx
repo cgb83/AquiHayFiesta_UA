@@ -49,6 +49,10 @@ function AppInner() {
       setAuthModal('login');
       return;
     }
+    // Limpiar búsqueda al navegar fuera de home
+    if (page !== 'home') {
+      setSearchQuery('');
+    }
     setRoute({ page, param });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -83,6 +87,7 @@ function AppInner() {
             {/* SearchBar shown on most pages except manage & profile */}
             {!['manage', 'profile'].includes(route.page) && (
               <SearchBar
+                key={route.page}
                 onSearch={setSearchQuery}
                 onCategory={(id) => id && navigate('category', id)}
               />

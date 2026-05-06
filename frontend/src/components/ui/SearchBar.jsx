@@ -20,7 +20,6 @@ export default function SearchBar({ onSearch, onCategory }) {
     <div className="search-row">
       <div className="search-input-wrap">
         <label className="sr-only" htmlFor="search-input">Buscar fiestas</label>
-        <span className="search-icon">🔍</span>
         <input
           id="search-input"
           className="search-input"

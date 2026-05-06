@@ -34,9 +34,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir archivos subidos estáticamente
-// Ejemplo: http://localhost:5000/uploads/mi-imagen.jpg
-app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+// Nota: Los archivos se sirven directamente desde Cloudinary, no localmente
 
 // ── Rutas de la API ──────────────────────────────────────────────
 app.use('/api/auth',         require('./routes/authRoutes'));

@@ -34,13 +34,16 @@ const createPublication = async (req, res) => {
     if (!fiesta) return res.status(404).json({ success: false, message: 'Fiesta no encontrada.' });
     const contentType = getContentType(req.file.mimetype);
 
+    // Usar la URL de Cloudinary
+    const fileUrl = req.file.path || req.file.secure_url;
+
     const publication = await Publication.create({
       title,
       description,
       fiesta:      fiestaId,
       createdBy:   req.user._id,
       contentType,
-      fileUrl:     req.file.path, 
+      fileUrl:     fileUrl,
       fileName:    req.file.originalname,
     });
     res.status(201).json({ success: true, message: 'Publicación creada correctamente.', publication });

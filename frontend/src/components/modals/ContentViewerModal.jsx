@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { useModalAccessibility } from './useModalAccessibility';
 
-export default function ContentViewerModal({ item, type, onClose, onDownload, canDownload = true }) {
+export default function ContentViewerModal({ item, type, onClose, onDownload, canDownload = true, onNavigate }) {
   const modalRef = useRef(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -82,7 +82,11 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
             </button>
           ) : (
             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-soft)' }}>
-              <em>Inicia sesión para descargar este contenido.</em>
+              <button className="auth-link" onClick={() => onNavigate?.('login')} 
+                style={{ cursor: 'pointer', textDecoration: 'underline', color: 'var(--color-primary)' }}>
+                Inicia sesión
+              </button>
+              {' '}para descargar este contenido.
             </p>
           )}
         </div>

@@ -338,6 +338,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
           onDownload={user ? handleDownload : undefined}
           canDownload={Boolean(user)}
           onClose={() => setActiveViewer(null)}
+          onNavigate={onNavigate}
         />
       )}
 
