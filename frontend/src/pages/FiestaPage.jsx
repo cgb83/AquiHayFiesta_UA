@@ -19,7 +19,7 @@ function AudioWave() {
     </div>
   );
 }
-export default function FiestaPage({ slug, onNavigate }) {
+export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
   const { user, fiestas, toggleSave, isSaved } = useApp();
   const [activeViewer, setActiveViewer] = useState(null); // { item, type }
   const [showPublish, setShowPublish] = useState(false);
@@ -30,6 +30,19 @@ export default function FiestaPage({ slug, onNavigate }) {
   const lastDetailSlugRef = useRef(null);
 
   const fiesta = fiestaDetail || fiestas.find(f => f.slug === slug);
+
+  // Filtrar contenido basado en searchQuery
+  const filteredContent = useMemo(() => {
+    if (!searchQuery.trim()) return content;
+
+    const query = searchQuery.toLowerCase();
+    return {
+      videos: content.videos.filter(item => item.title.toLowerCase().includes(query)),
+      images: content.images.filter(item => item.title.toLowerCase().includes(query)),
+      documents: content.documents.filter(item => item.title.toLowerCase().includes(query)),
+      audios: content.audios.filter(item => item.title.toLowerCase().includes(query)),
+    };
+  }, [content, searchQuery]);
 
   const loadFiestaDetail = useCallback(async () => {
     try {
@@ -228,51 +241,51 @@ export default function FiestaPage({ slug, onNavigate }) {
           {contentError && <p style={{ color: 'var(--color-text-soft)' }}>{contentError}</p>}
 
           {/* Videos */}
-          {content.videos.length > 0 && (
+          {filteredContent.videos.length > 0 && (
             <div className="mb-lg">
               <div className="section-subtitle">Vídeos</div>
               <div className="media-grid">
-                {content.videos.map(item => <MediaThumb key={item.id} item={item} type="video" />)}
+                {filteredContent.videos.map(item => <MediaThumb key={item.id} item={item} type="video" />)}
               </div>
             </div>
           )}
 
           {/* Images */}
-          {content.images.length > 0 && (
+          {filteredContent.images.length > 0 && (
             <div className="mb-lg">
               <div className="section-subtitle">Imágenes</div>
               <div className="media-grid">
-                {content.images.map(item => <MediaThumb key={item.id} item={item} type="image" />)}
+                {filteredContent.images.map(item => <MediaThumb key={item.id} item={item} type="image" />)}
               </div>
             </div>
           )}
 
           {/* Documents */}
-          {content.documents.length > 0 && (
+          {filteredContent.documents.length > 0 && (
             <div className="mb-lg">
               <div className="section-subtitle">Documentos</div>
               <div className="media-grid">
-                {content.documents.map(item => <MediaThumb key={item.id} item={item} type="document" />)}
+                {filteredContent.documents.map(item => <MediaThumb key={item.id} item={item} type="document" />)}
               </div>
             </div>
           )}
 
           {/* Audios */}
-          {content.audios.length > 0 && (
+          {filteredContent.audios.length > 0 && (
             <div className="mb-lg">
               <div className="section-subtitle">Audios</div>
               <div className="media-grid">
-                {content.audios.map(item => <MediaThumb key={item.id} item={item} type="audio" />)}
+                {filteredContent.audios.map(item => <MediaThumb key={item.id} item={item} type="audio" />)}
               </div>
             </div>
           )}
 
           {!contentLoading &&
-            content.videos.length === 0 &&
-            content.images.length === 0 &&
-            content.documents.length === 0 &&
-            content.audios.length === 0 && (
-              <p className="text-muted">No hay publicaciones todavia para esta fiesta.</p>
+            filteredContent.videos.length === 0 &&
+            filteredContent.images.length === 0 &&
+            filteredContent.documents.length === 0 &&
+            filteredContent.audios.length === 0 && (
+              <p className="text-muted">{searchQuery ? 'No hay resultados para tu búsqueda.' : 'No hay publicaciones todavia para esta fiesta.'}</p>
             )}
 
           {/* Subcategories */}

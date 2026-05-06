@@ -89,7 +89,7 @@ function AppInner() {
             )}
 
             {route.page === 'home'     && <HomePage     onNavigate={navigate} searchQuery={searchQuery} />}
-            {route.page === 'fiesta'   && <FiestaPage   slug={route.param} onNavigate={navigate} />}
+            {route.page === 'fiesta'   && <FiestaPage   slug={route.param} onNavigate={navigate} searchQuery={searchQuery} />}
             {route.page === 'category' && <CategoryPage categoryId={route.param} onNavigate={navigate} />}
             {route.page === 'saved'    && <SavedPage    onNavigate={navigate} />}
             {route.page === 'manage'   && <ManagePage />}
