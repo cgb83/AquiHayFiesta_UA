@@ -120,23 +120,26 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
 
   if (!fiesta) return <div className="page-content"><p>Fiesta no encontrada.</p></div>;
 
+  const forceDownload = (url) => {
+    if (url.includes('/raw/upload/')) {
+      return url.replace('/raw/upload/', '/raw/upload/fl_attachment/');
+    }
+    return url;
+  };
+  
   const handleDownload = async (item) => {
     try {
       if (item.fromApi) {
         const response = await registerDownload(item.id);
-        const url = resolveMediaUrl(response.fileUrl || item.fileUrl);
-  
-        const fileResponse = await fetch(url);
-        const blob = await fileResponse.blob();
-        const blobUrl = URL.createObjectURL(blob);
+        const url = forceDownload(resolveMediaUrl(response.fileUrl || item.fileUrl));
   
         const anchor = document.createElement('a');
-        anchor.href = blobUrl;
-        anchor.download = item.fileName || item.title || 'archivo';
+        anchor.href = url;
+        anchor.target = '_blank';
+        anchor.rel = 'noopener noreferrer';
         document.body.appendChild(anchor);
         anchor.click();
         anchor.remove();
-        URL.revokeObjectURL(blobUrl);
   
         setContent((prev) => {
           const updateType = (typeList) =>
@@ -156,16 +159,13 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
       }
   
       if (item.fileUrl) {
-        const fileResponse = await fetch(item.fileUrl);
-        const blob = await fileResponse.blob();
-        const blobUrl = URL.createObjectURL(blob);
         const anchor = document.createElement('a');
-        anchor.href = blobUrl;
-        anchor.download = item.fileName || item.title || 'archivo';
+        anchor.href = forceDownload(item.fileUrl);
+        anchor.target = '_blank';
+        anchor.rel = 'noopener noreferrer';
         document.body.appendChild(anchor);
         anchor.click();
         anchor.remove();
-        URL.revokeObjectURL(blobUrl);
       }
     } catch (error) {
       setContentError(error.message || 'No se pudo registrar la descarga.');
