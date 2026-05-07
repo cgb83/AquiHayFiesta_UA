@@ -16,11 +16,19 @@ const ALL_ALLOWED = Object.values(ALLOWED_TYPES).flat();
 // ── Configuración de Cloudinary Storage ──────────────────────────
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: async (req, file) => ({
-    folder: 'aquihayfiesta_ua',
-    resource_type: 'auto',
-    public_id: `${file.fieldname}-${Date.now()}`,
-  }),
+  params: async (req, file) => {
+    const isDocument = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ].includes(file.mimetype);
+  
+    return {
+      folder: 'aquihayfiesta_ua',
+      resource_type: isDocument ? 'raw' : 'auto',
+      public_id: `${file.fieldname}-${Date.now()}`,
+    };
+  },
 });
 
 // ── Filtro de tipos ──────────────────────────────────────────────
