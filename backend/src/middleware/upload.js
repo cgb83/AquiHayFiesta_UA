@@ -23,10 +23,14 @@ const storage = new CloudinaryStorage({
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     ].includes(file.mimetype);
   
+    const ext = file.originalname.split('.').pop();
+  
     return {
       folder: 'aquihayfiesta_ua',
       resource_type: isDocument ? 'raw' : 'auto',
-      public_id: `${file.fieldname}-${Date.now()}`,
+      public_id: isDocument
+        ? `${file.fieldname}-${Date.now()}.${ext}`
+        : `${file.fieldname}-${Date.now()}`,
     };
   },
 });
