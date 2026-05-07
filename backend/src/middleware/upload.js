@@ -16,11 +16,11 @@ const ALL_ALLOWED = Object.values(ALLOWED_TYPES).flat();
 // ── Configuración de Cloudinary Storage ──────────────────────────
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
-  params: {
+  params: async (req, file) => ({
     folder: 'aquihayfiesta_ua',
-    resource_type: 'auto', // Acepta cualquier tipo (imagen, video, audio, PDF)
-    public_id: (req, file) => `${file.fieldname}-${Date.now()}`,
-  },
+    resource_type: 'auto',
+    public_id: `${file.fieldname}-${Date.now()}`,
+  }),
 });
 
 // ── Filtro de tipos ──────────────────────────────────────────────
