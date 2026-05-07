@@ -84,6 +84,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
           downloads: pub.downloads || 0,
           image: resolveMediaUrl(pub.thumbnailUrl || pub.fileUrl),
           fileUrl: resolveMediaUrl(pub.fileUrl),
+          fileName: pub.fileName || pub.title,
           fromApi: true,
         };
 
@@ -124,14 +125,19 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
       if (item.fromApi) {
         const response = await registerDownload(item.id);
         const url = resolveMediaUrl(response.fileUrl || item.fileUrl);
+  
+        const fileResponse = await fetch(url);
+        const blob = await fileResponse.blob();
+        const blobUrl = URL.createObjectURL(blob);
+  
         const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.setAttribute('download', '');
-        anchor.setAttribute('target', '_blank');
-        anchor.rel = 'noopener noreferrer';
+        anchor.href = blobUrl;
+        anchor.download = item.fileName || item.title || 'archivo';
         document.body.appendChild(anchor);
         anchor.click();
         anchor.remove();
+        URL.revokeObjectURL(blobUrl);
+  
         setContent((prev) => {
           const updateType = (typeList) =>
             typeList.map((entry) =>
@@ -139,7 +145,6 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                 ? { ...entry, downloads: (entry.downloads || 0) + 1 }
                 : entry
             );
-
           return {
             videos: updateType(prev.videos),
             images: updateType(prev.images),
@@ -149,16 +154,18 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
         });
         return;
       }
-
+  
       if (item.fileUrl) {
+        const fileResponse = await fetch(item.fileUrl);
+        const blob = await fileResponse.blob();
+        const blobUrl = URL.createObjectURL(blob);
         const anchor = document.createElement('a');
-        anchor.href = item.fileUrl;
-        anchor.setAttribute('download', '');
-        anchor.setAttribute('target', '_blank');
-        anchor.rel = 'noopener noreferrer';
+        anchor.href = blobUrl;
+        anchor.download = item.fileName || item.title || 'archivo';
         document.body.appendChild(anchor);
         anchor.click();
         anchor.remove();
+        URL.revokeObjectURL(blobUrl);
       }
     } catch (error) {
       setContentError(error.message || 'No se pudo registrar la descarga.');
