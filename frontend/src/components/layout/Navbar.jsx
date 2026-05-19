@@ -11,6 +11,7 @@ export default function Navbar({ onNavigate, currentPage }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const navRef = useRef(null);
+  const menuRef = useRef(null);
   const langRef = useRef(null);
   const userRef = useRef(null);
 
@@ -18,7 +19,7 @@ export default function Navbar({ onNavigate, currentPage }) {
 
   useEffect(() => {
     const handlePointerDown = (event) => {
-      if (!navRef.current?.contains(event.target)) {
+      if (!menuRef.current?.contains(event.target)) {
         setMenuOpen(false);
       }
 
@@ -53,8 +54,8 @@ export default function Navbar({ onNavigate, currentPage }) {
   return (
     <>
       <nav className="navbar" ref={navRef} aria-label="Navegacion principal">
-        {/* Left: nav links */}
-        <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
+        {/* Left: nav links (Desktop) */}
+        <div className="navbar-links">
           <button type="button" className={`navbar-link ${currentPage === 'home' ? 'active' : ''}`}
             onClick={() => nav('home')}>Inicio</button>
           {user && <>
@@ -67,6 +68,32 @@ export default function Navbar({ onNavigate, currentPage }) {
           </>}
         </div>
 
+        {/* Left: nav menu (Mobile) */}
+        <div className="dropdown-wrap navbar-menu-dropdown" ref={menuRef}>
+          <button type="button" className="dropdown-trigger navbar-hamburger"
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+            aria-controls="nav-menu"
+            aria-label="Menú"
+            onClick={() => { setMenuOpen(o => !o); setLangOpen(false); setUserOpen(false); }}>
+            <span /><span /><span />
+          </button>
+          {menuOpen && (
+            <div className="dropdown-menu" id="nav-menu" role="menu">
+              <button type="button" className={`dropdown-item ${currentPage === 'home' ? 'active' : ''}`}
+                onClick={() => nav('home')}>Inicio</button>
+              {user && <>
+                <button type="button" className={`dropdown-item ${currentPage === 'saved' ? 'active' : ''}`}
+                  onClick={() => nav('saved')}>Guardados</button>
+                <button type="button" className={`dropdown-item ${currentPage === 'manage' ? 'active' : ''}`}
+                  onClick={() => nav('manage')}>Mis publicaciones</button>
+                <button type="button" className={`dropdown-item ${currentPage === 'create-fiesta' ? 'active' : ''}`}
+                  onClick={() => nav('create-fiesta')}>Crear Fiesta</button>
+              </>}
+            </div>
+          )}
+        </div>
+
         {/* Right: lang + user */}
         <div className="navbar-actions" style={{ marginLeft: 'auto' }}>
           {/* Language picker */}
@@ -77,7 +104,12 @@ export default function Navbar({ onNavigate, currentPage }) {
               aria-controls="lang-menu"
               onClick={() => { setLangOpen(o => !o); setUserOpen(false); }}>
               {lang} <span style={{ fontSize: '0.7rem' }}>▼</span>
-              <span style={{ fontSize: '1rem' }}>🌐</span>
+              <span style={{
+                fontSize: '1rem',
+                filter: 'grayscale(100%) brightness(0%)'
+              }}>
+                🌐
+              </span>
             </button>
             {langOpen && (
               <div className="dropdown-menu" id="lang-menu" role="menu">
@@ -112,11 +144,6 @@ export default function Navbar({ onNavigate, currentPage }) {
             </div>
           )}
         </div>
-
-        {/* Hamburger */}
-        <button type="button" className="navbar-hamburger" aria-label="Menú" aria-expanded={menuOpen} onClick={() => setMenuOpen(o => !o)}>
-          <span /><span /><span />
-        </button>
       </nav>
 
       {/* Logout confirm */}

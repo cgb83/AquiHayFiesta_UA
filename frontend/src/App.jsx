@@ -98,7 +98,7 @@ function AppInner() {
             {route.page === 'fiesta'        && <FiestaPage   slug={route.param} onNavigate={navigate} searchQuery={searchQuery} />}
             {route.page === 'category'      && <CategoryPage categoryId={route.param} onNavigate={navigate} />}
             {route.page === 'saved'         && <SavedPage    onNavigate={navigate} />}
-            {route.page === 'manage'        && <ManagePage />}
+            {route.page === 'manage'        && <ManagePage   onNavigate={navigate} />}
             {route.page === 'create-fiesta' && <CreateFiestaPage onNavigate={navigate} />}
             {route.page === 'profile'       && <ProfilePage />}
           </div>

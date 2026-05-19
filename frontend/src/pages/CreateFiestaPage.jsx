@@ -119,7 +119,7 @@ export default function CreateFiestaPage({ onNavigate }) {
   return (
     <div style={{ maxWidth: '700px', margin: '0 auto', padding: 'var(--space-xl)' }}>
       <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.8rem,5vw,2.5rem)', fontWeight: 700, marginBottom: 'var(--space-lg)' }}>
-        ✨ Crear Nueva Fiesta
+        Crear Nueva Fiesta
       </h1>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
@@ -174,7 +174,7 @@ export default function CreateFiestaPage({ onNavigate }) {
             onClick={() => fileInputRef.current?.click()} 
             disabled={loading}
           >
-            {coverImage ? `✓ ${coverImage.name}` : '📸 Subir imagen'}
+            {coverImage ? `✓ ${coverImage.name}` : ' Subir imagen'}
           </button>
           <div className="form-hint">JPG, PNG, WEBP o GIF. Máximo 10MB.</div>
           {coverImage && (
@@ -296,7 +296,7 @@ export default function CreateFiestaPage({ onNavigate }) {
             style={{ flex: 1 }}
             disabled={loading}
           >
-            {loading ? '⏳ Publicando fiesta...' : '🎉 Publicar fiesta'}
+            {loading ? ' Publicando fiesta...' : ' Publicar fiesta'}
           </button>
           <button 
             type="button"

@@ -3,7 +3,7 @@
 /* ─── Design Tokens ─────────────────────────────────────────── */
 :root {
   /* Colors */
-  --color-bg:         #fff8f6;
+  --color-bg:         #ffffff;
   --color-surface:    #ffffff;
   --color-primary:    #7d3048;
   --color-primary-light: #c47a8a;
@@ -50,7 +50,7 @@
 
 /* Dark Mode */
 [data-theme="dark"] {
-  --color-bg:         #1e0f14;
+  --color-bg:         #ffffff;
   --color-surface:    #2d1a22;
   --color-text:       #f5dde3;
   --color-text-soft:  #c4909a;
@@ -78,10 +78,7 @@ html { font-size: 16px; scroll-behavior: smooth; }
 
 body {
   font-family: var(--font-ui);
-  background:
-    radial-gradient(circle at 92% 8%, rgba(244, 198, 210, 0.35), transparent 32%),
-    radial-gradient(circle at 8% 92%, rgba(232, 180, 190, 0.28), transparent 30%),
-    var(--color-bg);
+  background: var(--color-bg);
   color: var(--color-text);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -200,11 +197,13 @@ select:focus-visible {
 
 /* ─── Hero Banner ───────────────────────────────────────────── */
 .hero {
-  background: linear-gradient(135deg, #f0b8c3 0%, #e8a0b0 40%, #d4869a 100%);
+  background: #e8b4be;
   height: var(--hero-height);
   display: flex;
-  align-items: flex-end;
-  padding: 0 var(--space-xl) var(--space-md);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
   position: relative;
   overflow: hidden;
 }
@@ -217,7 +216,7 @@ select:focus-visible {
   right: -90px;
   top: -180px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0));
+  background: transparent;
 }
 
 .hero::before {
@@ -241,7 +240,7 @@ select:focus-visible {
 /* ─── Navigation ────────────────────────────────────────────── */
 .navbar {
   height: var(--nav-height);
-  background: linear-gradient(180deg, rgba(255, 246, 248, 0.92), rgba(248, 229, 235, 0.92));
+  background: #ffffff;
   border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
@@ -283,11 +282,18 @@ select:focus-visible {
 }
 
 /* Mobile hamburger */
-.navbar-hamburger {
+.navbar-menu-dropdown {
+  position: relative;
   display: none;
+}
+
+.navbar-hamburger {
+  display: flex;
   flex-direction: column;
   gap: 5px;
   padding: var(--space-sm);
+  background: transparent;
+  border: none;
 }
 
 .navbar-hamburger span {
@@ -301,19 +307,7 @@ select:focus-visible {
 @media (max-width: 600px) {
   .navbar { padding: 0 var(--space-md); }
   .navbar-links { display: none; }
-  .navbar-links.open {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: var(--nav-height);
-    left: 0; right: 0;
-    background: var(--color-surface);
-    padding: var(--space-md);
-    border-bottom: 1px solid var(--color-border);
-    box-shadow: var(--shadow-md);
-    z-index: 200;
-  }
-  .navbar-hamburger { display: flex; }
+  .navbar-menu-dropdown { display: flex; }
 }
 
 /* ─── Search Bar ────────────────────────────────────────────── */
@@ -1266,6 +1260,12 @@ select:focus-visible {
   overflow: hidden;
 }
 
+.manage-thumb-item .audio-thumb {
+  aspect-ratio: 1;
+  width: 100%;
+  height: 100%;
+}
+
 .audio-waveform {
   display: flex;
   align-items: center;
@@ -1283,6 +1283,15 @@ select:focus-visible {
 
 .audio-waveform span:nth-child(even) { animation-delay: 0.15s; }
 .audio-waveform span:nth-child(3n)   { animation-delay: 0.3s; }
+
+.manage-thumb-item .audio-waveform {
+  gap: 4px;
+  height: 32px;
+}
+
+.manage-thumb-item .audio-waveform span {
+  width: 4px;
+}
 
 @keyframes wave {
   0%, 100% { height: 6px; }
@@ -1426,13 +1435,25 @@ textarea:focus-visible {
 }
 
 .manage-thumb-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-direction: row;
   gap: var(--space-sm);
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding-bottom: var(--space-sm);
+  -webkit-overflow-scrolling: touch;
+}
+
+.manage-thumb-grid .manage-thumb-item {
+  flex: 0 0 120px;
+  width: 120px;
 }
 
 @media (max-width: 600px) {
-  .manage-thumb-grid { grid-template-columns: repeat(3, 1fr); }
+  .manage-thumb-grid .manage-thumb-item {
+    flex: 0 0 100px;
+    width: 100px;
+  }
 }
 
 .manage-thumb-item {
@@ -1659,9 +1680,7 @@ textarea:focus-visible {
 
 /* ─── Calendar Component ───────────────────────────────────── */
 .calendar-card {
-  background:
-    radial-gradient(circle at 15% 0%, rgba(244, 214, 223, 0.55), rgba(255, 255, 255, 0) 45%),
-    var(--color-surface);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: 8px;
@@ -1768,14 +1787,14 @@ textarea:focus-visible {
 }
 
 .calendar-wrapper .react-calendar__tile.event-day {
-  background: linear-gradient(135deg, var(--color-primary), #a54a63);
+  background: var(--color-primary);
   color: #fff;
   font-weight: 700;
   box-shadow: 0 8px 16px rgba(125, 48, 72, 0.25);
 }
 
 .calendar-wrapper .react-calendar__tile.event-day:hover {
-  background: linear-gradient(135deg, #8c3952, #b85470);
+  background: #8c3952;
 }
 
 .calendar-legend {
@@ -1791,7 +1810,7 @@ textarea:focus-visible {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary), #a54a63);
+  background: var(--color-primary);
   box-shadow: 0 0 0 4px rgba(125, 48, 72, 0.12);
 }
 
@@ -1966,24 +1985,24 @@ textarea:focus-visible {
     font-size: 0.6rem;
   }
 
-  /* Make media grids scrollable */
-  .media-grid {
+  /* Make media grids scrollable carousel with max 2 items visible */
+  .fiesta-content-mobile .media-grid {
     display: flex;
     gap: var(--space-sm);
     overflow-x: auto;
     scroll-behavior: smooth;
     padding-bottom: var(--space-sm);
     -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
   }
 
-  .media-grid > * {
-    flex: 0 0 auto;
-    width: 80px;
+  .fiesta-content-mobile .media-grid > * {
+    flex: 0 0 calc(50% - 4px);
+    scroll-snap-align: start;
   }
 
-  .media-grid .media-thumb {
-    width: 80px;
-    height: 56px;
+  .fiesta-content-mobile .media-grid .media-thumb {
+    aspect-ratio: 4/3;
   }
 
   .media-grid .media-label {

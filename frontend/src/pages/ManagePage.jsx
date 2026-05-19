@@ -5,6 +5,19 @@ import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
 import { deletePublication, updatePublication, deleteFiesta, fetchMyPublications, fetchMyFiestas, fetchFiestas, fetchAllPublications, resolveMediaUrl } from '../services/api';
 
+function AudioWave() {
+  return (
+    <div className="audio-thumb">
+      <div className="audio-waveform">
+        {[...Array(14)].map((_, i) => <span key={i} />)}
+      </div>
+      <div className="media-play" style={{ background: 'transparent' }}>
+        <div className="play-icon" style={{ position: 'absolute', right: 8, bottom: 8, width: 28, height: 28, fontSize: '0.8rem' }}>▶</div>
+      </div>
+    </div>
+  );
+}
+
 function ConfirmDialog({ title, message, onCancel, onConfirm, loading }) {
   return (
     <div className="modal-overlay" onClick={onCancel}>
@@ -68,19 +81,27 @@ function EditPublicationModal({ item, onClose, onSaved }) {
   );
 }
 
-function MediaGroup({ label, items, type, onView, onDelete, onEdit }) {
+function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, onToggleExpand }) {
   if (!items || items.length === 0) return null;
+  
+  const itemsToShow = expanded ? items : items.slice(0, 4);
+  const hasMore = items.length > 4;
+
   return (
     <div className="mb-md">
       <div className="section-subtitle">{label}</div>
       <div className="manage-thumb-grid">
-        {items.map(item => (
+        {itemsToShow.map(item => (
           <div key={item.id} className="manage-thumb-item"
             onClick={() => onView(item, type)}>
             {item.image ? (
               <img src={item.image} alt={item.title} />
             ) : type === 'document' ? (
               <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-primary-pale)', fontSize: '1.8rem' }}>📄</div>
+            ) : type === 'audio' ? (
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', background: 'var(--color-primary-pale)' }}>
+                <AudioWave />
+              </div>
             ) : (
               <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-primary-pale)', fontSize: '1.8rem' }}>🎵</div>
             )}
@@ -96,11 +117,20 @@ function MediaGroup({ label, items, type, onView, onDelete, onEdit }) {
           </div>
         ))}
       </div>
+      {hasMore && (
+        <button 
+          className="btn btn-outline" 
+          onClick={onToggleExpand}
+          style={{ fontSize: '0.82rem', padding: '6px 14px', marginTop: 'var(--space-sm)' }}
+        >
+          {expanded ? `▲ Ver menos (${items.length} total)` : `▼ Ver más (${items.length} total)`}
+        </button>
+      )}
     </div>
   );
 }
 
-export default function ManagePage() {
+export default function ManagePage({ onNavigate }) {
   const { user } = useApp();
   const { addToast } = useToast();
   const isAdmin = user?.role === 'admin';
@@ -115,6 +145,7 @@ export default function ManagePage() {
   const [error, setError] = useState('');
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState({});
 
   const normalizeFiestaItem = (f) => ({
     id: f._id,
@@ -322,7 +353,16 @@ export default function ManagePage() {
                 : <div className="manage-fiesta-thumb manage-fiesta-thumb--empty">🎉</div>
               }
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 600, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.title}</div>
+                <button 
+                  type="button"
+                  onClick={() => onNavigate('fiesta', f.slug)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%', padding: 0 }}
+                  className="manage-fiesta-title"
+                >
+                  <div style={{ fontWeight: 600, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'inherit' }}>
+                    {f.title}
+                  </div>
+                </button>
                 {f.location?.city && <div className="text-muted" style={{ fontSize: '0.8rem' }}>📍 {f.location.city}</div>}
               </div>
               <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
@@ -360,10 +400,10 @@ export default function ManagePage() {
             </button>
           </div>
 
-          <MediaGroup label="Vídeos"     items={types.videos}    type="video"    onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'video')} />
-          <MediaGroup label="Imágenes"   items={types.images}    type="image"    onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'image')} />
-          <MediaGroup label="Documentos" items={types.documents} type="document" onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'document')} />
-          <MediaGroup label="Audios"     items={types.audios}    type="audio"    onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'audio')} />
+          <MediaGroup label="Vídeos"     items={types.videos}    type="video"    onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'video')} expanded={expandedGroups[`${sectionKey}-video`] || false} onToggleExpand={() => setExpandedGroups(prev => ({ ...prev, [`${sectionKey}-video`]: !prev[`${sectionKey}-video`] }))} />
+          <MediaGroup label="Imágenes"   items={types.images}    type="image"    onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'image')} expanded={expandedGroups[`${sectionKey}-image`] || false} onToggleExpand={() => setExpandedGroups(prev => ({ ...prev, [`${sectionKey}-image`]: !prev[`${sectionKey}-image`] }))} />
+          <MediaGroup label="Documentos" items={types.documents} type="document" onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'document')} expanded={expandedGroups[`${sectionKey}-document`] || false} onToggleExpand={() => setExpandedGroups(prev => ({ ...prev, [`${sectionKey}-document`]: !prev[`${sectionKey}-document`] }))} />
+          <MediaGroup label="Audios"     items={types.audios}    type="audio"    onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'audio')} expanded={expandedGroups[`${sectionKey}-audio`] || false} onToggleExpand={() => setExpandedGroups(prev => ({ ...prev, [`${sectionKey}-audio`]: !prev[`${sectionKey}-audio`] }))} />
         </div>
       ))}
 
