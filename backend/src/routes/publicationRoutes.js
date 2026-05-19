@@ -1,7 +1,7 @@
 const express = require('express');
 const router  = express.Router();
 const { protect } = require('../middleware/auth');
-const upload  = require('../middleware/upload');
+const { upload, uploadToCloudinary, multerErrorHandler }  = require('../middleware/upload');
 const {
   getPublications,
   createPublication,
@@ -16,8 +16,8 @@ router.get('/', getPublications);
 
 // Privadas
 router.get   ('/my',              protect, getMyPublications);
-router.post  ('/',                protect, upload.single('file'), createPublication);
-router.put   ('/:id',             protect, updatePublication); // Esta línea causaba el error
+router.post  ('/',                protect, upload.single('file'), multerErrorHandler, uploadToCloudinary, createPublication);
+router.put   ('/:id',             protect, updatePublication);
 router.delete('/:id',             protect, deletePublication);
 router.post  ('/:id/download',    protect, registerDownload);
 

@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/auth');
-const upload = require('../middleware/upload');
+const { upload, uploadToCloudinary, multerErrorHandler } = require('../middleware/upload');
 
 // Endpoint simple para subir archivos a Cloudinary
-router.post('/', protect, upload.single('file'), (req, res) => {
+router.post('/', protect, upload.single('file'), multerErrorHandler, uploadToCloudinary, (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file provided' });
   }

@@ -28,7 +28,6 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
         role="dialog"
         aria-modal="true"
         aria-labelledby="content-viewer-title"
-        style={{ maxWidth: 660 }}
         onClick={e => e.stopPropagation()}
         tabIndex={-1}
       >
@@ -44,7 +43,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
               <video
                 src={item.fileUrl}
                 controls
-                style={{ width: '100%', borderRadius: 8, maxHeight: 360 }}
+                style={{ width: '100%', borderRadius: 8, maxHeight: 'clamp(200px, 60vh, 360px)' }}
               >
                 Tu navegador no soporta la reproducción de vídeo.
               </video>
@@ -68,7 +67,18 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
               </div>
             )}
             {type === 'document' && (
-              <div className="doc-thumb" style={{ width: '100%', aspectRatio: '4/3' }}>📄</div>
+              <div style={{ width: '100%', backgroundColor: '#f5f5f5', borderRadius: 8, overflow: 'hidden' }}>
+                {item.fileUrl ? (
+                  <iframe 
+                    src={item.fileUrl} 
+                    title={item.title}
+                    style={{ width: '100%', height: 'clamp(200px, 50vh, 400px)', border: 'none', borderRadius: 8 }}
+                    onError={() => setError('No se pudo cargar la vista previa del documento')}
+                  />
+                ) : (
+                  <div className="doc-thumb" style={{ width: '100%', aspectRatio: '4/3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📄</div>
+                )}
+              </div>
             )}
           </div>
 

@@ -198,8 +198,148 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
   return (
     <>
       <div className="content-grid fiesta-layout">
+        {/* Mobile: Title || Calendar || Categories in parallel */}
+        <div className="fiesta-mobile-main">
+          {/* Left: Title + Description + Date/Location */}
+          <div className="fiesta-mobile-left">
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 12, marginBottom: 'var(--space-md)' }}>
+              {fiesta.title}
+              {user && (
+                <button className={`bookmark-btn ${isSaved(fiesta.id) ? 'saved' : ''}`}
+                  onClick={() => toggleSave(fiesta.id)}
+                  aria-label={isSaved(fiesta.id) ? 'Quitar de guardados' : 'Guardar fiesta'}>
+                  {isSaved(fiesta.id) ? '❤️' : '🤍'}
+                </button>
+              )}
+            </h1>
+
+            <p style={{ marginTop: 8, fontSize: '0.92rem', color: 'var(--color-text-soft)' }}>
+              {fiesta.description}
+            </p>
+
+            <div style={{ display: 'flex', gap: 'var(--space-lg)', marginTop: 'var(--space-lg)', flexWrap: 'wrap' }}>
+              {fiesta.date && (
+                <div className="fiesta-info-block">
+                  <span className="fiesta-info-label">📅 Fecha</span>
+                  <span className="fiesta-info-value">{fiesta.date}</span>
+                </div>
+              )}
+              {fiesta.location && (
+                <div className="fiesta-info-block">
+                  <span className="fiesta-info-label">📍 Lugar</span>
+                  <span className="fiesta-info-value">{fiesta.location}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Calendar + Categories */}
+          <div className="fiesta-mobile-right">
+            {/* Calendar */}
+            <div className="fiesta-calendar-mobile">
+              <Calendar fiesta={fiesta} />
+            </div>
+
+            {/* Categories */}
+            <div className="fiesta-categories-mobile-sidebar">
+              <h3 className="section-title" style={{ textAlign: 'right' }}>Categorías</h3>
+              {fiesta.subcategories?.length > 0 ? (
+                <div className="flex gap-sm" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  {fiesta.subcategories.map(s => (
+                    <span key={s} className="tag">{s}</span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted" style={{ textAlign: 'right', fontSize: '0.85rem' }}>Esta fiesta no tiene categorías</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Content - Carrusel deslizable */}
+        <div className="fiesta-content-mobile">
+          {/* Content header */}
+          <div className="flex-between mb-md">
+            <h3 className="section-title" style={{ marginBottom: 0, borderBottom: 'none' }}>Contenido</h3>
+            {user && (
+              <button className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '6px 14px' }}
+                onClick={() => setShowPublish(true)}>
+                ⊕ Publicar
+              </button>
+            )}
+          </div>
+
+          {contentLoading && <p style={{ color: 'var(--color-muted)' }}>Cargando contenido...</p>}
+          {contentError && <p style={{ color: 'var(--color-text-soft)' }}>{contentError}</p>}
+
+          {/* Videos carousel */}
+          {filteredContent.videos.length > 0 && (
+            <div className="mb-lg">
+              <div className="section-subtitle">Vídeos</div>
+              <div className="media-grid">
+                {filteredContent.videos.map(item => <MediaThumb key={item.id} item={item} type="video" />)}
+              </div>
+            </div>
+          )}
+
+          {/* Images carousel */}
+          {filteredContent.images.length > 0 && (
+            <div className="mb-lg">
+              <div className="section-subtitle">Imágenes</div>
+              <div className="media-grid">
+                {filteredContent.images.map(item => <MediaThumb key={item.id} item={item} type="image" />)}
+              </div>
+            </div>
+          )}
+
+          {/* Documents carousel */}
+          {filteredContent.documents.length > 0 && (
+            <div className="mb-lg">
+              <div className="section-subtitle">Documentos</div>
+              <div className="media-grid">
+                {filteredContent.documents.map(item => <MediaThumb key={item.id} item={item} type="document" />)}
+              </div>
+            </div>
+          )}
+
+          {/* Audios carousel */}
+          {filteredContent.audios.length > 0 && (
+            <div className="mb-lg">
+              <div className="section-subtitle">Audios</div>
+              <div className="media-grid">
+                {filteredContent.audios.map(item => <MediaThumb key={item.id} item={item} type="audio" />)}
+              </div>
+            </div>
+          )}
+
+          {!contentLoading &&
+            filteredContent.videos.length === 0 &&
+            filteredContent.images.length === 0 &&
+            filteredContent.documents.length === 0 &&
+            filteredContent.audios.length === 0 && (
+              <p className="text-muted">{searchQuery ? 'No hay resultados para tu búsqueda.' : 'No hay publicaciones todavia para esta fiesta.'}</p>
+            )}
+        </div>
+
+        {/* Mobile Explore */}
+        <div className="fiesta-explore-mobile">
+          <h3 className="section-title" style={{ textAlign: 'left' }}>Explorar fiestas</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {exploreFiestas.map(f => (
+              <div key={f.id} style={{ cursor: 'pointer' }} onClick={() => onNavigate('fiesta', f.slug)}>
+                <img src={f.image} alt={f.title}
+                  style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 8 }} />
+                <div style={{ fontSize: '0.85rem', fontWeight: 500, marginTop: 4 }}>{f.title}</div>
+                <div className="text-muted">{formatViews(f.views)}</div>
+              </div>
+            ))}
+            <button className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '6px 12px' }}>Ver más</button>
+          </div>
+        </div>
+
+        {/* Desktop layout */}
         <div className="fiesta-sidebar">
-          {/* Header */}
+          {/* Header - Solo titulo */}
           <div className="flex-between mb-md" style={{ alignItems: 'flex-start' }}>
             <div style={{ flex: 1 }}>
               <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 12, marginBottom: 'var(--space-md)' }}>
@@ -212,25 +352,34 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                   </button>
                 )}
               </h1>
-              <p style={{ marginTop: 8, fontSize: '0.92rem', color: 'var(--color-text-soft)', maxWidth: 480 }}>
-                {fiesta.description}
-              </p>
-              {/* Info block: date + location */}
-              <div style={{ display: 'flex', gap: 'var(--space-lg)', marginTop: 'var(--space-lg)', flexWrap: 'wrap' }}>
-                {fiesta.date && (
-                  <div className="fiesta-info-block">
-                    <span className="fiesta-info-label">📅 Fecha</span>
-                    <span className="fiesta-info-value">{fiesta.date}</span>
-                  </div>
-                )}
-                {fiesta.location && (
-                  <div className="fiesta-info-block">
-                    <span className="fiesta-info-label">📍 Lugar</span>
-                    <span className="fiesta-info-value">{fiesta.location}</span>
-                  </div>
-                )}
-              </div>
             </div>
+          </div>
+
+          {/* Description with date and location */}
+          <div className="mb-lg">
+            <p style={{ marginTop: 8, fontSize: '0.92rem', color: 'var(--color-text-soft)' }}>
+              {fiesta.description}
+            </p>
+            {/* Info block: date + location */}
+            <div style={{ display: 'flex', gap: 'var(--space-lg)', marginTop: 'var(--space-lg)', flexWrap: 'wrap' }}>
+              {fiesta.date && (
+                <div className="fiesta-info-block">
+                  <span className="fiesta-info-label">📅 Fecha</span>
+                  <span className="fiesta-info-value">{fiesta.date}</span>
+                </div>
+              )}
+              {fiesta.location && (
+                <div className="fiesta-info-block">
+                  <span className="fiesta-info-label">📍 Lugar</span>
+                  <span className="fiesta-info-value">{fiesta.location}</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Calendar - debajo de la descripción */}
+          <div className="calendar-section mb-lg">
+            <Calendar fiesta={fiesta} />
           </div>
 
           {/* Content sections */}
@@ -294,30 +443,27 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             filteredContent.audios.length === 0 && (
               <p className="text-muted">{searchQuery ? 'No hay resultados para tu búsqueda.' : 'No hay publicaciones todavia para esta fiesta.'}</p>
             )}
-
-          {/* Subcategories */}
-          {fiesta.subcategories?.length > 0 && (
-            <div className="flex gap-sm" style={{ flexWrap: 'wrap', marginTop: 8 }}>
-              {fiesta.subcategories.map(s => <span key={s} className="tag">{s}</span>)}
-            </div>
-          )}
         </div>
 
         {/* Sidebar */}
-        <div>
-          {/* Calendar */}
-          <div className="mb-lg">
+        <div className="fiesta-sidebar-right">
+          {/* Calendar - solo en desktop */}
+          <div className="mb-lg calendar-desktop-only">
             <Calendar fiesta={fiesta} />
           </div>
 
           {/* Categories */}
           <div className="mb-lg">
             <h3 className="section-title" style={{ textAlign: 'right' }}>Categorías</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0 }}>
-              {(fiesta.subcategories || []).map(s => (
-                <button key={s} className="sidebar-cat-item">{s}</button>
-              ))}
-            </div>
+            {fiesta.subcategories?.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0 }}>
+                {fiesta.subcategories.map(s => (
+                  <button key={s} className="sidebar-cat-item">{s}</button>
+                ))}
+              </div>
+            ) : (
+              <p className="text-muted" style={{ textAlign: 'right', fontSize: '0.85rem' }}>Esta fiesta no tiene categorías</p>
+            )}
           </div>
 
           {/* Explore fiestas */}

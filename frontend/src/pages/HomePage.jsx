@@ -17,10 +17,11 @@ function shuffle(list) {
 }
 
 export default function HomePage({ onNavigate, searchQuery = '' }) {
-  const { user, fiestas, fiestasLoading, fiestasError, reloadFiestas } = useApp();
+  const { user, fiestas, fiestasLoading, fiestasError, reloadFiestas, categories } = useApp();
   const [showCreate, setShowCreate] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
+  const [showAllCategories, setShowAllCategories] = useState(false);
 
   useEffect(() => {
     const query = searchQuery.trim();
@@ -52,6 +53,8 @@ export default function HomePage({ onNavigate, searchQuery = '' }) {
   const hasSearch = searchResults !== null;
   const recommendationSource = fiestas;
 
+  const displayedCategories = showAllCategories ? categories : categories.slice(0, 4);
+
   const featured = useMemo(
     () => [...recommendationSource].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5),
     [recommendationSource]
@@ -62,6 +65,25 @@ export default function HomePage({ onNavigate, searchQuery = '' }) {
     const candidates = recommendationSource.filter((f) => !featuredIds.has(f.id));
     return shuffle(candidates).slice(0, 4);
   }, [featured, recommendationSource]);
+
+  const seAcerca = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return recommendationSource
+      .filter((f) => {
+        if (f.upcoming) return true;
+        if (!f.date) return false;
+        const eventDate = new Date(`${f.date}T00:00:00`);
+        return !Number.isNaN(eventDate.getTime()) && eventDate >= today;
+      })
+      .sort((a, b) => {
+        if (!a.date && !b.date) return 0;
+        if (!a.date) return 1;
+        if (!b.date) return -1;
+        return new Date(a.date) - new Date(b.date);
+      })
+      .slice(0, 5);
+  }, [recommendationSource]);
 
   return (
     <>
@@ -88,7 +110,7 @@ export default function HomePage({ onNavigate, searchQuery = '' }) {
 
       <div className="content-grid">
         {/* Main column */}
-        <div>
+        <div className="main-content">
           {hasSearch && (
             <div className="mb-lg">
               <h3 className="section-title">Resultados</h3>
@@ -120,61 +142,130 @@ export default function HomePage({ onNavigate, searchQuery = '' }) {
             </div>
           )}
 
-          {/* Featured */}
-          <div className="mb-lg">
-            <h3 className="section-title">Destacado</h3>
-            {fiestasLoading && <p style={{ color: 'var(--color-muted)' }}>Cargando fiestas...</p>}
-            <div className="card-list">
-              {featured.map(f => (
-                <div key={f.id} className="card-item"
-                  role="button" tabIndex={0}
-                  onClick={() => onNavigate('fiesta', f.slug)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
-                  <img
-                    className="card-thumb"
-                    src={f.image}
-                    alt={f.title}
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = DEFAULT_FIESTA_IMAGE;
-                    }}
-                  />
-                  <div className="card-info">
-                    <div className="card-title">{f.title}</div>
-                    <div className="card-views">{formatViews(f.views)}</div>
+          {/* Featured + Categorías lado a lado */}
+          <div className="featured-categories-row mb-lg">
+            {/* Featured */}
+            <div className="featured-section">
+              <h3 className="section-title">Destacado</h3>
+              {fiestasLoading && <p style={{ color: 'var(--color-muted)' }}>Cargando fiestas...</p>}
+              <div className="card-list">
+                {featured.map(f => (
+                  <div key={f.id} className="card-item"
+                    role="button" tabIndex={0}
+                    onClick={() => onNavigate('fiesta', f.slug)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
+                    <img
+                      className="card-thumb"
+                      src={f.image}
+                      alt={f.title}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = DEFAULT_FIESTA_IMAGE;
+                      }}
+                    />
+                    <div className="card-info">
+                      <div className="card-title">{f.title}</div>
+                      <div className="card-views">{formatViews(f.views)}</div>
+                    </div>
                   </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Categorías - solo en mobile, a la derecha */}
+            <div className="categories-mobile">
+              <h3 className="section-title">Categorías</h3>
+              <div className="sidebar-categories">
+                {displayedCategories.map(c => (
+                  <button
+                    key={c.id}
+                    className="sidebar-cat-item"
+                    onClick={() => onNavigate?.('category', c.id)}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
+              {categories.length > 4 && (
+                <div className="sidebar-show-more">
+                  <button
+                    className="show-more-btn"
+                    onClick={() => setShowAllCategories(o => !o)}
+                    title={showAllCategories ? 'Ver menos' : 'Ver más'}
+                  >
+                    {showAllCategories ? '▲' : '▼'}
+                  </button>
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
-          {/* No te pierdas */}
-          <div>
-            <h3 className="section-title">No te pierdas...</h3>
-            {!fiestasLoading && noPerder.length === 0 && (
-              <p style={{ color: 'var(--color-muted)' }}>No hay resultados con los filtros actuales.</p>
-            )}
-            <div className="card-grid">
-              {noPerder.map(f => (
-                <div key={f.id} className="card-grid-item"
-                  role="button" tabIndex={0}
-                  onClick={() => onNavigate('fiesta', f.slug)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
-                  <img
-                    className="card-grid-thumb"
-                    src={f.image}
-                    alt={f.title}
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = DEFAULT_FIESTA_IMAGE;
-                    }}
-                  />
-                  <div className="card-grid-info">
-                    <div className="card-title" style={{ fontSize: '0.9rem' }}>{f.title}</div>
-                    <div className="card-views">{formatViews(f.views)}</div>
+          {/* No te pierdas + Se acerca lado a lado */}
+          <div className="no-perder-acerca-row mb-lg">
+            {/* No te pierdas */}
+            <div className="no-perder-section">
+              <h3 className="section-title">No te pierdas...</h3>
+              {!fiestasLoading && noPerder.length === 0 && (
+                <p style={{ color: 'var(--color-muted)' }}>No hay resultados con los filtros actuales.</p>
+              )}
+              <div className="upcoming-list">
+                {noPerder.map(f => (
+                  <div
+                    key={f.id}
+                    className="upcoming-item"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => onNavigate('fiesta', f.slug)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}
+                  >
+                    <div className="upcoming-date">{f.date ? new Date(f.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) : 'Nuevo'}</div>
+                    <img
+                      className="upcoming-thumb"
+                      src={f.image}
+                      alt={f.title}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = DEFAULT_FIESTA_IMAGE;
+                      }}
+                    />
+                    <div className="upcoming-title">{f.title}</div>
+                    <div className="text-muted">{formatViews(f.views)}</div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Se acerca - en paralelo en mobile */}
+            <div className="acerca-section">
+              <h3 className="section-title">Se acerca...</h3>
+              {seAcerca.length === 0 && (
+                <p style={{ color: 'var(--color-muted)' }}>No hay fiestas próximas.</p>
+              )}
+              <div className="upcoming-list">
+                {seAcerca.map(f => (
+                  <div
+                    key={f.id}
+                    className="upcoming-item"
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => onNavigate('fiesta', f.slug)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}
+                  >
+                    <div className="upcoming-date">{f.date ? new Date(f.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) : 'Próximamente'}</div>
+                    <img
+                      className="upcoming-thumb"
+                      src={f.image}
+                      alt={f.title}
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = DEFAULT_FIESTA_IMAGE;
+                      }}
+                    />
+                    <div className="upcoming-title">{f.title}</div>
+                    <div className="text-muted">{formatViews(f.views)}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

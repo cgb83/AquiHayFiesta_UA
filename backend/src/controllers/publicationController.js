@@ -48,7 +48,8 @@ const createPublication = async (req, res) => {
     });
     res.status(201).json({ success: true, message: 'Publicación creada correctamente.', publication });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error al crear la publicación.' });
+    console.error('Error al crear publicación:', error);
+    res.status(500).json({ success: false, message: `Error al crear la publicación: ${error.message}` });
   }
 };
 
@@ -73,9 +74,10 @@ const updatePublication = async (req, res) => {
     publication.description = description?.trim() || '';
     await publication.save();
 
-    return res.json({ success: true, message: 'Publicación actualizada correctamente.', publication });
+    res.json({ success: true, message: 'Publicación actualizada.', publication });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error al actualizar la publicación.' });
+    console.error('Error al actualizar publicación:', error);
+    res.status(500).json({ success: false, message: `Error al actualizar la publicación: ${error.message}` });
   }
 };
 

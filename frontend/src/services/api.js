@@ -21,7 +21,10 @@ async function request(path, options = {}) {
   clearTimeout(timeoutId);
   let payload = null;
   try { payload = await response.json(); } catch { /* ignore */ }
-  if (!response.ok) throw new Error(payload?.message || `Error ${response.status}`);
+  if (!response.ok) {
+    const errorMessage = payload?.message || `Error ${response.status}`;
+    throw new Error(errorMessage);
+  }
   return payload;
 }
 

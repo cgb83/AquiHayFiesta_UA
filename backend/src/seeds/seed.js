@@ -6,7 +6,7 @@ const User = require('../models/User');
 const Fiesta = require('../models/Fiesta');
 const Publication = require('../models/Publication');
 
-const cloudinaryImage = 'https://res.cloudinary.com/dmqkrgprk/image/upload/v1777913897/aquihayfiesta_ua/file-1777913895610.png';
+const cloudinaryImage = 'https://res.cloudinary.com/dmqkrgprk/image/upload/v1778102145/aquihayfiesta_ua/file-1778102145476.jpg';
 
 
 const adminsData = [
