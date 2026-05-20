@@ -157,7 +157,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Título */}
         <div className="form-group">
           <label className="form-label" htmlFor="create-title">
-            Título de la fiesta <span style={{ color: '#e74c3c' }}>*</span>
+            Título de la fiesta <span className="alerta">*</span>
           </label>
           <input 
             id="create-title" 
@@ -173,7 +173,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Portada */}
         <div className="form-group">
           <label className="form-label" htmlFor="create-cover">
-            Portada de la fiesta  <span style={{ color: '#e74c3c' }}>*</span>
+            Portada de la fiesta  <span className="alerta">*</span>
           </label>
           <input
             ref={fileInputRef}
@@ -206,7 +206,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Descripción */}
         <div className="form-group">
           <label className="form-label" htmlFor="create-description">
-            Descripción  <span style={{ color: '#e74c3c' }}>*</span>
+            Descripción  <span className="alerta">*</span>
           </label>
           <input 
             id="create-description" 
@@ -222,7 +222,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Categorías */}
         <div className="form-group">
           <label className="form-label" style={{ marginBottom: 'var(--space-sm)' }}>
-            Categorías <span style={{ color: '#e74c3c' }}>*</span> (puedes elegir varias)
+            Categorías <span className="alerta">*</span> (puedes elegir varias)
           </label>
           <div className="category-multi-grid" role="group" aria-label="Categorías">
             {CATEGORY_OPTIONS.map((category) => {
@@ -246,7 +246,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Fechas */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
           <div className="form-group">
-            <label className="form-label" htmlFor="create-start">Fecha de inicio  <span style={{ color: '#e74c3c' }}>*</span></label>
+            <label className="form-label" htmlFor="create-start">Fecha de inicio  <span className="alerta">*</span></label>
             <input 
               id="create-start" 
               className="form-input" 

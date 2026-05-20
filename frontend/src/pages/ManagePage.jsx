@@ -62,7 +62,7 @@ function EditPublicationModal({ item, onClose, onSaved }) {
         style={{ maxWidth: 420 }} onClick={e => e.stopPropagation()} tabIndex={-1}>
         <button className="modal-close" onClick={onClose} aria-label="Cerrar">✕</button>
         <h2 className="modal-title">Editar publicación</h2>
-        {error && <p role="alert" style={{ color: '#c0392b', marginBottom: 12 }}>{error}</p>}
+        {error && <p role="alert" style={{ color: 'var(--color-surface)', marginBottom: 12 }}>{error}</p>}
         <div className="form-group mb-md">
           <label className="form-label" htmlFor="ep-title">Título</label>
           <input id="ep-title" className="form-input" value={title}
@@ -457,7 +457,7 @@ export default function ManagePage({ onNavigate }) {
       </h3>
 
       {loading && <p className="text-muted">Cargando publicaciones...</p>}
-      {error && <p role="alert" style={{ color: '#c0392b' }}>{error}</p>}
+      {error && <p role="alert" className="alerta">{error}</p>}
       {!loading && Object.keys(content).length === 0 && (
         <p className="text-muted">{isAdmin ? 'No hay publicaciones en la plataforma.' : 'Todavía no tienes publicaciones creadas.'}</p>
       )}
