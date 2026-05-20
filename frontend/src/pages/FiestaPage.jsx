@@ -509,7 +509,6 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                   <div className="text-muted">{formatViews(f.views)}</div>
                 </div>
               ))}
-              <button className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '6px 12px' }}>Ver más</button>
             </div>
           </div>
         </div>
