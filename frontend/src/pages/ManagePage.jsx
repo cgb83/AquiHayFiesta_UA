@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
 import { EditFiestaModal } from '../components/modals/CreateModals';
 import { useApp } from '../context/AppContext';
@@ -84,27 +84,84 @@ function EditPublicationModal({ item, onClose, onSaved }) {
 function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, onToggleExpand }) {
   if (!items || items.length === 0) return null;
   
-  const itemsToShow = expanded ? items : items.slice(0, 4);
-  const hasMore = items.length > 4;
+  const gridRef = useRef(null);
+  const [hasOverflow, setHasOverflow] = useState(false);
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (!gridRef.current) return;
+      
+      const container = gridRef.current;
+      const children = Array.from(container.children);
+      
+      if (children.length === 0) {
+        setHasOverflow(false);
+        return;
+      }
+
+      // Detectar si es mobile o desktop
+      const isMobile = window.innerWidth <= 768;
+      let hasOverflowDetected = false;
+
+      if (isMobile) {
+        // En mobile: scroll horizontal
+        // Mostrar "Ver más" si el contenido necesita scroll
+        const scrollWidth = container.scrollWidth;
+        const clientWidth = container.clientWidth;
+        hasOverflowDetected = scrollWidth > clientWidth + 10; // 10px de tolerancia
+      } else {
+        // En desktop: flex-wrap
+        // Mostrar "Ver más" si hay múltiples filas
+        let firstRowHeight = children[0]?.offsetHeight || 0;
+        let hasMultipleRows = false;
+
+        children.forEach((child, idx) => {
+          if (idx > 0 && child.offsetTop > firstRowHeight / 2) {
+            hasMultipleRows = true;
+          }
+        });
+
+        hasOverflowDetected = hasMultipleRows;
+      }
+
+      setHasOverflow(hasOverflowDetected);
+    };
+
+    // Esperar a que se renderice el contenido
+    const timer = setTimeout(checkOverflow, 100);
+    
+    const observer = new ResizeObserver(checkOverflow);
+    if (gridRef.current) observer.observe(gridRef.current);
+
+    window.addEventListener('resize', checkOverflow);
+
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+      window.removeEventListener('resize', checkOverflow);
+    };
+  }, [items.length]);
 
   return (
     <div className="mb-md">
       <div className="section-subtitle">{label}</div>
-      <div className="manage-thumb-grid">
-        {itemsToShow.map(item => (
+      <div ref={gridRef} className="manage-thumb-grid manage-thumb-grid--desktop">
+        {items.map(item => (
           <div key={item.id} className="manage-thumb-item"
             onClick={() => onView(item, type)}>
-            {item.image ? (
-              <img src={item.image} alt={item.title} />
-            ) : type === 'document' ? (
+            {type === 'document' ? (
               <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-primary-pale)', fontSize: '1.8rem' }}>📄</div>
             ) : type === 'audio' ? (
               <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', background: 'var(--color-primary-pale)' }}>
                 <AudioWave />
               </div>
+            ) : item.image ? (
+              <img src={item.image} alt={item.title} />
             ) : (
               <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-primary-pale)', fontSize: '1.8rem' }}>🎵</div>
             )}
+
+
             <button className="manage-edit-btn"
               onClick={e => { e.stopPropagation(); onEdit(item, type); }}
               aria-label="Editar publicación">✏
@@ -117,9 +174,9 @@ function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, on
           </div>
         ))}
       </div>
-      {hasMore && (
+      {hasOverflow && (
         <button 
-          className="btn btn-outline" 
+          className="btn btn-outline manage-expand-btn-mobile" 
           onClick={onToggleExpand}
           style={{ fontSize: '0.82rem', padding: '6px 14px', marginTop: 'var(--space-sm)' }}
         >
@@ -355,31 +412,38 @@ export default function ManagePage({ onNavigate }) {
       {myFiestas.length > 0 && (
         <div className="manage-fiesta-list" style={{ marginBottom: 'var(--space-xl)' }}>
           {myFiestas.map(f => (
-            <div key={f.id} className="manage-fiesta-item">
+            <div 
+              key={f.id} 
+              className="manage-fiesta-item"
+              onClick={() => onNavigate('fiesta', f.slug)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onNavigate('fiesta', f.slug);
+                }
+              }}
+            >
               {f.image
                 ? <img src={f.image} alt={f.title} className="manage-fiesta-thumb" />
                 : <div className="manage-fiesta-thumb manage-fiesta-thumb--empty">🎉</div>
               }
               <div style={{ flex: 1, minWidth: 0 }}>
-                <button 
-                  type="button"
-                  onClick={() => onNavigate('fiesta', f.slug)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', width: '100%', padding: 0 }}
-                  className="manage-fiesta-title"
-                >
+                <div className="manage-fiesta-title">
                   <div style={{ fontWeight: 600, fontSize: '0.95rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: 'inherit' }}>
                     {f.title}
                   </div>
-                </button>
+                </div>
                 {f.location?.city && <div className="text-muted" style={{ fontSize: '0.8rem' }}>📍 {f.location.city}</div>}
               </div>
-              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
                 <button className="btn btn-outline" style={{ fontSize: '0.78rem', padding: '4px 10px' }}
-                  onClick={() => setEditFiesta(f)}>
+                  onClick={(e) => { e.stopPropagation(); setEditFiesta(f); }}>
                   Editar
                 </button>
                 <button className="btn btn-outline btn-danger" style={{ fontSize: '0.78rem', padding: '4px 10px' }}
-                  onClick={() => handleDeleteFiesta(f.id)}>
+                  onClick={(e) => { e.stopPropagation(); handleDeleteFiesta(f.id); }}>
                   Borrar
                 </button>
               </div>

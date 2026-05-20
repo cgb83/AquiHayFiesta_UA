@@ -64,6 +64,12 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
         image: resolveMediaUrl(data.coverImage || ''),
         date: data.startDate ? String(data.startDate).slice(0, 10) : null,
         location: data.location?.city || data.location?.country || null,
+        creator: data.createdBy || data.creator,
+        startDate: data.startDate ? String(data.startDate).slice(0, 10) : null,
+        endDate: data.endDate ? String(data.endDate).slice(0, 10) : null,
+        creatorName: data.createdBy?.username || data.creator?.username || 'Anónimo',
+        creatorAvatar: resolveMediaUrl(data.createdBy?.avatar || data.creator?.avatar || ''),
+        creatorId: data.createdBy?._id || data.creator?._id,
       });
     } catch {
       // API error
@@ -226,12 +232,6 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             </p>
 
             <div style={{ display: 'flex', gap: 'var(--space-lg)', marginTop: 'var(--space-lg)', flexWrap: 'wrap' }}>
-              {fiesta.date && (
-                <div className="fiesta-info-block">
-                  <span className="fiesta-info-label">📅 Fecha</span>
-                  <span className="fiesta-info-value">{fiesta.date}</span>
-                </div>
-              )}
               {fiesta.location && (
                 <div className="fiesta-info-block">
                   <span className="fiesta-info-label">📍 Lugar</span>
@@ -344,6 +344,22 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
 
         {/* Mobile Explore */}
         <div className="fiesta-explore-mobile">
+          {/* Creator Profile */}
+          {fiesta.creatorName && (
+            <div className="creator-profile">
+              <h3 className="section-title">Creador</h3>
+              <div className="creator-card">
+                {fiesta.creatorAvatar && (
+                  <img src={fiesta.creatorAvatar} alt={fiesta.creatorName} className="creator-avatar" />
+                )}
+                <div className="creator-info">
+                  <div className="creator-name">{fiesta.creatorName}</div>
+                  <div className="creator-meta">Creador de fiestas</div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <h3 className="section-title" style={{ textAlign: 'left' }}>Explorar fiestas</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {exploreFiestas.map(f => (
@@ -384,12 +400,6 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             </p>
             {/* Info block: date + location */}
             <div style={{ display: 'flex', gap: 'var(--space-lg)', marginTop: 'var(--space-lg)', flexWrap: 'wrap' }}>
-              {fiesta.date && (
-                <div className="fiesta-info-block">
-                  <span className="fiesta-info-label">📅 Fecha</span>
-                  <span className="fiesta-info-value">{fiesta.date}</span>
-                </div>
-              )}
               {fiesta.location && (
                 <div className="fiesta-info-block">
                   <span className="fiesta-info-label">📍 Lugar</span>
@@ -502,6 +512,22 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
 
           {/* Explore fiestas */}
           <div>
+            {/* Creator Profile */}
+            {fiesta.creatorName && (
+              <div className="creator-profile mb-lg">
+                <h3 className="section-title" style={{ textAlign: 'right' }}>Creador</h3>
+                <div className="creator-card">
+                  {fiesta.creatorAvatar && (
+                    <img src={fiesta.creatorAvatar} alt={fiesta.creatorName} className="creator-avatar" />
+                  )}
+                  <div className="creator-info">
+                    <div className="creator-name">{fiesta.creatorName}</div>
+                    <div className="creator-meta">Creador de fiestas</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <h3 className="section-title" style={{ textAlign: 'right' }}>Explorar fiestas</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {exploreFiestas.map(f => (

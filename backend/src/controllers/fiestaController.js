@@ -1,6 +1,6 @@
 const Fiesta = require('../models/Fiesta');
 const Publication = require('../models/Publication');
-const ALLOWED_CATEGORIES = ['amor', 'noche', 'disfraces', 'familia', 'musica', 'gastronomia'];
+const ALLOWED_CATEGORIES = ['amor', 'noche', 'disfraces', 'familia', 'musica', 'gastronomia', 'deporte', 'infantil', 'bodas', 'negocios', 'cultural', 'religiosa'];
 
 function accentInsensitiveRegex(str) {
   const escaped = str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -35,7 +35,7 @@ const getFiestas = async (req, res) => {
         filter.$or = searchFilter;
       }
     }
-    const fiestas = await Fiesta.find(filter).populate('createdBy', 'username').sort({ createdAt: -1 });
+    const fiestas = await Fiesta.find(filter).populate('createdBy', 'username email country city').sort({ createdAt: -1 });
     res.json({ success: true, count: fiestas.length, fiestas });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error al obtener las fiestas.' });
@@ -44,7 +44,7 @@ const getFiestas = async (req, res) => {
 
 const getFiestaBySlug = async (req, res) => {
   try {
-    const fiesta = await Fiesta.findOne({ slug: req.params.slug }).populate('createdBy', 'username');
+    const fiesta = await Fiesta.findOne({ slug: req.params.slug }).populate('createdBy', 'username email country city');
     if (!fiesta) return res.status(404).json({ success: false, message: 'Fiesta no encontrada.' });
     await fiesta.incrementViews();
     res.json({ success: true, fiesta });

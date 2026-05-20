@@ -74,6 +74,11 @@ function AppInner() {
       setSearchQuery(param.substring(7));
       setCategoryFilter(''); // Clear category filter when doing a text search
       param = null;
+    } else if (page === 'home' && param && param.startsWith('cat:')) {
+      // Handle category filter (param starting with 'cat:')
+      setCategoryFilter(param.substring(4));
+      setSearchQuery(''); // Clear search when filtering by category
+      param = null;
     } else if (page !== 'home') {
       setSearchQuery('');
       setCategoryFilter('');

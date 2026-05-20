@@ -4,12 +4,18 @@ import { useToast } from '../context/ToastContext';
 import { createFiesta } from '../services/api';
 
 const CATEGORY_OPTIONS = [
-  { id: 'amor', label: 'Amor' },
-  { id: 'noche', label: 'Noche' },
+  { id: 'amor',      label: 'Amor' },
+  { id: 'noche',     label: 'Noche' },
   { id: 'disfraces', label: 'Disfraces' },
-  { id: 'familia', label: 'Familia' },
-  { id: 'musica', label: 'Musica' },
-  { id: 'gastronomia', label: 'Gastronomia' },
+  { id: 'familia',   label: 'Familia' },
+  { id: 'musica',    label: 'Música' },
+  { id: 'gastronomia', label: 'Gastronomía' },
+  { id: 'deporte',   label: 'Deporte' },
+  { id: 'infantil',  label: 'Infantil' },
+  { id: 'bodas',     label: 'Bodas' },
+  { id: 'negocios',  label: 'Negocios' },
+  { id: 'cultural',  label: 'Cultural' },
+  { id: 'religiosa', label: 'Religiosa' },
 ];
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -53,21 +59,40 @@ export default function CreateFiestaPage({ onNavigate }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.title.trim() || form.categories.length === 0) {
-      setError('El título y al menos una categoría son obligatorios.');
-      return;
-    }
 
-    if (coverImage) {
-      if (!IMAGE_TYPES.includes(coverImage.type)) {
-        setError('La portada debe ser una imagen JPG, PNG, WEBP o GIF.');
-        return;
-      }
-      if (coverImage.size > MAX_IMAGE_SIZE) {
-        setError('La portada no puede superar 10MB.');
-        return;
-      }
-    }
+  // Validaciones
+  if (!form.title.trim()) {
+    setError('El título es obligatorio.');
+    return;
+  }
+  if (!coverImage) {
+    setError('La portada es obligatoria.');
+    return;
+  }
+  if (!form.description.trim()) {
+    setError('La descripción es obligatoria.');
+    return;
+  }
+  if (form.categories.length === 0) {
+    setError('Debes seleccionar al menos una categoría.');
+    return;
+  }
+  if (!form.startDate) {
+    setError('La fecha de inicio es obligatoria.');
+    return;
+  }
+  if (form.endDate && form.endDate < form.startDate) {
+    setError('La fecha de fin no puede ser anterior a la de inicio.');
+    return;
+  }
+  if (coverImage && !IMAGE_TYPES.includes(coverImage.type)) {
+    setError('La portada debe ser una imagen JPG, PNG, WEBP o GIF.');
+    return;
+  }
+  if (coverImage && coverImage.size > MAX_IMAGE_SIZE) {
+    setError('La portada no puede superar 10MB.');
+    return;
+  }
 
     try {
       setLoading(true);
@@ -124,14 +149,7 @@ export default function CreateFiestaPage({ onNavigate }) {
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
         {error && (
-          <div role="alert" style={{ 
-            background: '#fee', 
-            border: '1px solid #c0392b', 
-            color: '#c0392b', 
-            padding: 'var(--space-md)', 
-            borderRadius: '6px',
-            fontSize: '0.92rem'
-          }}>
+          <div className="form-validation-error" role="alert">
             {error}
           </div>
         )}
@@ -155,7 +173,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Portada */}
         <div className="form-group">
           <label className="form-label" htmlFor="create-cover">
-            Portada de la fiesta
+            Portada de la fiesta  <span style={{ color: '#e74c3c' }}>*</span>
           </label>
           <input
             ref={fileInputRef}
@@ -165,6 +183,7 @@ export default function CreateFiestaPage({ onNavigate }) {
             accept="image/*"
             onChange={(e) => setCoverImage(e.target.files?.[0] || null)}
             disabled={loading}
+            required
           />
           <button 
             id="create-cover"
@@ -187,7 +206,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Descripción */}
         <div className="form-group">
           <label className="form-label" htmlFor="create-description">
-            Descripción
+            Descripción  <span style={{ color: '#e74c3c' }}>*</span>
           </label>
           <input 
             id="create-description" 
@@ -196,6 +215,7 @@ export default function CreateFiestaPage({ onNavigate }) {
             value={form.description} 
             onChange={e => set('description', e.target.value)} 
             disabled={loading}
+            required
           />
         </div>
 
@@ -226,7 +246,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Fechas */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
           <div className="form-group">
-            <label className="form-label" htmlFor="create-start">Fecha de inicio</label>
+            <label className="form-label" htmlFor="create-start">Fecha de inicio  <span style={{ color: '#e74c3c' }}>*</span></label>
             <input 
               id="create-start" 
               className="form-input" 
@@ -235,6 +255,8 @@ export default function CreateFiestaPage({ onNavigate }) {
               value={form.startDate} 
               onChange={e => set('startDate', e.target.value)} 
               disabled={loading}
+              required
+
             />
           </div>
           <div className="form-group">
@@ -273,6 +295,7 @@ export default function CreateFiestaPage({ onNavigate }) {
               value={form.country} 
               onChange={e => set('country', e.target.value)} 
               disabled={loading}
+
             />
           </div>
         </div>
