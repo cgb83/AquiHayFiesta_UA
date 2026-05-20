@@ -2,6 +2,17 @@ const Fiesta = require('../models/Fiesta');
 const Publication = require('../models/Publication');
 const ALLOWED_CATEGORIES = ['amor', 'noche', 'disfraces', 'familia', 'musica', 'gastronomia'];
 
+function accentInsensitiveRegex(str) {
+  const escaped = str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return escaped
+    .replace(/[aá]/gi, '[aá]')
+    .replace(/[eé]/gi, '[eé]')
+    .replace(/[ií]/gi, '[ií]')
+    .replace(/[oó]/gi, '[oó]')
+    .replace(/[uúü]/gi, '[uúü]')
+    .replace(/[nñ]/gi, '[nñ]');
+}
+
 const getFiestas = async (req, res) => {
   try {
     const { category, search, featured, upcoming } = req.query;
@@ -10,9 +21,12 @@ const getFiestas = async (req, res) => {
     if (featured === 'true') filter.featured = true;
     if (upcoming === 'true') filter.upcoming = true;
     if (search) {
+      const r = accentInsensitiveRegex(search);
       const searchFilter = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } },
+        { title:        { $regex: r, $options: 'i' } },
+        { description:  { $regex: r, $options: 'i' } },
+        { subcategories:{ $regex: r, $options: 'i' } },
+        { categories:   { $regex: r, $options: 'i' } },
       ];
       if (filter.$or) {
         filter.$and = [{ $or: filter.$or }, { $or: searchFilter }];
@@ -77,7 +91,25 @@ const updateFiesta = async (req, res) => {
       return res.status(403).json({ success: false, message: 'No tienes permiso para editar esta fiesta.' });
     }
 
-    const updatedFiesta = await Fiesta.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const { title, description, startDate, endDate, location, categories, subcategories } = req.body;
+    const allowedUpdate = {};
+    if (title !== undefined) allowedUpdate.title = title;
+    if (description !== undefined) allowedUpdate.description = description;
+    if (startDate !== undefined) allowedUpdate.startDate = startDate || null;
+    if (endDate !== undefined) allowedUpdate.endDate = endDate || null;
+    if (location !== undefined) allowedUpdate.location = location;
+    if (subcategories !== undefined) allowedUpdate.subcategories = subcategories;
+    if (categories !== undefined) {
+      const safe = Array.from(new Set(
+        (Array.isArray(categories) ? categories : [categories]).filter(c => ALLOWED_CATEGORIES.includes(c))
+      ));
+      if (safe.length > 0) {
+        allowedUpdate.categories = safe;
+        allowedUpdate.category = safe[0];
+      }
+    }
+
+    const updatedFiesta = await Fiesta.findByIdAndUpdate(req.params.id, allowedUpdate, { new: true, runValidators: true });
     res.json({ success: true, message: 'Fiesta actualizada.', fiesta: updatedFiesta });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error al actualizar la fiesta.' });

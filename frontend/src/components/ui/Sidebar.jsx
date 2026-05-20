@@ -14,8 +14,7 @@ export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
 
   const upcoming = fiestas
     .filter((f) => {
-      if (f.upcoming) return true;
-      if (!f.date) return false;
+      if (!f.date) return Boolean(f.upcoming);
       const eventDate = new Date(`${f.date}T00:00:00`);
       return !Number.isNaN(eventDate.getTime()) && eventDate >= today;
     })

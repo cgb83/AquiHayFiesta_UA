@@ -127,19 +127,14 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
   if (!fiesta && fiestaLoading) return <div className="page-content" style={{ minHeight: '60vh' }}><SkeletonContent /></div>;
 
   const forceDownload = (url) => {
-    if (url.includes('/raw/upload/')) {
-      return url.replace('/raw/upload/', '/raw/upload/fl_attachment/');
-    }
-    return url;
+    return url.replace(/\/(image|video|raw)\/upload\//, '/$1/upload/fl_attachment/');
   };
-  
+
   const handleDownload = async (item) => {
     try {
       if (item.fromApi) {
         const response = await registerDownload(item.id);
-        console.log('registerDownload response:', response); // ← añade esto
         const url = forceDownload(resolveMediaUrl(response.fileUrl || item.fileUrl));
-        console.log('URL final:', url); // ← y esto
 
         const anchor = document.createElement('a');
         anchor.href = url;
@@ -176,7 +171,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
         anchor.remove();
       }
     } catch (error) {
-      setContentError(error.message || 'No se pudo registrar la descarga.');
+      throw new Error(error.message || 'No se pudo descargar el contenido.');
     }
   };
 
@@ -205,6 +200,14 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
 
   return (
     <>
+      <button
+        onClick={() => window.history.back()}
+        className="btn btn-outline"
+        style={{ marginBottom: 'var(--space-md)', fontSize: '0.85rem', padding: '6px 14px' }}
+        aria-label="Volver a la página anterior"
+      >
+        ← Volver
+      </button>
       <div className="content-grid fiesta-layout">
         {/* Mobile: Title || Calendar || Categories in parallel */}
         <div className="fiesta-mobile-main">

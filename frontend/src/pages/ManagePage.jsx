@@ -341,7 +341,15 @@ export default function ManagePage({ onNavigate }) {
 
       {fiestaLoading && <p className="text-muted">Cargando fiestas...</p>}
       {!fiestaLoading && myFiestas.length === 0 && (
-        <p className="text-muted" style={{ marginBottom: 'var(--space-xl)' }}>Todavía no has creado ninguna fiesta.</p>
+        <div style={{ marginBottom: 'var(--space-xl)', display: 'flex', alignItems: 'center', gap: 'var(--space-md)', flexWrap: 'wrap' }}>
+          <p className="text-muted">{isAdmin ? 'No hay fiestas en la plataforma.' : 'Todavía no has creado ninguna fiesta.'}</p>
+          {!isAdmin && onNavigate && (
+            <button className="btn btn-primary" style={{ fontSize: '0.85rem', padding: '6px 16px' }}
+              onClick={() => onNavigate('create-fiesta')}>
+              ⊕ Crear mi primera fiesta
+            </button>
+          )}
+        </div>
       )}
 
       {myFiestas.length > 0 && (

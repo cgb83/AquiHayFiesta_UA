@@ -10,6 +10,7 @@ export default function LoginPage({ onNavigate }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showForgotMsg, setShowForgotMsg] = useState(false);
 
   const handleLogin = async () => {
     const emailValue = email.trim().toLowerCase();
@@ -83,7 +84,20 @@ export default function LoginPage({ onNavigate }) {
         </form>
 
         <div className="auth-links mt-md">
-          <p><button className="auth-link" onClick={() => {}}>¿Has olvidado tu contraseña?</button></p>
+          <p>
+            <button className="auth-link" onClick={() => setShowForgotMsg(v => !v)}>
+              ¿Has olvidado tu contraseña?
+            </button>
+          </p>
+          {showForgotMsg && (
+            <p style={{ fontSize: '0.82rem', color: 'var(--color-text-soft)', marginTop: 6, textAlign: 'center' }}>
+              Escríbenos a{' '}
+              <a href="mailto:info@aquihayfiesta.es" style={{ color: 'var(--color-primary)' }}>
+                info@aquihayfiesta.es
+              </a>{' '}
+              y te ayudamos a recuperarla.
+            </p>
+          )}
           <p style={{ marginTop: 6 }}>
             ¿No tienes cuenta?{' '}
             <button className="auth-link" onClick={() => onNavigate('register')}>Regístrate</button>

@@ -51,8 +51,19 @@ export default function SavedPage({ onNavigate }) {
           <div className="featured-categories-row mb-lg">
             {/* Guardados section */}
             <div className="featured-section">
-              {filtered.length === 0 && (
-                <p style={{ color: 'var(--color-muted)' }}>No tienes elementos guardados.</p>
+              {saved.length === 0 && (
+                <div style={{ textAlign: 'center', padding: 'var(--space-xl) 0' }}>
+                  <div style={{ fontSize: '2.5rem', marginBottom: 'var(--space-md)' }}>🤍</div>
+                  <p style={{ color: 'var(--color-muted)', marginBottom: 'var(--space-md)' }}>
+                    Aún no has guardado ninguna fiesta.
+                  </p>
+                  <button className="btn btn-primary" onClick={() => onNavigate('home')}>
+                    Explorar fiestas
+                  </button>
+                </div>
+              )}
+              {saved.length > 0 && filtered.length === 0 && (
+                <p style={{ color: 'var(--color-muted)' }}>No hay guardados en esta categoría.</p>
               )}
 
               <div className="card-list">

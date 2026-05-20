@@ -22,6 +22,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
   const [searchResults, setSearchResults] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [showAllCategories, setShowAllCategories] = useState(false);
+  const [searchPage, setSearchPage] = useState(10);
 
   useEffect(() => {
     const query = searchQuery.trim();
@@ -47,6 +48,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
             results = results.filter(f => f.category === categoryFilter);
           }
           setSearchResults(results);
+          setSearchPage(10);
         } catch {
           setSearchResults([]);
         } finally {
@@ -71,7 +73,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
   const displayedCategories = showAllCategories ? categories : categories.slice(0, 4);
 
   const featured = useMemo(
-    () => [...recommendationSource].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5),
+    () => [...recommendationSource].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 4),
     [recommendationSource]
   );
 
@@ -86,8 +88,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
     today.setHours(0, 0, 0, 0);
     return recommendationSource
       .filter((f) => {
-        if (f.upcoming) return true;
-        if (!f.date) return false;
+        if (!f.date) return Boolean(f.upcoming);
         const eventDate = new Date(`${f.date}T00:00:00`);
         return !Number.isNaN(eventDate.getTime()) && eventDate >= today;
       })
@@ -132,14 +133,14 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
               {!searchLoading && searchResults.length === 0 && (
                 <p style={{ color: 'var(--color-muted)' }}>No hay resultados con tu busqueda.</p>
               )}
-              <div className="card-list">
-                {searchResults.map(f => (
-                  <div key={f.id} className="card-item"
+              <div className="card-grid">
+                {searchResults.slice(0, searchPage).map(f => (
+                  <div key={f.id} className="card-grid-item"
                     role="button" tabIndex={0}
                     onClick={() => onNavigate('fiesta', f.slug)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
                     <img
-                      className="card-thumb"
+                      className="card-grid-thumb"
                       src={f.image}
                       alt={f.title}
                       onError={(e) => {
@@ -147,13 +148,22 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
                         e.currentTarget.src = DEFAULT_FIESTA_IMAGE;
                       }}
                     />
-                    <div className="card-info">
+                    <div className="card-grid-info">
                       <div className="card-title">{f.title}</div>
                       <div className="card-views">{formatViews(f.views)}</div>
                     </div>
                   </div>
                 ))}
               </div>
+              {searchResults.length > searchPage && (
+                <button
+                  className="btn btn-outline"
+                  style={{ marginTop: 'var(--space-md)', fontSize: '0.85rem' }}
+                  onClick={() => setSearchPage(p => p + 10)}
+                >
+                  Ver más ({searchResults.length - searchPage} resultados más)
+                </button>
+              )}
             </div>
           )}
 
@@ -163,14 +173,14 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
             <div className="featured-section">
               <h3 className="section-title">Destacado</h3>
               {fiestasLoading && <p style={{ color: 'var(--color-muted)' }}>Cargando fiestas...</p>}
-              <div className="card-list">
+              <div className="card-grid">
                 {featured.map(f => (
-                  <div key={f.id} className="card-item"
+                  <div key={f.id} className="card-grid-item"
                     role="button" tabIndex={0}
                     onClick={() => onNavigate('fiesta', f.slug)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
                     <img
-                      className="card-thumb"
+                      className="card-grid-thumb"
                       src={f.image}
                       alt={f.title}
                       onError={(e) => {
@@ -178,7 +188,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
                         e.currentTarget.src = DEFAULT_FIESTA_IMAGE;
                       }}
                     />
-                    <div className="card-info">
+                    <div className="card-grid-info">
                       <div className="card-title">{f.title}</div>
                       <div className="card-views">{formatViews(f.views)}</div>
                     </div>
