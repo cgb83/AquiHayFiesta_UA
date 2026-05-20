@@ -6,6 +6,12 @@ export const CATEGORIES = [
   { id: 'familia',   label: 'Familia' },
   { id: 'musica',    label: 'Música' },
   { id: 'gastronomia', label: 'Gastronomía' },
+  { id: 'deporte',   label: 'Deporte' },
+  { id: 'infantil',  label: 'Infantil' },
+  { id: 'bodas',     label: 'Bodas' },
+  { id: 'negocios',  label: 'Negocios' },
+  { id: 'cultural',  label: 'Cultural' },
+  { id: 'religiosa', label: 'Religiosa' },
 ];
 
 // ── Fiestas ──────────────────────────────────────────────────────

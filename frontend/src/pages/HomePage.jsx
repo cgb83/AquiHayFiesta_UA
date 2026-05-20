@@ -195,7 +195,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
                   <button
                     key={c.id}
                     className="sidebar-cat-item"
-                    onClick={() => onNavigate?.('category', c.id)}
+                    onClick={() => onNavigate?.('home', `cat:${c.id}`)}
                   >
                     {c.label}
                   </button>

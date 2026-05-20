@@ -26,6 +26,11 @@ export default function SearchBar({ onSearch, onCategory, searchQuery = '', cate
     onCategory?.(newCat);
   };
 
+  const clearCategory = () => {
+    setCat('');
+    onCategory?.('');
+  };
+
   return (
     <div className="search-row">
       <div className="search-input-wrap">
@@ -38,13 +43,26 @@ export default function SearchBar({ onSearch, onCategory, searchQuery = '', cate
           onChange={handleSearch}
         />
       </div>
-      <label className="sr-only" htmlFor="category-select">Filtrar por categoria</label>
-      <select id="category-select" className="category-select" value={cat} onChange={handleCat}>
-        <option value="">Categoría ▾</option>
-        {categories.map(c => (
-          <option key={c.id} value={c.id}>{c.label}</option>
-        ))}
-      </select>
+      <div className="search-category-wrap">
+        <label className="sr-only" htmlFor="category-select">Filtrar por categoria</label>
+        <select id="category-select" className="category-select" value={cat} onChange={handleCat}>
+          <option value="">Categoría ▾</option>
+          {categories.map(c => (
+            <option key={c.id} value={c.id}>{c.label}</option>
+          ))}
+        </select>
+        {cat && (
+          <button 
+            className="clear-category-btn" 
+            onClick={clearCategory}
+            title="Limpiar categoría"
+            type="button"
+            aria-label="Limpiar filtro de categoría"
+          >
+            ✕
+          </button>
+        )}
+      </div>
     </div>
   );
 }

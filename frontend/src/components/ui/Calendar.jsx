@@ -19,21 +19,41 @@ function isSameDate(a, b) {
   );
 }
 
+function isDateInRange(date, startDate, endDate) {
+  if (!startDate) return false;
+  if (!endDate) return isSameDate(date, startDate);
+  return date >= startDate && date <= endDate;
+}
+
 export default function Calendar({ fiesta }) {
-  const fiestaDate = useMemo(() => parseIsoDateToLocal(fiesta?.date), [fiesta?.date]);
+  const startDate = useMemo(() => parseIsoDateToLocal(fiesta?.startDate), [fiesta?.startDate]);
+  const endDate = useMemo(() => parseIsoDateToLocal(fiesta?.endDate), [fiesta?.endDate]);
+  const fiestaDate = startDate || useMemo(() => parseIsoDateToLocal(fiesta?.date), [fiesta?.date]);
   const [activeMonth, setActiveMonth] = useState(fiestaDate || new Date());
 
   const longDate = useMemo(() => {
     if (!fiestaDate) return '';
+    if (startDate && endDate && !isSameDate(startDate, endDate)) {
+      const start = new Intl.DateTimeFormat('es-ES', {
+        day: 'numeric',
+        month: 'long',
+      }).format(startDate);
+      const end = new Intl.DateTimeFormat('es-ES', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }).format(endDate);
+      return start + ' - ' + end;
+    }
     return new Intl.DateTimeFormat('es-ES', {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
       year: 'numeric',
     }).format(fiestaDate);
-  }, [fiestaDate]);
+  }, [fiestaDate, startDate, endDate]);
 
-  if (!fiesta?.date) {
+  if (!fiesta?.startDate && !fiesta?.date) {
     return (
       <div className="calendar-card">
         <div className="calendar-topbar">
@@ -62,7 +82,9 @@ export default function Calendar({ fiesta }) {
           next2Label={null}
           prev2Label={null}
           tileClassName={({ date, view }) => {
-            if (view === 'month' && isSameDate(date, fiestaDate)) return 'event-day';
+            if (view === 'month') {
+              if (isDateInRange(date, startDate, endDate)) return 'event-day';
+            }
             return null;
           }}
           onActiveStartDateChange={({ activeStartDate }) => {
@@ -73,7 +95,7 @@ export default function Calendar({ fiesta }) {
 
       <div className="calendar-legend">
         <span className="legend-dot" aria-hidden="true" />
-        <span>Fecha principal de la fiesta</span>
+        <span>{endDate && !isSameDate(startDate, endDate) ? 'Rango de la fiesta' : 'Fecha principal de la fiesta'}</span>
       </div>
     </div>
   );
