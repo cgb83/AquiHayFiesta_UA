@@ -7,16 +7,24 @@ export function Hero() {
   );
 }
 
-export function Footer() {
+export function Footer({ onNavigate }) {
   return (
     <footer className="footer">
       <span>© AquiHayFiesta 2026</span>
-      <a href="mailto:contacto@aquihayfiesta.es" className="footer-link">
-         Contacto
-      </a>
-      <a href="#privacy" className="footer-link">
-         Privacidad
-      </a>
+      <button 
+        type="button"
+        className="footer-link"
+        onClick={() => onNavigate?.('contact')}
+      >
+        Contacto
+      </button>
+      <button 
+        type="button"
+        className="footer-link"
+        onClick={() => onNavigate?.('privacy')}
+      >
+        Privacidad
+      </button>
     </footer>
   );
 }

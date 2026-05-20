@@ -1,22 +1,23 @@
 /* Skeleton Shimmer Effect */
 @keyframes shimmer {
   0% {
-    background-position: -1000px 0;
+    background-position: -200% center;
   }
   100% {
-    background-position: 1000px 0;
+    background-position: 200% center;
   }
 }
 
 .skeleton {
   background: linear-gradient(
-    to right,
-    var(--color-primary-pale) 0%,
-    #e8e2e8 20%,
-    var(--color-primary-pale) 40%
+    90deg,
+    #e8c8d0 0%,
+    #d4a8b5 25%,
+    #e8c8d0 50%,
+    #e8c8d0 100%
   );
-  background-size: 1000px 100%;
-  animation: shimmer 2s infinite;
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite;
   border-radius: var(--radius-sm);
 }
 
@@ -24,22 +25,23 @@
   width: 100%;
   aspect-ratio: 1;
   margin-bottom: var(--space-sm);
+  min-height: 120px;
 }
 
 .skeleton-title {
-  height: 14px;
+  height: 16px;
   margin-bottom: var(--space-xs);
   width: 80%;
 }
 
 .skeleton-subtitle {
-  height: 12px;
+  height: 14px;
   width: 50%;
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 .skeleton-section-title {
-  height: 20px;
+  height: 24px;
   width: 120px;
   margin-bottom: var(--space-md);
   font-size: 0.95rem;
@@ -57,6 +59,11 @@
 @keyframes fadeIn {
   from {
     opacity: 0.7;
+  }
+  to {
+    opacity: 1;
+  }
+}
   }
   to {
     opacity: 1;

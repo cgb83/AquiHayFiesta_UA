@@ -14,11 +14,13 @@ import CreateFiestaPage from './pages/CreateFiestaPage';
 import ProfilePage     from './pages/ProfilePage';
 import LoginPage       from './pages/LoginPage';
 import RegisterPage    from './pages/RegisterPage';
+import ContactPage     from './pages/ContactPage';
+import PrivacyPage     from './pages/PrivacyPage';
 
 import './styles/globals.css';
 
 // Pages that show the hero+searchbar shell
-const SHELL_PAGES = ['home', 'fiesta', 'category', 'saved', 'manage', 'create-fiesta', 'profile'];
+const SHELL_PAGES = ['home', 'fiesta', 'category', 'saved', 'manage', 'create-fiesta', 'profile', 'contact', 'privacy'];
 
 function AppInner() {
   const { user } = useApp();
@@ -110,7 +112,7 @@ function AppInner() {
         {isShell && (
           <div className="page-content">
             {/* SearchBar shown on most pages except manage, create-fiesta & profile */}
-            {!['manage', 'create-fiesta', 'profile'].includes(route.page) && (
+            {!['manage', 'create-fiesta', 'profile', 'contact', 'privacy'].includes(route.page) && (
               <SearchBar
                 key={route.page}
                 searchQuery={searchQuery}
@@ -127,12 +129,14 @@ function AppInner() {
             {route.page === 'manage'        && <ManagePage   onNavigate={navigate} />}
             {route.page === 'create-fiesta' && <CreateFiestaPage onNavigate={navigate} />}
             {route.page === 'profile'       && <ProfilePage />}
+            {route.page === 'contact'       && <ContactPage />}
+            {route.page === 'privacy'       && <PrivacyPage />}
           </div>
         )}
       </main>
 
       {/* Footer on all shell pages */}
-      {isShell && <Footer />}
+      {isShell && <Footer onNavigate={navigate} />}
 
       {authModal && (
         <div className="auth-modal-overlay" onClick={closeAuthModal}>

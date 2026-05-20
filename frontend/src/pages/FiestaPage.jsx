@@ -25,12 +25,13 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
   const [activeViewer, setActiveViewer] = useState(null); // { item, type }
   const [showPublish, setShowPublish] = useState(false);
   const [content, setContent] = useState({ videos: [], images: [], documents: [], audios: [] });
-  const [contentLoading, setContentLoading] = useState(false);
+  const [contentLoading, setContentLoading] = useState(true);
   const [contentError, setContentError] = useState('');
   const [fiestaDetail, setFiestaDetail] = useState(null);
+  const [fiestaLoading, setFiestaLoading] = useState(true);
   const lastDetailSlugRef = useRef(null);
 
-  const fiesta = fiestaDetail || fiestas.find(f => f.slug === slug);
+  const fiesta = fiestaDetail;
 
   // Filtrar contenido basado en searchQuery
   const filteredContent = useMemo(() => {
@@ -47,6 +48,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
 
   const loadFiestaDetail = useCallback(async () => {
     try {
+      setFiestaLoading(true);
       const response = await fetchFiestaBySlug(slug);
       if (!response?.fiesta) return;
 
@@ -64,7 +66,9 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
         location: data.location?.city || data.location?.country || null,
       });
     } catch {
-      // Keep fallback from context list.
+      // API error
+    } finally {
+      setFiestaLoading(false);
     }
   }, [slug]);
 
@@ -119,7 +123,8 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
     return shuffled.slice(0, 3);
   }, [fiestas, slug]);
 
-  if (!fiesta) return <div className="page-content"><p>Fiesta no encontrada.</p></div>;
+  if (!fiesta && !fiestaLoading) return <div className="page-content"><p>Fiesta no encontrada.</p></div>;
+  if (!fiesta && fiestaLoading) return <div className="page-content" style={{ minHeight: '60vh' }}><SkeletonContent /></div>;
 
   const forceDownload = (url) => {
     if (url.includes('/raw/upload/')) {
@@ -271,9 +276,10 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
           <div className="flex-between mb-md">
             <h3 className="section-title" style={{ marginBottom: 0, borderBottom: 'none' }}>Contenido</h3>
             {user && (
-              <button className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '6px 14px' }}
+              <button className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '6px 14px', marginLeft: '10px' }}
                 onClick={() => setShowPublish(true)}>
                 ⊕ Publicar
+                
               </button>
             )}
           </div>
@@ -294,25 +300,25 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                 </div>
               )}
 
-          {/* Images carousel */}
-          {filteredContent.images.length > 0 && (
-            <div className="mb-lg">
-              <div className="section-subtitle">Imágenes</div>
-              <div className="media-grid">
-                {filteredContent.images.map(item => <MediaThumb key={item.id} item={item} type="image" />)}
-              </div>
-            </div>
-          )}
+              {/* Images carousel */}
+              {filteredContent.images.length > 0 && (
+                <div className="mb-lg">
+                  <div className="section-subtitle">Imágenes</div>
+                  <div className="media-grid">
+                    {filteredContent.images.map(item => <MediaThumb key={item.id} item={item} type="image" />)}
+                  </div>
+                </div>
+              )}
 
-          {/* Documents carousel */}
-          {filteredContent.documents.length > 0 && (
-            <div className="mb-lg">
-              <div className="section-subtitle">Documentos</div>
-              <div className="media-grid">
-                {filteredContent.documents.map(item => <MediaThumb key={item.id} item={item} type="document" />)}
-              </div>
-            </div>
-          )}
+              {/* Documents carousel */}
+              {filteredContent.documents.length > 0 && (
+                <div className="mb-lg">
+                  <div className="section-subtitle">Documentos</div>
+                  <div className="media-grid">
+                    {filteredContent.documents.map(item => <MediaThumb key={item.id} item={item} type="document" />)}
+                  </div>
+                </div>
+              )}
 
               {/* Audios carousel */}
               {filteredContent.audios.length > 0 && (

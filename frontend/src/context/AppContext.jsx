@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { CATEGORIES, FIESTAS } from '../data/mockData';
+import { CATEGORIES } from '../data/mockData';
 import { fetchFiestas, fetchMe, resolveMediaUrl, toggleSaveFiesta } from '../services/api';
 
 const AppContext = createContext(null);
@@ -46,7 +46,7 @@ export function AppProvider({ children }) {
   const [lang, setLang] = useState(() => localStorage.getItem(STORAGE_KEYS.lang) || 'ES');
   const [theme, setTheme] = useState(() => localStorage.getItem(STORAGE_KEYS.theme) || 'standard');
   const [savedItems, setSavedItems] = useState(() => parseJSON(STORAGE_KEYS.savedItems, []));
-  const [fiestas, setFiestas] = useState(FIESTAS);
+  const [fiestas, setFiestas] = useState([]);
   const [fiestasLoading, setFiestasLoading] = useState(false);
   const [fiestasError, setFiestasError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
@@ -169,11 +169,11 @@ export function AppProvider({ children }) {
       if (Array.isArray(response.fiestas) && response.fiestas.length > 0) {
         setFiestas(response.fiestas.map(normalizeFiesta));
       } else {
-        setFiestas(FIESTAS);
+        setFiestas([]);
       }
     } catch {
-      setFiestas(FIESTAS);
-      setFiestasError('No se pudo cargar la API. Mostrando datos locales.');
+      setFiestas([]);
+      setFiestasError('No se pudo cargar la API.');
     } finally {
       setFiestasLoading(false);
     }

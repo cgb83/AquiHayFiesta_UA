@@ -52,8 +52,10 @@ const uploadToCloudinary = (req, res, next) => {
       folder: 'aquihayfiesta_ua',
       resource_type: resourceType,
       public_id: `${req.file.fieldname}-${Date.now()}`,
+      type: 'upload',        // ← añade esto
+      access_mode: 'public', // ← y esto
       // Parámetros extra para PDFs
-      ...(resourceType === 'raw' && { format: 'pdf' }),
+      //...(resourceType === 'raw' && { format: 'pdf' }),
     },
     (error, result) => {
       if (error) {
