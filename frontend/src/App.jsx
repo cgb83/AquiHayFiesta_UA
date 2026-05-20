@@ -26,7 +26,16 @@ function AppInner() {
   const [route, setRoute] = useState(() => {
     try {
       const saved = sessionStorage.getItem('ahf_route');
-      return saved ? JSON.parse(saved) : { page: 'home', param: null };
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const protectedPages = ['saved', 'manage', 'create-fiesta', 'profile'];
+        const user = JSON.parse(localStorage.getItem('ahf_user'));
+        if (protectedPages.includes(parsed.page) && !user) {
+          return { page: 'home', param: null };
+        }
+        return parsed;
+      }
+      return { page: 'home', param: null };
     } catch {
       return { page: 'home', param: null };
     }
