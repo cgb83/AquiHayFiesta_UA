@@ -838,7 +838,6 @@ select:focus-visible {
   color: var(--color-text);
   margin-bottom: var(--space-md);
   padding-bottom: var(--space-sm);
-  border-bottom: 1px solid rgba(232, 200, 208, 0.9);
 }
 
 @media (max-width: 768px) {
@@ -1179,15 +1178,15 @@ select:focus-visible {
   }
 
   .no-perder-acerca-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-md);
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
   }
 
   .no-perder-section,
   .acerca-section {
     min-width: 0;
+    width: 100%;
   }
 }
 
@@ -2689,9 +2688,6 @@ textarea:focus-visible {
 
 .description-calendar-row {
   display: contents;
-}
-
-.description-section {
 }
 
 .calendar-section {
