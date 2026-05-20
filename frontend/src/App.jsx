@@ -23,7 +23,14 @@ const SHELL_PAGES = ['home', 'fiesta', 'category', 'saved', 'manage', 'create-fi
 function AppInner() {
   const { user } = useApp();
   // route = { page, param } e.g. { page: 'fiesta', param: 'san-valentin' }
-  const [route, setRoute] = useState({ page: 'home', param: null });
+  const [route, setRoute] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('ahf_route');
+      return saved ? JSON.parse(saved) : { page: 'home', param: null };
+    } catch {
+      return { page: 'home', param: null };
+    }
+  });
   const [authModal, setAuthModal] = useState(null); // 'login' | 'register' | null
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -54,6 +61,8 @@ function AppInner() {
     if (page !== 'home') {
       setSearchQuery('');
     }
+    const newRoute = { page, param };
+    sessionStorage.setItem('ahf_route', JSON.stringify(newRoute));
     setRoute({ page, param });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
