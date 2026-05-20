@@ -50,13 +50,102 @@
 
 /* Dark Mode */
 [data-theme="dark"] {
-  --color-bg:         #ffffff;
-  --color-surface:    #2d1a22;
-  --color-text:       #f5dde3;
-  --color-text-soft:  #c4909a;
-  --color-border:     #4a2535;
-  --color-primary-pale: #3d1a26;
-  --color-hero-bg:    #3d1a26;
+  --color-bg:            #1a0a0f;
+  --color-surface:       #2d1a22;
+  --color-primary:       #c47a8a;
+  --color-primary-light: #e8a0b0;
+  --color-primary-pale:  #3d1a26;
+  --color-accent:        #e8738a;
+  --color-muted:         #8a6070;
+  --color-text:          #f5dde3;
+  --color-text-soft:     #c4909a;
+  --color-border:        #c4909a;
+  --color-hero-bg:       #3d1a26;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,.30);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.40);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.50);
+}
+
+[data-theme="dark"] .form-input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: #2d1a22;
+  color: #f5dde3;
+  border-color: #4a2535;
+}
+
+[data-theme="dark"] .form-input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: #8a6070;
+}
+
+[data-theme="dark"] .hero {
+  background: #3d1a26;
+}
+
+[data-theme="dark"] .navbar {
+  background: #2d1a22;
+  border-bottom-color: #4a2535;
+}
+
+[data-theme="dark"] .manage-fiesta-item .manage-fiesta-title,
+[data-theme="dark"] .manage-fiesta-item div {
+  color: #f5dde3;
+}
+
+[data-theme="dark"] .btn-outline {
+  color: #f5dde3;
+  background: var(--color-primary-pale);
+  box-shadow: #f5dde3;
+}
+
+[data-theme="dark"] .btn-outline:hover {
+  background: var(--color-primary);
+  color: #f5dde3;
+}
+
+[data-theme="dark"] .btn-danger {
+  color: #f5dde3;
+  background-color: #d82121;
+  border-color: #d82121;
+}
+
+[data-theme="dark"] .btn-danger:hover {
+  background-color: #630e0e;
+  border-color: #630e0e;
+}
+
+[data-theme="dark"] .dropdown-trigger {
+  color: #f5dde3;
+}
+
+[data-theme="dark"] .dropdown-menu {
+  background: #2d1a22;
+  border-color: #4a2535;
+}
+
+[data-theme="dark"] .dropdown-item {
+  color: #f5dde3;
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+  color: #3d1a26;
+  background: #f5dde3;
+}
+
+[data-theme="dark"] .dropdown-item.danger {
+  color: #f5dde3;
+  background-color: #3d1a26;
+}
+
+[data-theme="dark"] .dropdown-item.danger:hover {
+  background-color: #d82121;
+}
+
+[data-theme="dark"] .category-pill.is-active {
+  background: #7d3048;
+  border-color: #c47a8a;
+  color: #f5dde3;
 }
 
 /* High contrast */
@@ -197,7 +286,7 @@ select:focus-visible {
 
 /* ─── Hero Banner ───────────────────────────────────────────── */
 .hero {
-  background: #e8b4be;
+  background: var(--color-hero-bg);
   height: var(--hero-height);
   display: flex;
   flex-direction: column;
@@ -240,7 +329,7 @@ select:focus-visible {
 /* ─── Navigation ────────────────────────────────────────────── */
 .navbar {
   height: var(--nav-height);
-  background: #ffffff;
+  background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
@@ -421,13 +510,13 @@ select:focus-visible {
   padding: var(--space-sm);
   border-radius: var(--radius-md);
   border: 1px solid transparent;
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--color-surface);
   cursor: pointer;
   transition: background var(--transition), transform var(--transition), border-color var(--transition), box-shadow var(--transition);
 }
 
 .card-item:hover {
-  background: #fff;
+  background: var(--color-primary-pale);
   border-color: var(--color-border);
   transform: translateX(4px) translateY(-1px);
   box-shadow: var(--shadow-sm);
@@ -1083,7 +1172,7 @@ select:focus-visible {
   font-size: 0.84rem;
   font-weight: 600;
   color: var(--color-text-soft);
-  background: #fff;
+  background: var(--color-surface);
   transition: all var(--transition);
 }
 

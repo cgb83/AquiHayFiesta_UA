@@ -370,7 +370,7 @@ export default function ManagePage({ onNavigate }) {
                   onClick={() => setEditFiesta(f)}>
                   Editar
                 </button>
-                <button className="btn btn-outline" style={{ fontSize: '0.78rem', padding: '4px 10px', color: '#c0392b', borderColor: '#c0392b' }}
+                <button className="btn btn-outline btn-danger" style={{ fontSize: '0.78rem', padding: '4px 10px' }}
                   onClick={() => handleDeleteFiesta(f.id)}>
                   Borrar
                 </button>

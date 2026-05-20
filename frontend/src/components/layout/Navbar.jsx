@@ -106,7 +106,7 @@ export default function Navbar({ onNavigate, currentPage }) {
               {lang} <span style={{ fontSize: '0.7rem' }}>▼</span>
               <span style={{
                 fontSize: '1rem',
-                filter: 'grayscale(100%) brightness(0%)'
+                filter: 'none'
               }}>
                 🌐
               </span>
