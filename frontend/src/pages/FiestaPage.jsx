@@ -20,6 +20,12 @@ function AudioWave() {
     </div>
   );
 }
+
+function getFileExt(fileName) {
+  if (!fileName) return 'DOC';
+  const ext = fileName.split('.').pop().toUpperCase();
+  return ext.length <= 4 ? ext : 'DOC';
+}
 export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
   const { user, fiestas, toggleSave, isSaved } = useApp();
   const [activeViewer, setActiveViewer] = useState(null); // { item, type }
@@ -132,24 +138,26 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
   if (!fiesta && !fiestaLoading) return <div className="page-content"><p>Fiesta no encontrada.</p></div>;
   if (!fiesta && fiestaLoading) return <div className="page-content" style={{ minHeight: '60vh' }}><SkeletonContent /></div>;
 
-  const forceDownload = (url) => {
-    return url.replace(/\/(image|video|raw)\/upload\//, '/$1/upload/fl_attachment/');
+  const downloadBlob = async (url, fileName) => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('No se pudo descargar el archivo');
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = blobUrl;
+    anchor.download = fileName || 'archivo';
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
   };
 
   const handleDownload = async (item) => {
     try {
       if (item.fromApi) {
         const response = await registerDownload(item.id);
-        const url = forceDownload(resolveMediaUrl(response.fileUrl || item.fileUrl));
-
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.target = '_blank';
-        anchor.rel = 'noopener noreferrer';
-        document.body.appendChild(anchor);
-        anchor.click();
-        anchor.remove();
-  
+        const fileUrl = resolveMediaUrl(response.fileUrl || item.fileUrl);
+        await downloadBlob(fileUrl, item.fileName);
         setContent((prev) => {
           const updateType = (typeList) =>
             typeList.map((entry) =>
@@ -166,15 +174,8 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
         });
         return;
       }
-  
       if (item.fileUrl) {
-        const anchor = document.createElement('a');
-        anchor.href = forceDownload(item.fileUrl);
-        anchor.target = '_blank';
-        anchor.rel = 'noopener noreferrer';
-        document.body.appendChild(anchor);
-        anchor.click();
-        anchor.remove();
+        await downloadBlob(resolveMediaUrl(item.fileUrl), item.fileName);
       }
     } catch (error) {
       throw new Error(error.message || 'No se pudo descargar el contenido.');
@@ -312,22 +313,54 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                 </div>
               )}
 
-              {/* Documents carousel */}
+              {/* Documents — filas con badge + botón descargar */}
               {filteredContent.documents.length > 0 && (
                 <div className="mb-lg">
                   <div className="section-subtitle">Documentos</div>
-                  <div className="media-grid">
-                    {filteredContent.documents.map(item => <MediaThumb key={item.id} item={item} type="document" />)}
+                  <div className="doc-list">
+                    {filteredContent.documents.map(item => (
+                      <div key={item.id} className="doc-row">
+                        <div className="doc-row-icon" aria-hidden="true">
+                          <span className="doc-type-badge">{getFileExt(item.fileName)}</span>
+                        </div>
+                        <div className="doc-row-info" role="button" tabIndex={0}
+                          onClick={() => setActiveViewer({ item, type: 'document' })}
+                          onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveViewer({ item, type: 'document' }); } }}>
+                          <div className="doc-row-title">{item.title}</div>
+                          <div className="doc-row-meta">{formatDownloads(item.downloads || 0)}</div>
+                        </div>
+                        <button className="doc-row-download btn btn-outline"
+                          onClick={() => handleDownload(item)}
+                          aria-label={`Descargar ${item.title}`}>
+                          ⬇ Descargar
+                        </button>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
 
-              {/* Audios carousel */}
+              {/* Audios — filas tipo playlist */}
               {filteredContent.audios.length > 0 && (
                 <div className="mb-lg">
                   <div className="section-subtitle">Audios</div>
-                  <div className="media-grid">
-                    {filteredContent.audios.map(item => <MediaThumb key={item.id} item={item} type="audio" />)}
+                  <div className="audio-list">
+                    {filteredContent.audios.map(item => (
+                      <div key={item.id} className="audio-row" role="button" tabIndex={0}
+                        onClick={() => setActiveViewer({ item, type: 'audio' })}
+                        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveViewer({ item, type: 'audio' }); } }}>
+                        <div className="audio-row-wave" aria-hidden="true">
+                          <div className="audio-waveform">
+                            {[...Array(8)].map((_, i) => <span key={i} />)}
+                          </div>
+                        </div>
+                        <div className="audio-row-info">
+                          <div className="audio-row-title">{item.title}</div>
+                          <div className="audio-row-meta">{formatDownloads(item.downloads || 0)}</div>
+                        </div>
+                        <div className="audio-row-play" aria-hidden="true">▶</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}

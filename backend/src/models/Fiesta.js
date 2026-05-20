@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const ALLOWED_CATEGORIES = ['amor', 'noche', 'disfraces', 'familia', 'musica', 'gastronomia'];
+const ALLOWED_CATEGORIES = ['amor', 'noche', 'disfraces', 'familia', 'musica', 'gastronomia', 'deporte', 'infantil', 'bodas', 'negocios', 'cultural', 'religiosa'];
 
 const fiestaSchema = new mongoose.Schema(
   {
