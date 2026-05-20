@@ -200,29 +200,26 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
 
   return (
     <>
-      <button
-        onClick={() => window.history.back()}
-        className="btn btn-outline"
-        style={{ marginBottom: 'var(--space-md)', fontSize: '0.85rem', padding: '6px 14px' }}
-        aria-label="Volver a la página anterior"
-      >
-        ← Volver
-      </button>
       <div className="content-grid fiesta-layout">
         {/* Mobile: Title || Calendar || Categories in parallel */}
         <div className="fiesta-mobile-main">
           {/* Left: Title + Description + Date/Location */}
           <div className="fiesta-mobile-left">
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 12, marginBottom: 'var(--space-md)' }}>
-              {fiesta.title}
-              {user && (
-                <button className={`bookmark-btn ${isSaved(fiesta.id) ? 'saved' : ''}`}
-                  onClick={() => toggleSave(fiesta.id)}
-                  aria-label={isSaved(fiesta.id) ? 'Quitar de guardados' : 'Guardar fiesta'}>
-                  {isSaved(fiesta.id) ? '❤️' : '🤍'}
-                </button>
-              )}
-            </h1>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-md)' }}>
+              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 12, margin: 0 }}>
+                {fiesta.title}
+                {user && (
+                  <button className={`bookmark-btn ${isSaved(fiesta.id) ? 'saved' : ''}`}
+                    onClick={() => toggleSave(fiesta.id)}
+                    aria-label={isSaved(fiesta.id) ? 'Quitar de guardados' : 'Guardar fiesta'}>
+                    {isSaved(fiesta.id) ? '❤️' : '🤍'}
+                  </button>
+                )}
+              </h1>
+              <button onClick={() => onNavigate('home')} className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '5px 12px', flexShrink: 0, marginLeft: 'var(--space-md)' }} aria-label="Volver al inicio">
+                ← Volver
+              </button>
+            </div>
 
             <p style={{ marginTop: 8, fontSize: '0.92rem', color: 'var(--color-text-soft)' }}>
               {fiesta.description}
@@ -364,19 +361,20 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
         {/* Desktop layout */}
         <div className="fiesta-sidebar">
           {/* Header - Solo titulo */}
-          <div className="flex-between mb-md" style={{ alignItems: 'flex-start' }}>
-            <div style={{ flex: 1 }}>
-              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 12, marginBottom: 'var(--space-md)' }}>
-                {fiesta.title}
-                {user && (
-                  <button className={`bookmark-btn ${isSaved(fiesta.id) ? 'saved' : ''}`}
-                    onClick={() => toggleSave(fiesta.id)}
-                    aria-label={isSaved(fiesta.id) ? 'Quitar de guardados' : 'Guardar fiesta'}>
-                    {isSaved(fiesta.id) ? '❤️' : '🤍'}
-                  </button>
-                )}
-              </h1>
-            </div>
+          <div className="flex-between mb-md" style={{ alignItems: 'center' }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 12, margin: 0 }}>
+              {fiesta.title}
+              {user && (
+                <button className={`bookmark-btn ${isSaved(fiesta.id) ? 'saved' : ''}`}
+                  onClick={() => toggleSave(fiesta.id)}
+                  aria-label={isSaved(fiesta.id) ? 'Quitar de guardados' : 'Guardar fiesta'}>
+                  {isSaved(fiesta.id) ? '❤️' : '🤍'}
+                </button>
+              )}
+            </h1>
+            <button onClick={() => onNavigate('home')} className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '5px 12px', flexShrink: 0, marginLeft: 'var(--space-md)' }} aria-label="Volver al inicio">
+              ← Volver
+            </button>
           </div>
 
           {/* Description with date and location */}

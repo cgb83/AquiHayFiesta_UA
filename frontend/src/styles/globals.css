@@ -637,6 +637,50 @@ select:focus-visible {
   }
 }
 
+/* ─── No te pierdas grid (4 cuadrados en fila) ──────────────── */
+.noperder-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-sm);
+}
+
+.noperder-item {
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid rgba(232, 200, 208, 0.78);
+  background: #fff;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.noperder-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(196, 122, 138, 0.65);
+}
+
+.noperder-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: var(--color-primary-pale);
+  transition: filter var(--transition);
+}
+
+.noperder-item:hover .noperder-thumb {
+  filter: brightness(1.06);
+}
+
+.noperder-info {
+  padding: var(--space-xs) var(--space-sm);
+}
+
+@media (max-width: 768px) {
+  .noperder-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 /* Upcoming (Se acerca) cards */
 .upcoming-list {
   display: flex;

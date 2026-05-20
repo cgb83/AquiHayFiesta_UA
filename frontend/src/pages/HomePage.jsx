@@ -233,19 +233,18 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
               {!fiestasLoading && noPerder.length === 0 && (
                 <p style={{ color: 'var(--color-muted)' }}>No hay resultados con los filtros actuales.</p>
               )}
-              <div className="upcoming-list">
+              <div className="noperder-grid">
                 {noPerder.map(f => (
                   <div
                     key={f.id}
-                    className="upcoming-item"
+                    className="noperder-item"
                     role="button"
                     tabIndex={0}
                     onClick={() => onNavigate('fiesta', f.slug)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}
                   >
-                    <div className="upcoming-date">{f.date ? new Date(f.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) : 'Nuevo'}</div>
                     <img
-                      className="upcoming-thumb"
+                      className="noperder-thumb"
                       src={f.image}
                       alt={f.title}
                       onError={(e) => {
@@ -253,8 +252,10 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
                         e.currentTarget.src = DEFAULT_FIESTA_IMAGE;
                       }}
                     />
-                    <div className="upcoming-title">{f.title}</div>
-                    <div className="text-muted">{formatViews(f.views)}</div>
+                    <div className="noperder-info">
+                      <div className="card-title" style={{ fontSize: '0.82rem' }}>{f.title}</div>
+                      <div className="card-views">{formatViews(f.views)}</div>
+                    </div>
                   </div>
                 ))}
               </div>
