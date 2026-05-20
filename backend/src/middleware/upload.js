@@ -59,12 +59,13 @@ const uploadToCloudinary = (req, res, next) => {
     },
     (error, result) => {
       if (error) {
-        console.error('Error Cloudinary:', error);
+        console.error('Error Cloudinary COMPLETO:', JSON.stringify(error, null, 2));
         return res.status(500).json({ 
           success: false, 
           message: `Error al subir a Cloudinary: ${error.message}` 
         });
       }
+      console.log('Cloudinary result:', result.secure_url);
       
       // Guardar info en req.file para que el controlador la use
       req.file.path = result.secure_url;

@@ -137,8 +137,10 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
     try {
       if (item.fromApi) {
         const response = await registerDownload(item.id);
+        console.log('registerDownload response:', response); // ← añade esto
         const url = forceDownload(resolveMediaUrl(response.fileUrl || item.fileUrl));
-  
+        console.log('URL final:', url); // ← y esto
+
         const anchor = document.createElement('a');
         anchor.href = url;
         anchor.target = '_blank';

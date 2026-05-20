@@ -32,9 +32,12 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
         tabIndex={-1}
         style={{ backgroundColor: '#ffffff' }}
       >
-        <button style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', marginBottom: 8 }}
+        <button 
+          className="content-viewer-close"
           aria-label="Cerrar visor"
-          onClick={onClose}>←
+          onClick={onClose}
+        >
+          ←
         </button>
 
         <div className="content-viewer">
@@ -69,16 +72,15 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
             )}
             {type === 'document' && (
               <div style={{ width: '100%', backgroundColor: '#ffffff', borderRadius: 8, overflow: 'hidden' }}>
-                {item.fileUrl ? (
-                  <iframe 
-                    src={item.fileUrl} 
-                    title={item.title}
-                    style={{ width: '100%', height: 'clamp(200px, 50vh, 400px)', border: 'none', borderRadius: 8 }}
-                    onError={() => setError('No se pudo cargar la vista previa del documento')}
-                  />
-                ) : (
-                  <div className="doc-thumb" style={{ width: '100%', aspectRatio: '4/3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📄</div>
-                )}
+                <div style={{ 
+                  padding: '2rem', 
+                  background: 'var(--color-primary-pale)', 
+                  borderRadius: 8,
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>📄</div>
+                  
+                </div>
               </div>
             )}
           </div>
@@ -94,7 +96,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
         </div>
 
         {/* Descarga: solo si el usuario está logueado */}
-        <div style={{ textAlign: 'right', marginTop: 16 }}>
+        <div className="content-viewer-download">
           {canDownload ? (
             <button className="btn btn-outline" style={{ gap: 6 }}
               onClick={handleDownload} disabled={loading}>
