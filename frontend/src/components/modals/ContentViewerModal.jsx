@@ -30,7 +30,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
         aria-labelledby="content-viewer-title"
         onClick={e => e.stopPropagation()}
         tabIndex={-1}
-        style={{ backgroundColor: '#ffffff' }}
+        style={{ backgroundColor: 'var(--color-surface)' }}
       >
         <button 
           className="content-viewer-close"
@@ -71,7 +71,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
               </div>
             )}
             {type === 'document' && (
-              <div style={{ width: '100%', backgroundColor: '#ffffff', borderRadius: 8, overflow: 'hidden' }}>
+              <div style={{ width: '100%', backgroundColor: 'var(--color-surface)', borderRadius: 8, overflow: 'hidden' }}>
                 <div style={{ 
                   padding: '2rem', 
                   background: 'var(--color-primary-pale)', 
