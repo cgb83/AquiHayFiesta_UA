@@ -1,0 +1,64 @@
+/* Skeleton Shimmer Effect */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    to right,
+    var(--color-primary-pale) 0%,
+    #e8e2e8 20%,
+    var(--color-primary-pale) 40%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  margin-bottom: var(--space-sm);
+}
+
+.skeleton-title {
+  height: 14px;
+  margin-bottom: var(--space-xs);
+  width: 80%;
+}
+
+.skeleton-subtitle {
+  height: 12px;
+  width: 50%;
+  opacity: 0.6;
+}
+
+.skeleton-section-title {
+  height: 20px;
+  width: 120px;
+  margin-bottom: var(--space-md);
+  font-size: 0.95rem;
+}
+
+.skeleton-media {
+  display: flex;
+  flex-direction: column;
+}
+
+.fiesta-content-skeleton {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0.7;
+  }
+  to {
+    opacity: 1;
+  }
+}

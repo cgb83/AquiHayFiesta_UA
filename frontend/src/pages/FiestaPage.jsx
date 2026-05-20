@@ -6,6 +6,7 @@ import { useApp } from '../context/AppContext';
 import { fetchFiestaBySlug, fetchPublicationsByFiesta, registerDownload, resolveMediaUrl } from '../services/api';
 
 import Calendar from '../components/ui/Calendar';
+import { SkeletonContent } from '../components/ui/SkeletonLoader';
 
 function AudioWave() {
   return (
@@ -277,18 +278,21 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             )}
           </div>
 
-          {contentLoading && <p style={{ color: 'var(--color-muted)' }}>Cargando contenido...</p>}
-          {contentError && <p style={{ color: 'var(--color-text-soft)' }}>{contentError}</p>}
+          {contentLoading ? (
+            <SkeletonContent />
+          ) : (
+            <>
+              {contentError && <p style={{ color: 'var(--color-text-soft)' }}>{contentError}</p>}
 
-          {/* Videos carousel */}
-          {filteredContent.videos.length > 0 && (
-            <div className="mb-lg">
-              <div className="section-subtitle">Vídeos</div>
-              <div className="media-grid">
-                {filteredContent.videos.map(item => <MediaThumb key={item.id} item={item} type="video" />)}
-              </div>
-            </div>
-          )}
+              {/* Videos carousel */}
+              {filteredContent.videos.length > 0 && (
+                <div className="mb-lg">
+                  <div className="section-subtitle">Vídeos</div>
+                  <div className="media-grid">
+                    {filteredContent.videos.map(item => <MediaThumb key={item.id} item={item} type="video" />)}
+                  </div>
+                </div>
+              )}
 
           {/* Images carousel */}
           {filteredContent.images.length > 0 && (
@@ -310,23 +314,24 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             </div>
           )}
 
-          {/* Audios carousel */}
-          {filteredContent.audios.length > 0 && (
-            <div className="mb-lg">
-              <div className="section-subtitle">Audios</div>
-              <div className="media-grid">
-                {filteredContent.audios.map(item => <MediaThumb key={item.id} item={item} type="audio" />)}
-              </div>
-            </div>
-          )}
+              {/* Audios carousel */}
+              {filteredContent.audios.length > 0 && (
+                <div className="mb-lg">
+                  <div className="section-subtitle">Audios</div>
+                  <div className="media-grid">
+                    {filteredContent.audios.map(item => <MediaThumb key={item.id} item={item} type="audio" />)}
+                  </div>
+                </div>
+              )}
 
-          {!contentLoading &&
-            filteredContent.videos.length === 0 &&
-            filteredContent.images.length === 0 &&
-            filteredContent.documents.length === 0 &&
-            filteredContent.audios.length === 0 && (
-              <p className="text-muted">{searchQuery ? 'No hay resultados para tu búsqueda.' : 'No hay publicaciones todavia para esta fiesta.'}</p>
-            )}
+              {filteredContent.videos.length === 0 &&
+                filteredContent.images.length === 0 &&
+                filteredContent.documents.length === 0 &&
+                filteredContent.audios.length === 0 && (
+                  <p className="text-muted">{searchQuery ? 'No hay resultados para tu búsqueda.' : 'No hay publicaciones todavia para esta fiesta.'}</p>
+                )}
+            </>
+          )}
         </div>
 
         {/* Mobile Explore */}
@@ -401,56 +406,60 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             )}
           </div>
 
-          {contentLoading && <p style={{ color: 'var(--color-muted)' }}>Cargando contenido...</p>}
-          {contentError && <p style={{ color: 'var(--color-text-soft)' }}>{contentError}</p>}
+          {contentLoading ? (
+            <SkeletonContent />
+          ) : (
+            <>
+              {contentError && <p style={{ color: 'var(--color-text-soft)' }}>{contentError}</p>}
 
-          {/* Videos */}
-          {filteredContent.videos.length > 0 && (
-            <div className="mb-lg">
-              <div className="section-subtitle">Vídeos</div>
-              <div className="media-grid">
-                {filteredContent.videos.map(item => <MediaThumb key={item.id} item={item} type="video" />)}
-              </div>
-            </div>
+              {/* Videos */}
+              {filteredContent.videos.length > 0 && (
+                <div className="mb-lg">
+                  <div className="section-subtitle">Vídeos</div>
+                  <div className="media-grid">
+                    {filteredContent.videos.map(item => <MediaThumb key={item.id} item={item} type="video" />)}
+                  </div>
+                </div>
+              )}
+
+              {/* Images */}
+              {filteredContent.images.length > 0 && (
+                <div className="mb-lg">
+                  <div className="section-subtitle">Imágenes</div>
+                  <div className="media-grid">
+                    {filteredContent.images.map(item => <MediaThumb key={item.id} item={item} type="image" />)}
+                  </div>
+                </div>
+              )}
+
+              {/* Documents */}
+              {filteredContent.documents.length > 0 && (
+                <div className="mb-lg">
+                  <div className="section-subtitle">Documentos</div>
+                  <div className="media-grid">
+                    {filteredContent.documents.map(item => <MediaThumb key={item.id} item={item} type="document" />)}
+                  </div>
+                </div>
+              )}
+
+              {/* Audios */}
+              {filteredContent.audios.length > 0 && (
+                <div className="mb-lg">
+                  <div className="section-subtitle">Audios</div>
+                  <div className="media-grid">
+                    {filteredContent.audios.map(item => <MediaThumb key={item.id} item={item} type="audio" />)}
+                  </div>
+                </div>
+              )}
+
+              {filteredContent.videos.length === 0 &&
+                filteredContent.images.length === 0 &&
+                filteredContent.documents.length === 0 &&
+                filteredContent.audios.length === 0 && (
+                  <p className="text-muted">{searchQuery ? 'No hay resultados para tu búsqueda.' : 'No hay publicaciones todavia para esta fiesta.'}</p>
+                )}
+            </>
           )}
-
-          {/* Images */}
-          {filteredContent.images.length > 0 && (
-            <div className="mb-lg">
-              <div className="section-subtitle">Imágenes</div>
-              <div className="media-grid">
-                {filteredContent.images.map(item => <MediaThumb key={item.id} item={item} type="image" />)}
-              </div>
-            </div>
-          )}
-
-          {/* Documents */}
-          {filteredContent.documents.length > 0 && (
-            <div className="mb-lg">
-              <div className="section-subtitle">Documentos</div>
-              <div className="media-grid">
-                {filteredContent.documents.map(item => <MediaThumb key={item.id} item={item} type="document" />)}
-              </div>
-            </div>
-          )}
-
-          {/* Audios */}
-          {filteredContent.audios.length > 0 && (
-            <div className="mb-lg">
-              <div className="section-subtitle">Audios</div>
-              <div className="media-grid">
-                {filteredContent.audios.map(item => <MediaThumb key={item.id} item={item} type="audio" />)}
-              </div>
-            </div>
-          )}
-
-          {!contentLoading &&
-            filteredContent.videos.length === 0 &&
-            filteredContent.images.length === 0 &&
-            filteredContent.documents.length === 0 &&
-            filteredContent.audios.length === 0 && (
-              <p className="text-muted">{searchQuery ? 'No hay resultados para tu búsqueda.' : 'No hay publicaciones todavia para esta fiesta.'}</p>
-            )}
         </div>
 
         {/* Sidebar */}
