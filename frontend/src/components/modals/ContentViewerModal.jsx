@@ -30,6 +30,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
         aria-labelledby="content-viewer-title"
         onClick={e => e.stopPropagation()}
         tabIndex={-1}
+        style={{ backgroundColor: '#ffffff' }}
       >
         <button style={{ background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', marginBottom: 8 }}
           aria-label="Cerrar visor"
@@ -67,7 +68,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
               </div>
             )}
             {type === 'document' && (
-              <div style={{ width: '100%', backgroundColor: '#f5f5f5', borderRadius: 8, overflow: 'hidden' }}>
+              <div style={{ width: '100%', backgroundColor: '#ffffff', borderRadius: 8, overflow: 'hidden' }}>
                 {item.fileUrl ? (
                   <iframe 
                     src={item.fileUrl} 

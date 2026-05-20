@@ -397,6 +397,12 @@ select:focus-visible {
   .navbar { padding: 0 var(--space-md); }
   .navbar-links { display: none; }
   .navbar-menu-dropdown { display: flex; }
+  
+  .navbar-menu-dropdown .dropdown-menu {
+    left: 0;
+    right: auto;
+    max-width: calc(100vw - var(--space-md) * 2);
+  }
 }
 
 /* ─── Search Bar ────────────────────────────────────────────── */
@@ -1023,9 +1029,9 @@ select:focus-visible {
 
 @media (max-width: 768px) {
   .modal {
-    padding: var(--space-lg);
-    max-width: 100%;
-    max-height: 85vh;
+    padding: 8px;
+    max-width: calc(100vw - 16px);
+    max-height: 75vh;
     border-radius: var(--radius-lg);
   }
 }
@@ -1042,6 +1048,13 @@ select:focus-visible {
   color: var(--color-primary);
   text-align: center;
   margin-bottom: var(--space-xl);
+}
+
+@media (max-width: 768px) {
+  .modal-title {
+    font-size: 1rem;
+    margin-bottom: var(--space-sm);
+  }
 }
 
 .modal-close {
@@ -1445,6 +1458,13 @@ textarea:focus-visible {
   box-shadow: var(--shadow-lg);
 }
 
+@media (max-width: 768px) {
+  .auth-card {
+    padding: var(--space-md);
+    max-width: calc(100vw - 16px);
+  }
+}
+
 .auth-title {
   font-family: var(--font-display);
   font-size: 1.8rem;
@@ -1452,6 +1472,13 @@ textarea:focus-visible {
   color: var(--color-primary);
   text-align: center;
   margin-bottom: var(--space-xl);
+}
+
+@media (max-width: 768px) {
+  .auth-title {
+    font-size: 1.3rem;
+    margin-bottom: var(--space-md);
+  }
 }
 
 .auth-links {
