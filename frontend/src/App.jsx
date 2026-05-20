@@ -42,6 +42,7 @@ function AppInner() {
   });
   const [authModal, setAuthModal] = useState(null); // 'login' | 'register' | null
   const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
 
   const closeAuthModal = () => setAuthModal(null);
 
@@ -66,9 +67,14 @@ function AppInner() {
       setAuthModal('login');
       return;
     }
-    // Limpiar búsqueda al navegar fuera de home
-    if (page !== 'home') {
+    // Handle search queries (param starting with 'search:')
+    if (page === 'home' && param && param.startsWith('search:')) {
+      setSearchQuery(param.substring(7));
+      setCategoryFilter(''); // Clear category filter when doing a text search
+      param = null;
+    } else if (page !== 'home') {
       setSearchQuery('');
+      setCategoryFilter('');
     }
     const newRoute = { page, param };
     sessionStorage.setItem('ahf_route', JSON.stringify(newRoute));
@@ -107,12 +113,14 @@ function AppInner() {
             {!['manage', 'create-fiesta', 'profile'].includes(route.page) && (
               <SearchBar
                 key={route.page}
+                searchQuery={searchQuery}
+                categoryFilter={categoryFilter}
                 onSearch={setSearchQuery}
-                onCategory={(id) => id && navigate('category', id)}
+                onCategory={setCategoryFilter}
               />
             )}
 
-            {route.page === 'home'          && <HomePage     onNavigate={navigate} searchQuery={searchQuery} />}
+            {route.page === 'home'          && <HomePage     onNavigate={navigate} searchQuery={searchQuery} categoryFilter={categoryFilter} />}
             {route.page === 'fiesta'        && <FiestaPage   slug={route.param} onNavigate={navigate} searchQuery={searchQuery} />}
             {route.page === 'category'      && <CategoryPage categoryId={route.param} onNavigate={navigate} />}
             {route.page === 'saved'         && <SavedPage    onNavigate={navigate} />}

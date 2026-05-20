@@ -246,7 +246,15 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
               {fiesta.subcategories?.length > 0 ? (
                 <div className="flex gap-sm" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
                   {fiesta.subcategories.map(s => (
-                    <span key={s} className="tag">{s}</span>
+                    <button
+                      key={s}
+                      className="tag"
+                      onClick={() => onNavigate('home', `search:${s}`)}
+                      style={{ cursor: 'pointer', background: 'none', border: '1px solid currentColor', padding: '4px 8px', borderRadius: '4px' }}
+                      type="button"
+                    >
+                      {s}
+                    </button>
                   ))}
                 </div>
               ) : (
@@ -333,7 +341,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                 <div className="text-muted">{formatViews(f.views)}</div>
               </div>
             ))}
-            <button className="btn btn-outline" style={{ fontSize: '0.8rem', padding: '6px 12px' }}>Ver más</button>
+            
           </div>
         </div>
 
@@ -458,7 +466,15 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             {fiesta.subcategories?.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0 }}>
                 {fiesta.subcategories.map(s => (
-                  <button key={s} className="sidebar-cat-item">{s}</button>
+                  <button
+                    key={s}
+                    className="sidebar-cat-item"
+                    onClick={() => onNavigate('home', `search:${s}`)}
+                    type="button"
+                    style={{ cursor: 'pointer', textAlign: 'right' }}
+                  >
+                    {s}
+                  </button>
                 ))}
               </div>
             ) : (

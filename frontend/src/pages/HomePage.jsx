@@ -16,7 +16,7 @@ function shuffle(list) {
   return clone;
 }
 
-export default function HomePage({ onNavigate, searchQuery = '' }) {
+export default function HomePage({ onNavigate, searchQuery = '', categoryFilter = '' }) {
   const { user, fiestas, fiestasLoading, fiestasError, reloadFiestas, categories } = useApp();
   const [showCreate, setShowCreate] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
@@ -25,30 +25,45 @@ export default function HomePage({ onNavigate, searchQuery = '' }) {
 
   useEffect(() => {
     const query = searchQuery.trim();
-    if (!query) { setSearchResults(null); return; }
-
-    const timer = setTimeout(async () => {
-      try {
-        setSearchLoading(true);
-        const response = await fetchFiestas({ search: query });
-        setSearchResults((response.fiestas || []).map(f => ({
-          id: f._id,
-          slug: f.slug,
-          title: f.title,
-          description: f.description || '',
-          category: f.category,
-          views: f.views || 0,
-          image: resolveMediaUrl(f.coverImage || ''),
-        })));
-      } catch {
-        setSearchResults([]);
-      } finally {
-        setSearchLoading(false);
-      }
-    }, 350);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+    const hasCategoryFilter = categoryFilter && categoryFilter.trim();
+    
+    // Si hay búsqueda, buscar en API
+    if (query) {
+      const timer = setTimeout(async () => {
+        try {
+          setSearchLoading(true);
+          const response = await fetchFiestas({ search: query });
+          let results = (response.fiestas || []).map(f => ({
+            id: f._id,
+            slug: f.slug,
+            title: f.title,
+            description: f.description || '',
+            category: f.category,
+            views: f.views || 0,
+            image: resolveMediaUrl(f.coverImage || ''),
+          }));
+          // Si hay filtro de categoría también, aplicarlo
+          if (hasCategoryFilter) {
+            results = results.filter(f => f.category === categoryFilter);
+          }
+          setSearchResults(results);
+        } catch {
+          setSearchResults([]);
+        } finally {
+          setSearchLoading(false);
+        }
+      }, 350);
+      return () => clearTimeout(timer);
+    }
+    
+    // Si solo hay filtro de categoría (sin búsqueda), filtrar localmente
+    if (hasCategoryFilter) {
+      const filtered = fiestas.filter(f => f.category === categoryFilter);
+      setSearchResults(filtered);
+    } else {
+      setSearchResults(null);
+    }
+  }, [searchQuery, categoryFilter]);
 
   const hasSearch = searchResults !== null;
   const recommendationSource = fiestas;

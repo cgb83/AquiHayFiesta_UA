@@ -1,19 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 
-export default function SearchBar({ onSearch, onCategory }) {
+export default function SearchBar({ onSearch, onCategory, searchQuery = '', categoryFilter = '' }) {
   const { categories } = useApp();
-  const [query, setQuery] = useState('');
-  const [cat, setCat] = useState('');
+  const [query, setQuery] = useState(searchQuery);
+  const [cat, setCat] = useState(categoryFilter);
+
+  useEffect(() => {
+    setQuery(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setCat(categoryFilter);
+  }, [categoryFilter]);
 
   const handleSearch = (e) => {
-    setQuery(e.target.value);
-    onSearch?.(e.target.value);
+    const newQuery = e.target.value;
+    setQuery(newQuery);
+    onSearch?.(newQuery);
   };
 
   const handleCat = (e) => {
-    setCat(e.target.value);
-    onCategory?.(e.target.value);
+    const newCat = e.target.value;
+    setCat(newCat);
+    onCategory?.(newCat);
   };
 
   return (
