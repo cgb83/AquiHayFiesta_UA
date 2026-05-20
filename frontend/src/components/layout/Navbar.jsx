@@ -180,7 +180,7 @@ export default function Navbar({ onNavigate, currentPage }) {
                     nav('home');
                   }
                 }}>
-                {deleteLoading ? 'Eliminando...' : 'Sí, eliminar'}
+                {deleteLoading ? 'Eliminando...' : 'Eliminar'}
               </button>
               <button type="button" className="confirm-btn" disabled={deleteLoading} onClick={() => setShowDeleteConfirm(false)}>No</button>
             </div>

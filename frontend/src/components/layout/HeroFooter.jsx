@@ -1,14 +1,9 @@
 export function Hero() {
   return (
-    <div className="hero">
-      <img 
-        src="/assets/logo.png" 
-        alt="AquiHayFiesta Logo" 
-        className="hero-logo"
-        style={{ maxWidth: '140px', height: 'auto', marginBottom: '8px', objectFit: 'contain' }}
-      />
-      <h1 className="hero-title">AquiHayFiesta</h1>
-    </div>
+  <div className="hero">
+
+    <h1 className="hero-title">AquiHayFiesta</h1>
+  </div>
   );
 }
 
