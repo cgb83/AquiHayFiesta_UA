@@ -48,7 +48,12 @@
   --transition: 200ms ease;
 }
 
-/* Dark Mode */
+/* 
+------------------------------------
+ESTILOS VISUALES
+------------------------------------
+*/
+/* ---------- Dark Mode ------------ */
 [data-theme="dark"] {
   --color-bg:            #1a0a0f;
   --color-surface:       #2d1a22;
@@ -56,10 +61,10 @@
   --color-primary-light: #e8a0b0;
   --color-primary-pale:  #3d1a26;
   --color-accent:        #e8738a;
-  --color-muted:         #8a6070;
+  --color-muted:         #ca8da4;
   --color-text:          #f5dde3;
   --color-text-soft:     #c4909a;
-  --color-border:        #c4909a;
+  --color-border:        #3d1a26;
   --color-hero-bg:       #3d1a26;
   --shadow-sm: 0 1px 4px rgba(0,0,0,.30);
   --shadow-md: 0 4px 16px rgba(0,0,0,.40);
@@ -69,43 +74,60 @@
 [data-theme="dark"] .form-input,
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {
-  background: #2d1a22;
+  background: var(--color-surface);
   color: #f5dde3;
   border-color: #4a2535;
 }
 
 [data-theme="dark"] .form-input::placeholder,
 [data-theme="dark"] textarea::placeholder {
-  color: #8a6070;
+  color: var(--color-muted);
 }
 
-[data-theme="dark"] .hero {
-  background: #3d1a26;
+[data-theme="dark"] .hero-title {
+  color: var(--color-surface);
+}
+
+[data-theme="dark"] .card-item {
+  background-color: var(--color-bg);
+  border: none;
 }
 
 [data-theme="dark"] .navbar {
-  background: #2d1a22;
+  background: var(--color-surface);
   border-bottom-color: #4a2535;
+}
+
+[data-theme="dark"] .category-select {
+  background: var(--color-primary);
+  color: var(--color-text);
+  border-color: #4a2535;
+}
+
+[data-theme="dark"] .category-select:focus { 
+  outline: none;
+  border-color: var(--color-primary);
+  background: var(--color-hero-bg);
 }
 
 [data-theme="dark"] .manage-fiesta-item .manage-fiesta-title,
 [data-theme="dark"] .manage-fiesta-item div {
-  color: #f5dde3;
+  color: var(--color-text);
 }
 
 [data-theme="dark"] .btn-outline {
-  color: #f5dde3;
+  color: var(--color-text);
   background: var(--color-primary-pale);
-  box-shadow: #f5dde3;
+  box-shadow: var(--color-text);
 }
 
 [data-theme="dark"] .btn-outline:hover {
   background: var(--color-primary);
-  color: #f5dde3;
+  color: var(--color-text);
 }
 
 [data-theme="dark"] .btn-danger {
-  color: #f5dde3;
+  color: var(--color-text);
   background-color: #d82121;
   border-color: #d82121;
 }
@@ -116,44 +138,155 @@
 }
 
 [data-theme="dark"] .dropdown-trigger {
-  color: #f5dde3;
+  color: var(--color-text);
 }
 
 [data-theme="dark"] .dropdown-menu {
-  background: #2d1a22;
+  background: var(--color-surface);
   border-color: #4a2535;
 }
 
 [data-theme="dark"] .dropdown-item {
-  color: #f5dde3;
+  color: var(--color-text);
 }
 
 [data-theme="dark"] .dropdown-item:hover {
-  color: #3d1a26;
-  background: #f5dde3;
+  color: var(--color-border);
+  background: var(--color-text);
 }
 
 [data-theme="dark"] .dropdown-item.danger {
-  color: #f5dde3;
-  background-color: #3d1a26;
+  color: var(--color-primary);
 }
 
 [data-theme="dark"] .dropdown-item.danger:hover {
-  background-color: #d82121;
+  color: var(--color-text);
 }
 
 [data-theme="dark"] .category-pill.is-active {
   background: #7d3048;
-  border-color: #c47a8a;
-  color: #f5dde3;
+  border-color: var(--color-text-soft);
+  color: var(--color-text);
 }
 
-/* High contrast */
+[data-theme="dark"] .search-input::placeholder {
+  color: var(--color-muted);
+}
+
+[data-theme="dark"] .modal {
+  background: var(--color-surface);
+}
+
+/* ---------- High Contrast ------------ */
 [data-theme="high-contrast"] {
-  --color-primary: #5a0020;
-  --color-text: #000000;
-  --color-bg: #ffffff;
-  --color-border: #000000;
+  --color-bg:            #000000;
+  --color-surface:       #000000;
+  --color-primary:       #ffff00;
+  --color-primary-light: #ffff00;
+  --color-primary-pale:  #1a1a00;
+  --color-accent:        #ffff00;
+  --color-muted:         #ffffff;
+  --color-text:          #ffffff;
+  --color-text-soft:     #ffff00;
+  --color-border:        #ffffff;
+  --color-hero-bg:       #000000;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+}
+
+[data-theme="high-contrast"] .form-input,
+[data-theme="high-contrast"] select,
+[data-theme="high-contrast"] textarea {
+  background: var(--color-bg);
+  color: var(--color-text);
+  border-color: var(--color-muted);
+  border-width: 2px;
+}
+
+[data-theme="high-contrast"] .form-input::placeholder,
+[data-theme="high-contrast"] textarea::placeholder {
+  color: var(--color-primary);
+}
+
+[data-theme="high-contrast"] .navbar {
+  background: var(--color-bg);
+  border-bottom: 2px solid var(--color-muted);
+}
+
+[data-theme="high-contrast"] .hero-title {
+  color: #2a1520;
+}
+
+[data-theme="high-contrast"] .btn-outline {
+  background: var(--color-bg);
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+}
+
+[data-theme="high-contrast"] .btn-outline:hover {
+  background: var(--color-primary);
+  color: var(--color-bg);
+}
+
+[data-theme="high-contrast"] .btn-danger {
+  background: var(--color-bg);
+  color: #ff4444;
+  border: 2px solid #ff4444;
+}
+
+[data-theme="high-contrast"] .btn-danger:hover {
+  background: #ff4444;
+  color: var(--color-bg);
+}
+
+[data-theme="high-contrast"] .dropdown-trigger {
+  color: var(--color-text);
+}
+
+[data-theme="high-contrast"] .dropdown-menu {
+  background: var(--color-bg);
+  border: 2px solid var(--color-muted);
+}
+
+[data-theme="high-contrast"] .dropdown-item {
+  color: var(--color-muted);
+}
+
+[data-theme="high-contrast"] .dropdown-item:hover {
+  background: var(--color-primary);
+  color: var(--color-bg);
+}
+
+[data-theme="high-contrast"] .dropdown-item.danger {
+  color: var(--color-primary);
+}
+
+[data-theme="high-contrast"] .dropdown-item.danger:hover {
+  background: #ff4444;
+  color: var(--color-bg);
+}
+
+[data-theme="high-contrast"] .category-pill.is-active {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-bg);
+}
+
+[data-theme="high-contrast"] .manage-fiesta-item .manage-fiesta-title,
+[data-theme="high-contrast"] .manage-fiesta-item div {
+  color: var(--color-muted);
+}
+
+[data-theme="high-contrast"] .search-input::placeholder {
+  color: var(--color-primary);
+}
+
+[data-theme="high-contrast"] .search-input {
+  background: var(--color-bg)var(--color-bg);
+  color: var(--color-text);
+  border-color: var(--color-muted);
+  border-width: 2px;
 }
 
 /* Large text */
@@ -623,8 +756,8 @@ select:focus-visible {
   cursor: pointer;
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid rgba(232, 200, 208, 0.78);
-  background: #fff;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
   transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
 
@@ -666,8 +799,8 @@ select:focus-visible {
   cursor: pointer;
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid rgba(232, 200, 208, 0.78);
-  background: #fff;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
   transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
 
@@ -804,9 +937,6 @@ select:focus-visible {
 }
 
 /* ─── Sidebar ───────────────────────────────────────────────── */
-.sidebar {
-}
-
 @media (max-width: 768px) {
   .sidebar {
     display: none;
@@ -873,7 +1003,7 @@ select:focus-visible {
 .sidebar-cat-item:hover {
   color: var(--color-primary);
   padding-right: 4px;
-  background: rgba(245, 221, 227, 0.4);
+  background: var(--color-primary-pale);
 }
 
 @media (max-width: 768px) {
@@ -895,17 +1025,18 @@ select:focus-visible {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: rgba(232, 200, 208, 0.95);
+  background: var(--color-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-soft);
+  color: var(--color-surface);
   cursor: pointer;
   transition: background var(--transition), transform var(--transition);
 }
 
 .show-more-btn:hover {
   background: var(--color-primary-pale);
+  color: var(--color-text);
   transform: translateY(-1px);
 }
 
@@ -1035,6 +1166,11 @@ select:focus-visible {
 .dropdown-item:hover { background: var(--color-primary-pale); }
 
 .dropdown-item.danger { color: #c0392b; }
+
+.dropdown-item.danger:hover { 
+  color: var(--color-surface);
+  background: #c0392b;
+}
 
 /* ─── Modals ─────────────────────────────────────────────────── */
 .modal-overlay {
@@ -1334,14 +1470,14 @@ select:focus-visible {
   cursor: pointer;
   aspect-ratio: 4/3;
   background: var(--color-primary-pale);
-  border: 1px solid rgba(232, 200, 208, 0.75);
+  border: 1px solid var(--color-surface);
   transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
 
 .media-thumb:hover {
   transform: scale(1.02);
   box-shadow: var(--shadow-sm);
-  border-color: rgba(196, 122, 138, 0.7);
+  border-color: var(--color-accent);
 }
 
 .media-thumb img {
@@ -1373,7 +1509,7 @@ select:focus-visible {
 
 .media-label {
   font-size: 0.78rem;
-  color: var(--color-text-soft);
+  color: var(--color-text);
   margin-top: 4px;
   white-space: nowrap;
   overflow: hidden;
@@ -1975,6 +2111,7 @@ textarea:focus-visible {
   gap: var(--space-xl);
   align-items: flex-start;
   padding: var(--space-md) 0;
+  background: var(--color-surface);
 }
 
 @media (max-width: 500px) {
@@ -2161,7 +2298,7 @@ textarea:focus-visible {
 }
 
 .calendar-wrapper {
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 2px;
@@ -2255,6 +2392,25 @@ textarea:focus-visible {
   border-radius: 50%;
   background: var(--color-primary);
   box-shadow: 0 0 0 4px rgba(125, 48, 72, 0.12);
+}
+
+.explore-item {
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  padding: var(--space-xs);
+  border: 1px solid transparent;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition), border-color var(--transition);
+}
+
+.explore-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-sm);
+  background: var(--color-primary-pale);
+  border-color: var(--color-border);
+}
+
+.explore-item:hover img {
+  filter: brightness(1.06);
 }
 
 /* Fiesta page: right column wider for a more horizontal calendar */
@@ -2543,15 +2699,10 @@ textarea:focus-visible {
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-md);
-  background: linear-gradient(135deg, var(--color-primary-pale) 0%, rgba(245, 221, 227, 0.5) 100%);
+  background: linear-gradient(135deg, var(--color-primary-pale) 0%, var(--color-surface) 100%);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   transition: transform var(--transition), box-shadow var(--transition);
-}
-
-.creator-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
 }
 
 .creator-avatar {
@@ -2579,7 +2730,7 @@ textarea:focus-visible {
 
 .creator-meta {
   font-size: 0.8rem;
-  color: var(--color-text-soft);
+  color: var(--color-text);
   font-weight: 500;
 }
 
