@@ -363,7 +363,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
           <h3 className="section-title" style={{ textAlign: 'left' }}>Explorar fiestas</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {exploreFiestas.map(f => (
-              <div key={f.id} style={{ cursor: 'pointer' }} onClick={() => onNavigate('fiesta', f.slug)}>
+              <div key={f.id} className="explore-item" onClick={() => onNavigate('fiesta', f.slug)}>
                 <img src={f.image} alt={f.title}
                   style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 8 }} />
                 <div style={{ fontSize: '0.85rem', fontWeight: 500, marginTop: 4 }}>{f.title}</div>
@@ -531,7 +531,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             <h3 className="section-title" style={{ textAlign: 'right' }}>Explorar fiestas</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {exploreFiestas.map(f => (
-                <div key={f.id} style={{ cursor: 'pointer' }} onClick={() => onNavigate('fiesta', f.slug)}>
+                <div key={f.id} className="explore-item" onClick={() => onNavigate('fiesta', f.slug)}>
                   <img src={f.image} alt={f.title}
                     style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 8 }} />
                   <div style={{ fontSize: '0.85rem', fontWeight: 500, marginTop: 4 }}>{f.title}</div>

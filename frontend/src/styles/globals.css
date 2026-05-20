@@ -1468,14 +1468,14 @@ select:focus-visible {
   cursor: pointer;
   aspect-ratio: 4/3;
   background: var(--color-primary-pale);
-  border: 1px solid rgba(232, 200, 208, 0.75);
+  border: 1px solid var(--color-surface);
   transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
 }
 
 .media-thumb:hover {
   transform: scale(1.02);
   box-shadow: var(--shadow-sm);
-  border-color: rgba(196, 122, 138, 0.7);
+  border-color: var(--color-accent);
 }
 
 .media-thumb img {
@@ -1507,7 +1507,7 @@ select:focus-visible {
 
 .media-label {
   font-size: 0.78rem;
-  color: var(--color-text-soft);
+  color: var(--color-text);
   margin-top: 4px;
   white-space: nowrap;
   overflow: hidden;
@@ -2143,7 +2143,7 @@ textarea:focus-visible {
 }
 
 .calendar-wrapper {
-  background: rgba(255, 255, 255, 0.75);
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 2px;
@@ -2237,6 +2237,25 @@ textarea:focus-visible {
   border-radius: 50%;
   background: var(--color-primary);
   box-shadow: 0 0 0 4px rgba(125, 48, 72, 0.12);
+}
+
+.explore-item {
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  padding: var(--space-xs);
+  border: 1px solid transparent;
+  transition: transform var(--transition), box-shadow var(--transition), background var(--transition), border-color var(--transition);
+}
+
+.explore-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-sm);
+  background: var(--color-primary-pale);
+  border-color: var(--color-border);
+}
+
+.explore-item:hover img {
+  filter: brightness(1.06);
 }
 
 /* Fiesta page: right column wider for a more horizontal calendar */
@@ -2529,11 +2548,6 @@ textarea:focus-visible {
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
   transition: transform var(--transition), box-shadow var(--transition);
-}
-
-.creator-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
 }
 
 .creator-avatar {
