@@ -1,15 +1,7 @@
 import { useRef, useState } from 'react';
 import { useModalAccessibility } from './useModalAccessibility';
 import { createFiesta, createPublication, updateFiesta } from '../../services/api';
-
-const CATEGORY_OPTIONS = [
-  { id: 'amor', label: 'Amor' },
-  { id: 'noche', label: 'Noche' },
-  { id: 'disfraces', label: 'Disfraces' },
-  { id: 'familia', label: 'Familia' },
-  { id: 'musica', label: 'Musica' },
-  { id: 'gastronomia', label: 'Gastronomia' },
-];
+import { CATEGORIES as CATEGORY_OPTIONS } from '../../data/mockData';
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const FILE_TYPES = [

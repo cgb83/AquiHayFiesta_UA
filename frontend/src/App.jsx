@@ -121,9 +121,7 @@ function AppInner() {
               <SearchBar
                 key={route.page}
                 searchQuery={searchQuery}
-                categoryFilter={categoryFilter}
                 onSearch={setSearchQuery}
-                onCategory={setCategoryFilter}
               />
             )}
 

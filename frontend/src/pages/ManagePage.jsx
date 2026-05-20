@@ -188,7 +188,7 @@ function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, on
 }
 
 export default function ManagePage({ onNavigate }) {
-  const { user } = useApp();
+  const { user, reloadFiestas } = useApp();
   const { addToast } = useToast();
   const isAdmin = user?.role === 'admin';
 
@@ -494,7 +494,7 @@ export default function ManagePage({ onNavigate }) {
         <EditFiestaModal
           fiesta={editFiesta}
           onClose={() => setEditFiesta(null)}
-          onUpdated={() => { setEditFiesta(null); loadMyFiestas(); addToast('Fiesta actualizada correctamente.'); }}
+          onUpdated={() => { setEditFiesta(null); loadMyFiestas(); reloadFiestas(); addToast('Fiesta actualizada correctamente.'); }}
         />
       )}
 

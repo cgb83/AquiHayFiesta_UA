@@ -169,7 +169,6 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
 
           {/* Featured + Categorías lado a lado */}
           <div className="featured-categories-row mb-lg">
-            {/* Featured */}
             <div className="featured-section">
               <h3 className="section-title">Destacado</h3>
               {fiestasLoading && <p style={{ color: 'var(--color-muted)' }}>Cargando fiestas...</p>}

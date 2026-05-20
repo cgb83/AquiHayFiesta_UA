@@ -1,34 +1,16 @@
 import { useState, useEffect } from 'react';
-import { useApp } from '../../context/AppContext';
 
-export default function SearchBar({ onSearch, onCategory, searchQuery = '', categoryFilter = '' }) {
-  const { categories } = useApp();
+export default function SearchBar({ onSearch, searchQuery = '' }) {
   const [query, setQuery] = useState(searchQuery);
-  const [cat, setCat] = useState(categoryFilter);
 
   useEffect(() => {
     setQuery(searchQuery);
   }, [searchQuery]);
 
-  useEffect(() => {
-    setCat(categoryFilter);
-  }, [categoryFilter]);
-
   const handleSearch = (e) => {
     const newQuery = e.target.value;
     setQuery(newQuery);
     onSearch?.(newQuery);
-  };
-
-  const handleCat = (e) => {
-    const newCat = e.target.value;
-    setCat(newCat);
-    onCategory?.(newCat);
-  };
-
-  const clearCategory = () => {
-    setCat('');
-    onCategory?.('');
   };
 
   return (
@@ -42,26 +24,6 @@ export default function SearchBar({ onSearch, onCategory, searchQuery = '', cate
           value={query}
           onChange={handleSearch}
         />
-      </div>
-      <div className="search-category-wrap">
-        <label className="sr-only" htmlFor="category-select">Filtrar por categoria</label>
-        <select id="category-select" className="category-select" value={cat} onChange={handleCat}>
-          <option value="">Categoría ▾</option>
-          {categories.map(c => (
-            <option key={c.id} value={c.id}>{c.label}</option>
-          ))}
-        </select>
-        {cat && (
-          <button 
-            className="clear-category-btn" 
-            onClick={clearCategory}
-            title="Limpiar categoría"
-            type="button"
-            aria-label="Limpiar filtro de categoría"
-          >
-            ✕
-          </button>
-        )}
       </div>
     </div>
   );
