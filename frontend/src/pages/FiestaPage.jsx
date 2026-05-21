@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
 import { CreatePublicationModal } from '../components/modals/CreateModals';
-import { formatDownloads, formatViews } from '../data/mockData';
+import { CATEGORIES, formatDownloads, formatViews } from '../data/mockData';
 import { useApp } from '../context/AppContext';
 import { fetchFiestaBySlug, fetchPublicationsByFiesta, registerDownload, resolveMediaUrl } from '../services/api';
 
@@ -65,7 +65,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
         title: data.title,
         description: data.description || '',
         category: data.category,
-        subcategories: data.subcategories || [],
+        subcategories: data.subcategories?.length > 0 ? data.subcategories : data.categories || [],
         views: data.views || 0,
         image: resolveMediaUrl(data.coverImage || ''),
         date: data.startDate ? String(data.startDate).slice(0, 10) : null,
@@ -254,17 +254,20 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
               <h3 className="section-title" style={{ textAlign: 'right' }}>Categorías</h3>
               {fiesta.subcategories?.length > 0 ? (
                 <div className="flex gap-sm" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                  {fiesta.subcategories.map(s => (
-                    <button
-                      key={s}
-                      className="tag"
-                      onClick={() => onNavigate('home', `search:${s}`)}
-                      style={{ cursor: 'pointer', background: 'none', border: '1px solid currentColor', padding: '4px 8px', borderRadius: '4px' }}
-                      type="button"
-                    >
-                      {s}
-                    </button>
-                  ))}
+                  {fiesta.subcategories.map(s => {
+                    const cat = CATEGORIES.find(c => c.id === s);
+                    return (
+                      <button
+                        key={s}
+                        className="sidebar-cat-item"
+                        onClick={() => onNavigate('home', `cat:${s}`)}
+                        type="button"
+                        style={{ cursor: 'pointer', textAlign: 'right' }}
+                      >
+                        {cat ? cat.label : s}
+                      </button>
+                    );
+                  })}
                 </div>
               ) : (
                 <p className="text-muted" style={{ textAlign: 'right', fontSize: '0.85rem' }}>Esta fiesta no tiene categorías</p>
@@ -526,17 +529,20 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             <h3 className="section-title" style={{ textAlign: 'right' }}>Categorías</h3>
             {fiesta.subcategories?.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0 }}>
-                {fiesta.subcategories.map(s => (
-                  <button
-                    key={s}
-                    className="sidebar-cat-item"
-                    onClick={() => onNavigate('home', `search:${s}`)}
-                    type="button"
-                    style={{ cursor: 'pointer', textAlign: 'right' }}
-                  >
-                    {s}
-                  </button>
-                ))}
+                {fiesta.subcategories.map(s => {
+                  const cat = CATEGORIES.find(c => c.id === s);
+                  return (
+                    <button
+                      key={s}
+                      className="sidebar-cat-item"
+                      onClick={() => onNavigate('home', `cat:${s}`)}
+                      type="button"
+                      style={{ cursor: 'pointer', textAlign: 'right' }}
+                    >
+                      {cat ? cat.label : s}
+                    </button>
+                  );
+                })}
               </div>
             ) : (
               <p className="text-muted" style={{ textAlign: 'right', fontSize: '0.85rem' }}>Esta fiesta no tiene categorías</p>

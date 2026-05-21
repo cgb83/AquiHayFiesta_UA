@@ -60,7 +60,10 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
     
     // Si solo hay filtro de categoría (sin búsqueda), filtrar localmente
     if (hasCategoryFilter) {
-      const filtered = fiestas.filter(f => f.category === categoryFilter);
+      const filtered = fiestas.filter(f => 
+        f.category === categoryFilter || 
+        (f.categories || []).includes(categoryFilter)
+      );
       setSearchResults(filtered);
     } else {
       setSearchResults(null);
