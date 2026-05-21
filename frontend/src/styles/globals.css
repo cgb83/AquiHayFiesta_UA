@@ -507,7 +507,12 @@ ESTILOS VISUALES
 /* ─── Reset & Base ──────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { font-size: 16px; scroll-behavior: smooth; }
+html { 
+  font-size: 16px; 
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
+}
 
 body {
   font-family: var(--font-ui);
@@ -516,6 +521,8 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 a { color: inherit; text-decoration: none; }
@@ -1602,6 +1609,22 @@ select:focus-visible {
   gap: var(--space-sm);
 }
 
+.dates-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+@media (max-width: 720px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .dates-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 .form-hint {
   font-size: 0.75rem;
   color: var(--color-muted);
@@ -1878,7 +1901,7 @@ select:focus-visible {
   padding: 12px var(--space-md);
   border-radius: var(--radius-md);
   border: 1px solid var(--color-border);
-  background: #fff;
+  background: var(--color-surface);
   transition: box-shadow var(--transition), border-color var(--transition);
 }
 
@@ -2705,6 +2728,10 @@ textarea:focus-visible {
   display: none;
 }
 
+.fiesta-categories-mobile-sidebar .sidebar-cat-item {
+  text-align: left;
+}
+
 .fiesta-content-mobile {
   display: none;
 }
@@ -2770,8 +2797,8 @@ textarea:focus-visible {
 
   /* Mobile main: Left column (title+desc+date/location) || Right column (calendar+categories) */
   .fiesta-mobile-main {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
+    display: flex;
+    flex-direction: column;
     gap: var(--space-lg);
   }
 

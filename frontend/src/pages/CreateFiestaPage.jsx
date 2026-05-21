@@ -244,7 +244,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         </div>
 
         {/* Fechas */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
+        <div className="dates-row">
           <div className="form-group">
             <label className="form-label" htmlFor="create-start">Fecha de inicio  <span className="alerta">*</span></label>
             <input 

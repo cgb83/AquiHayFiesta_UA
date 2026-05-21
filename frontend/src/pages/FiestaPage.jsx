@@ -251,9 +251,9 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
 
             {/* Categories */}
             <div className="fiesta-categories-mobile-sidebar">
-              <h3 className="section-title" style={{ textAlign: 'right' }}>Categorías</h3>
+              <h3 className="section-title" style={{ textAlign: 'left' }}>Categorías</h3>
               {fiesta.subcategories?.length > 0 ? (
-                <div className="flex gap-sm" style={{ flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0 }}>
                   {fiesta.subcategories.map(s => {
                     const cat = CATEGORIES.find(c => c.id === s);
                     return (
