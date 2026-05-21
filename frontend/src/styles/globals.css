@@ -177,6 +177,11 @@ ESTILOS VISUALES
   background: var(--color-surface);
 }
 
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
 /* ---------- High Contrast ------------ */
 [data-theme="high-contrast"] {
   --color-bg:            #000000;
@@ -328,6 +333,11 @@ ESTILOS VISUALES
 [data-theme="high-contrast"] .modal,
 [data-theme="high-contrast"] .confirm-modal {
   border: 1px solid var(--color-text);
+}
+
+[data-theme="high-contrast"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
 }
 
 /* ---------- Large Text + Contrast ------------ */
@@ -487,6 +497,11 @@ ESTILOS VISUALES
 [data-theme="large-contrast"] .modal,
 [data-theme="large-contrast"] .confirm-modal {
   border: 1px solid var(--color-text);
+}
+
+[data-theme="large-contrast"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
 }
 
 /* ─── Reset & Base ──────────────────────────────────────────── */

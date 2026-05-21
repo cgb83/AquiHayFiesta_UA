@@ -251,7 +251,7 @@ export default function CreateFiestaPage({ onNavigate }) {
               id="create-start" 
               className="form-input" 
               type="date"
-              style={{ width: '120px' }}
+              style={{ width: '100%' }}
               value={form.startDate} 
               onChange={e => set('startDate', e.target.value)} 
               disabled={loading}
@@ -266,7 +266,7 @@ export default function CreateFiestaPage({ onNavigate }) {
               className="form-input" 
               type="date"
               value={form.endDate} 
-              style={{ width: '120px' }}
+              style={{ width: '100%' }}
               onChange={e => set('endDate', e.target.value)} 
               disabled={loading}
             />
