@@ -7,7 +7,7 @@ import Calendar from './Calendar';
 const DEFAULT_FIESTA_IMAGE = 'https://picsum.photos/seed/ahf-fiesta/640/360';
 
 export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
-  const { categories, fiestas, t } = useApp();
+  const { categories, fiestas, t, lang } = useApp();
   const [showAll, setShowAll] = useState(false);
   const displayed = showAll ? categories : categories.slice(0, 3);
   const today = new Date();
@@ -85,7 +85,7 @@ export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
                 }}
               />
               <div className="upcoming-title">{f.title}</div>
-              <div className="text-muted">{formatViews(f.views)}</div>
+              <div className="text-muted">{formatViews(f.views, lang)}</div>
             </div>
           ))}
         </div>

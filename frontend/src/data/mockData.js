@@ -227,15 +227,21 @@ export const MOCK_USER = {
   ],
 };
 
-export const formatViews = (n) => {
+export const formatViews = (n, lang = 'ES') => {
   const formatter = new Intl.NumberFormat('es-ES');
   const value = Number.isFinite(n) ? n : 0;
-  const label = value === 1 ? 'vez visto' : 'veces visto';
+  const label = lang === 'EN' 
+    ? (value === 1 ? 'time viewed' : 'times viewed')
+    : (value === 1 ? 'vez visto' : 'veces visto');
   return `${formatter.format(value)} ${label}`;
 };
 
-export const formatDownloads = (n) =>
-  n >= 1000 ? `${(n / 1000).toFixed(0)}k descargas` : `${n} descargas`;
+export const formatDownloads = (n, lang = 'ES') => {
+  if (lang === 'EN') {
+    return n >= 1000 ? `${(n / 1000).toFixed(0)}k downloads` : `${n} downloads`;
+  }
+  return n >= 1000 ? `${(n / 1000).toFixed(0)}k descargas` : `${n} descargas`;
+};
 
 export const formatDate = (iso) => {
   if (!iso) return null;

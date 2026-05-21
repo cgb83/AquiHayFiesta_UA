@@ -23,7 +23,7 @@ const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export default function CreateFiestaPage({ onNavigate }) {
-  const { user } = useApp();
+  const { user, t } = useApp();
   const { addToast } = useToast();
   const fileInputRef = useRef(null);
   
@@ -44,12 +44,12 @@ export default function CreateFiestaPage({ onNavigate }) {
   if (!user) {
     return (
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: 'var(--space-xl)', textAlign: 'center' }}>
-        <h2 style={{ marginBottom: 'var(--space-md)' }}>Necesitas iniciar sesión</h2>
+        <h2 style={{ marginBottom: 'var(--space-md)' }}>{t('create_login_needed')}</h2>
         <p style={{ marginBottom: 'var(--space-lg)', color: 'var(--color-text-soft)' }}>
-          Para crear una fiesta debes estar autenticado.
+          {t('create_login_msg')}
         </p>
         <button className="btn btn-primary" onClick={() => onNavigate('login')}>
-          Ir a iniciar sesión
+          {t('create_login_btn')}
         </button>
       </div>
     );
@@ -145,7 +145,7 @@ export default function CreateFiestaPage({ onNavigate }) {
   return (
     <div style={{ maxWidth: '700px', margin: '0 auto', padding: 'var(--space-xl)' }}>
       <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.8rem,5vw,2.5rem)', fontWeight: 700, marginBottom: 'var(--space-lg)' }}>
-        Crear Nueva Fiesta
+        {t('create_title')}
       </h1>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
@@ -158,7 +158,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Título */}
         <div className="form-group">
           <label className="form-label" htmlFor="create-title">
-            Título de la fiesta <span className="alerta">*</span>
+            {t('modal_titulo')} <span className="alerta">*</span>
           </label>
           <input 
             id="create-title" 
@@ -174,7 +174,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Portada */}
         <div className="form-group">
           <label className="form-label" htmlFor="create-cover">
-            Portada de la fiesta  <span className="alerta">*</span>
+            {t('create_portada_label')}  <span className="alerta">*</span>
           </label>
           <input
             ref={fileInputRef}
@@ -194,12 +194,12 @@ export default function CreateFiestaPage({ onNavigate }) {
             onClick={() => fileInputRef.current?.click()} 
             disabled={loading}
           >
-            {coverImage ? <><Check size={16} /> {coverImage.name}</> : <><Upload size={16} /> Subir imagen</>}
+            {coverImage ? <><Check size={16} /> {coverImage.name}</> : <><Upload size={16} /> {t('create_subir_imagen')}</>}
           </button>
-          <div className="form-hint">JPG, PNG, WEBP o GIF. Máximo 10MB.</div>
+          <div className="form-hint">{t('modal_hint_imagen')}</div>
           {coverImage && (
             <div style={{ marginTop: 'var(--space-md)', fontSize: '0.85rem', color: 'var(--color-text-soft)' }}>
-              Tamaño: {(coverImage.size / 1024 / 1024).toFixed(2)}MB
+              {t('create_tamano')} {(coverImage.size / 1024 / 1024).toFixed(2)}MB
             </div>
           )}
         </div>
@@ -207,12 +207,12 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Descripción */}
         <div className="form-group">
           <label className="form-label" htmlFor="create-description">
-            Descripción  <span className="alerta">*</span>
+            {t('modal_descripcion')}  <span className="alerta">*</span>
           </label>
           <input 
             id="create-description" 
             className="form-input" 
-            placeholder="Describe tu fiesta... (opcional)"
+            placeholder={t('create_desc_placeholder')}
             value={form.description} 
             onChange={e => set('description', e.target.value)} 
             disabled={loading}
@@ -223,7 +223,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Categorías */}
         <div className="form-group">
           <label className="form-label" style={{ marginBottom: 'var(--space-sm)' }}>
-            Categorías <span className="alerta">*</span> (puedes elegir varias)
+            {t('modal_categorias')} <span className="alerta">*</span> (puedes elegir varias)
           </label>
           <div className="category-multi-grid" role="group" aria-label="Categorías">
             {CATEGORY_OPTIONS.map((category) => {
@@ -247,7 +247,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Fechas */}
         <div className="dates-row">
           <div className="form-group">
-            <label className="form-label" htmlFor="create-start">Fecha de inicio  <span className="alerta">*</span></label>
+            <label className="form-label" htmlFor="create-start">{t('modal_fecha_inicio')}  <span className="alerta">*</span></label>
             <input 
               id="create-start" 
               className="form-input" 
@@ -261,7 +261,7 @@ export default function CreateFiestaPage({ onNavigate }) {
             />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="create-end">Fecha de fin</label>
+            <label className="form-label" htmlFor="create-end">{t('modal_fecha_fin')}</label>
             <input 
               id="create-end" 
               className="form-input" 
@@ -277,7 +277,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Ubicación */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
           <div className="form-group">
-            <label className="form-label" htmlFor="create-city">Ciudad</label>
+            <label className="form-label" htmlFor="create-city">{t('modal_ciudad')}</label>
             <input 
               id="create-city" 
               className="form-input" 
@@ -288,11 +288,11 @@ export default function CreateFiestaPage({ onNavigate }) {
             />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="create-country">País</label>
+            <label className="form-label" htmlFor="create-country">{t('modal_pais')}</label>
             <input 
               id="create-country" 
               className="form-input" 
-              placeholder="España"
+              placeholder={t('modal_pais')}
               value={form.country} 
               onChange={e => set('country', e.target.value)} 
               disabled={loading}
@@ -303,7 +303,7 @@ export default function CreateFiestaPage({ onNavigate }) {
 
         {/* Dirección */}
         <div className="form-group">
-          <label className="form-label" htmlFor="create-address">Dirección completa</label>
+          <label className="form-label" htmlFor="create-address">{t('modal_direccion')}</label>
           <input 
             id="create-address" 
             className="form-input" 
@@ -322,7 +322,7 @@ export default function CreateFiestaPage({ onNavigate }) {
             disabled={loading}
           >
             <Upload size={16} />
-            <span className="create-btn-text"> {loading ? 'Publicando fiesta...' : 'Publicar fiesta'}</span>
+          <span className="create-btn-text"> {loading ? t('create_publicando') : t('create_publicar')}</span>
           </button>
           <button 
             type="button"
@@ -331,7 +331,7 @@ export default function CreateFiestaPage({ onNavigate }) {
             disabled={loading}
           >
             <ArrowLeft size={16} />
-            <span className="create-btn-text"> Cancelar</span>
+            <span className="create-btn-text"> {t('cancelar')}</span>
           </button>
         </div>
       </form>

@@ -19,7 +19,7 @@ function AudioWave() {
   );
 }
 
-function ConfirmDialog({ title, message, onCancel, onConfirm, loading, t }) {
+function ConfirmDialog({ title, message, onCancel, onConfirm, loading, t, lang }) {
   return (
     <div className="modal-overlay" onClick={onCancel}>
       <div className="confirm-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
@@ -82,7 +82,7 @@ function EditPublicationModal({ item, onClose, onSaved, t }) {
   );
 }
 
-function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, onToggleExpand, t }) {
+function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, onToggleExpand, t, lang }) {
   if (!items || items.length === 0) return null;
   
   const gridRef = useRef(null);
@@ -189,7 +189,7 @@ function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, on
 }
 
 export default function ManagePage({ onNavigate }) {
-  const { user, reloadFiestas, t } = useApp();
+  const { user, reloadFiestas, t, lang } = useApp();
   const { addToast } = useToast();
   const isAdmin = user?.role === 'admin';
 

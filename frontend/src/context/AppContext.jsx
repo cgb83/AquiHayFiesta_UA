@@ -70,7 +70,9 @@ export function AppProvider({ children }) {
     if (userData.theme) {
       setTheme(userData.theme);
     }
-    if (userData.language) {
+    // Solo aplica el idioma del servidor si no hay uno guardado en localStorage
+    const savedLang = localStorage.getItem(STORAGE_KEYS.lang);
+    if (!savedLang && userData.language) {
       setLang(userData.language);
     }
     const normalizedUser = {

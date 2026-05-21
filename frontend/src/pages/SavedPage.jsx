@@ -7,7 +7,7 @@ import { useApp } from '../context/AppContext';
 const DEFAULT_FIESTA_IMAGE = 'https://picsum.photos/seed/ahf-fiesta/640/360';
 
 export default function SavedPage({ onNavigate }) {
-  const { toggleSave, isSaved, fiestas, categories, t } = useApp();
+  const { toggleSave, isSaved, fiestas, categories, t, lang } = useApp();
   const [catFilter, setCatFilter] = useState('all');
   const [showAllCategories, setShowAllCategories] = useState(false);
 
@@ -85,7 +85,7 @@ export default function SavedPage({ onNavigate }) {
                     />
                     <div className="card-info">
                       <div className="card-title">{f.title}</div>
-                      <div className="card-views">{formatViews(f.views)}</div>
+                      <div className="card-views">{formatViews(f.views, lang)}</div>
                     </div>
                     <button className="saved-bookmark"
                       onClick={(e) => { e.stopPropagation(); toggleSave(f.id); }}
@@ -154,7 +154,7 @@ export default function SavedPage({ onNavigate }) {
                         }}
                       />
                       <div className="upcoming-title">{f.title}</div>
-                      <div className="text-muted">{formatViews(f.views)}</div>
+                      <div className="text-muted">{formatViews(f.views, lang)}</div>
                     </div>
                   ))}
                 </div>

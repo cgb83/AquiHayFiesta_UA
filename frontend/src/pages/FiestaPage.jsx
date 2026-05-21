@@ -28,7 +28,7 @@ function getFileExt(fileName) {
   return ext.length <= 4 ? ext : 'DOC';
 }
 export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
-  const { user, fiestas, toggleSave, isSaved, t } = useApp();
+  const { user, fiestas, toggleSave, isSaved, t, lang } = useApp();
   const [activeViewer, setActiveViewer] = useState(null); // { item, type }
   const [showPublish, setShowPublish] = useState(false);
   const [content, setContent] = useState({ videos: [], images: [], documents: [], audios: [] });
@@ -412,7 +412,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                 <img src={f.image} alt={f.title}
                   style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 8 }} />
                 <div style={{ fontSize: '0.85rem', fontWeight: 500, marginTop: 4 }}>{f.title}</div>
-                <div className="text-muted">{formatViews(f.views)}</div>
+                <div className="text-muted">{formatViews(f.views, lang)}</div>
               </div>
             ))}
             
@@ -587,7 +587,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                   <img src={f.image} alt={f.title}
                     style={{ width: '100%', height: 80, objectFit: 'cover', borderRadius: 8 }} />
                   <div style={{ fontSize: '0.85rem', fontWeight: 500, marginTop: 4 }}>{f.title}</div>
-                  <div className="text-muted">{formatViews(f.views)}</div>
+                  <div className="text-muted">{formatViews(f.views, lang)}</div>
                 </div>
               ))}
             </div>

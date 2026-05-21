@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { Upload, Save } from 'lucide-react';
+import { useApp } from '../../context/AppContext';
 import { useModalAccessibility } from './useModalAccessibility';
 import { createFiesta, createPublication, updateFiesta } from '../../services/api';
 import { CATEGORIES as CATEGORY_OPTIONS } from '../../data/mockData';
@@ -16,6 +17,7 @@ const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
 export function CreateFiestaModal({ onClose, onCreated }) {
+  const { t } = useApp();
   const modalRef = useRef(null);
   const fileInputRef = useRef(null);
   const [form, setForm] = useState({
@@ -87,18 +89,18 @@ export function CreateFiestaModal({ onClose, onCreated }) {
         tabIndex={-1}
       >
         <button className="modal-close" onClick={onClose} aria-label="Cerrar modal">✕</button>
-        <h2 id="create-fiesta-title" className="modal-title">Crear nueva fiesta</h2>
+        <h2 id="create-fiesta-title" className="modal-title">{t('modal_crear_fiesta')}</h2>
 
         {error && <p role="alert" style={{ color: '#c0392b', marginBottom: 12 }}>{error}</p>}
 
         <div className="form-row mb-md">
           <div className="form-group">
-            <label className="form-label" htmlFor="fiesta-title">Titulo</label>
+            <label className="form-label" htmlFor="fiesta-title">{t('modal_titulo')}</label>
             <input id="fiesta-title" className="form-input" placeholder="Ej: Fiestas del pueblo"
               value={form.title} onChange={e => set('title', e.target.value)} disabled={loading} />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="fiesta-cover">Portada</label>
+            <label className="form-label" htmlFor="fiesta-cover">{t('modal_portada')}</label>
             <input
               ref={fileInputRef}
               id="fiesta-cover-input"
@@ -108,20 +110,20 @@ export function CreateFiestaModal({ onClose, onCreated }) {
               onChange={(e) => setCoverImage(e.target.files?.[0] || null)}
             />
             <button id="fiesta-cover" className="btn btn-outline w-full" onClick={() => fileInputRef.current?.click()} disabled={loading}>
-              {coverImage ? `Archivo: ${coverImage.name}` : 'Subir Archivo'}
+              {coverImage ? `${t('modal_archivo')}${coverImage.name}` : t('modal_subir_archivo')}
             </button>
-            <div className="form-hint">JPG, PNG, WEBP o GIF. Max 10MB.</div>
+            <div className="form-hint">{t('modal_hint_imagen')}</div>
           </div>
         </div>
 
         <div className="form-group mb-md">
-          <label className="form-label" htmlFor="fiesta-description">Descripcion</label>
+          <label className="form-label" htmlFor="fiesta-description">{t('modal_descripcion')}</label>
           <input id="fiesta-description" className="form-input" placeholder="Ej: Tutorial para hacer un regalo especial."
             value={form.description} onChange={e => set('description', e.target.value)} disabled={loading} />
         </div>
 
         <div className="form-group mb-md">
-          <label className="form-label">Categorias (puedes elegir varias)</label>
+          <label className="form-label">{t('modal_categorias')}</label>
           <div className="category-multi-grid" role="group" aria-label="Categorias">
             {CATEGORY_OPTIONS.map((category) => {
               const active = form.categories.includes(category.id);
@@ -143,12 +145,12 @@ export function CreateFiestaModal({ onClose, onCreated }) {
 
         <div className="form-row mb-md">
           <div className="form-group">
-            <label className="form-label" htmlFor="fiesta-start">Fecha inicio</label>
+            <label className="form-label" htmlFor="fiesta-start">{t('modal_fecha_inicio')}</label>
             <input id="fiesta-start" className="form-input" type="date"
               value={form.startDate} onChange={e => set('startDate', e.target.value)} disabled={loading} />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="fiesta-end">Fecha fin</label>
+            <label className="form-label" htmlFor="fiesta-end">{t('modal_fecha_fin')}</label>
             <input id="fiesta-end" className="form-input" type="date"
               value={form.endDate} onChange={e => set('endDate', e.target.value)} disabled={loading} />
           </div>
@@ -156,27 +158,27 @@ export function CreateFiestaModal({ onClose, onCreated }) {
 
         <div className="form-row mb-md">
           <div className="form-group">
-            <label className="form-label" htmlFor="fiesta-city">Ciudad</label>
-            <input id="fiesta-city" className="form-input" placeholder="Ciudad"
+            <label className="form-label" htmlFor="fiesta-city">{t('modal_ciudad')}</label>
+            <input id="fiesta-city" className="form-input" placeholder={t('modal_ciudad')}
               value={form.city} onChange={e => set('city', e.target.value)} disabled={loading} />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="fiesta-country">Pais</label>
-            <input id="fiesta-country" className="form-input" placeholder="Pais"
+            <label className="form-label" htmlFor="fiesta-country">{t('modal_pais')}</label>
+            <input id="fiesta-country" className="form-input" placeholder={t('modal_pais')}
               value={form.country} onChange={e => set('country', e.target.value)} disabled={loading} />
           </div>
         </div>
 
         <div className="form-group mb-md">
-          <label className="form-label" htmlFor="fiesta-address">Direccion</label>
-          <input id="fiesta-address" className="form-input" placeholder="Direccion completa"
+          <label className="form-label" htmlFor="fiesta-address">{t('modal_direccion')}</label>
+          <input id="fiesta-address" className="form-input" placeholder={t('modal_direccion')}
             value={form.address} onChange={e => set('address', e.target.value)} disabled={loading} />
         </div>
 
         <button className="btn btn-primary btn-full" style={{ marginTop: 8 }}
           onClick={handleSubmit}
           disabled={loading}>
-          <Upload size={16} /> {loading ? 'Publicando...' : 'Publicar'}
+          <Upload size={16} /> {loading ? t('modal_publicando') : t('modal_publicar')}
         </button>
       </div>
     </div>
@@ -184,6 +186,7 @@ export function CreateFiestaModal({ onClose, onCreated }) {
 }
 
 export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
+  const { t } = useApp();
   const modalRef = useRef(null);
   const [form, setForm] = useState({
     title:       fiesta.title       || '',
@@ -251,26 +254,26 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
         tabIndex={-1}
       >
         <button className="modal-close" onClick={onClose} aria-label="Cerrar modal">✕</button>
-        <h2 id="edit-fiesta-modal-title" className="modal-title">Editar fiesta</h2>
+        <h2 id="edit-fiesta-modal-title" className="modal-title">{t('modal_editar_fiesta')}</h2>
 
         {error && <p role="alert" style={{ color: '#c0392b', marginBottom: 12 }}>{error}</p>}
 
         <div className="form-row mb-md">
           <div className="form-group">
-            <label className="form-label" htmlFor="edit-fiesta-title">Título</label>
+            <label className="form-label" htmlFor="edit-fiesta-title">{t('modal_titulo')}</label>
             <input id="edit-fiesta-title" className="form-input"
               value={form.title} onChange={e => set('title', e.target.value)} disabled={loading} />
           </div>
         </div>
 
         <div className="form-group mb-md">
-          <label className="form-label" htmlFor="edit-fiesta-desc">Descripción</label>
+          <label className="form-label" htmlFor="edit-fiesta-desc">{t('modal_descripcion')}</label>
           <input id="edit-fiesta-desc" className="form-input"
             value={form.description} onChange={e => set('description', e.target.value)} disabled={loading} />
         </div>
 
         <div className="form-group mb-md">
-          <label className="form-label">Categorías</label>
+          <label className="form-label">{t('modal_categorias')}</label>
           <div className="category-multi-grid" role="group" aria-label="Categorias">
             {CATEGORY_OPTIONS.map(cat => (
               <button key={cat.id} type="button"
@@ -285,12 +288,12 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
 
         <div className="form-row mb-md">
           <div className="form-group">
-            <label className="form-label" htmlFor="edit-fiesta-start">Fecha inicio</label>
+            <label className="form-label" htmlFor="edit-fiesta-start">{t('modal_fecha_inicio')}</label>
             <input id="edit-fiesta-start" className="form-input" type="date"
               value={form.startDate} onChange={e => set('startDate', e.target.value)} disabled={loading} />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="edit-fiesta-end">Fecha fin</label>
+            <label className="form-label" htmlFor="edit-fiesta-end">{t('modal_fecha_fin')}</label>
             <input id="edit-fiesta-end" className="form-input" type="date"
               value={form.endDate} onChange={e => set('endDate', e.target.value)} disabled={loading} />
           </div>
@@ -298,26 +301,26 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
 
         <div className="form-row mb-md">
           <div className="form-group">
-            <label className="form-label" htmlFor="edit-fiesta-city">Ciudad</label>
+            <label className="form-label" htmlFor="edit-fiesta-city">{t('modal_ciudad')}</label>
             <input id="edit-fiesta-city" className="form-input"
               value={form.city} onChange={e => set('city', e.target.value)} disabled={loading} />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="edit-fiesta-country">País</label>
+            <label className="form-label" htmlFor="edit-fiesta-country">{t('modal_pais')}</label>
             <input id="edit-fiesta-country" className="form-input"
               value={form.country} onChange={e => set('country', e.target.value)} disabled={loading} />
           </div>
         </div>
 
         <div className="form-group mb-md">
-          <label className="form-label" htmlFor="edit-fiesta-address">Dirección</label>
+          <label className="form-label" htmlFor="edit-fiesta-address">{t('modal_direccion')}</label>
           <input id="edit-fiesta-address" className="form-input"
             value={form.address} onChange={e => set('address', e.target.value)} disabled={loading} />
         </div>
 
         <button className="btn btn-primary btn-full" style={{ marginTop: 8 }}
           onClick={handleSubmit} disabled={loading}>
-          <Save size={16} /> {loading ? 'Guardando...' : 'Guardar cambios'}
+          <Save size={16} /> {loading ? t('modal_guardando') : t('modal_guardar')}
         </button>
       </div>
     </div>
@@ -325,6 +328,7 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
 }
 
 export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId, onClose, onCreated }) {
+  const { t } = useApp();
   const modalRef = useRef(null);
   const fileInputRef = useRef(null);
   const [form, setForm] = useState({ title: '', description: '' });
@@ -385,13 +389,13 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
         tabIndex={-1}
       >
         <button className="modal-close" onClick={onClose} aria-label="Cerrar modal">✕</button>
-        <h2 id="create-publication-title" className="modal-title">Crear nueva publicación</h2>
+        <h2 id="create-publication-title" className="modal-title">{t('modal_crear_pub')}</h2>
 
         {error && <p role="alert" style={{ color: '#c0392b', marginBottom: 12 }}>{error}</p>}
 
         <div className="form-row mb-md">
           <div className="form-group">
-            <label className="form-label" htmlFor="publication-title">Titulo</label>
+            <label className="form-label" htmlFor="publication-title">{t('modal_titulo')}</label>
             <input id="publication-title" className="form-input" placeholder="Ej: Regalo romantico"
               value={form.title} onChange={e => set('title', e.target.value)} disabled={loading} />
           </div>
@@ -403,13 +407,13 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
         </div>
 
         <div className="form-group mb-md">
-          <label className="form-label" htmlFor="publication-description">Descripcion</label>
+          <label className="form-label" htmlFor="publication-description">{t('modal_descripcion')}</label>
           <input id="publication-description" className="form-input" placeholder="Ej: Tutorial para hacer un regalo especial."
             value={form.description} onChange={e => set('description', e.target.value)} disabled={loading} />
         </div>
 
         <div className="form-group mb-md">
-          <label className="form-label" htmlFor="publication-content">Contenido</label>
+          <label className="form-label" htmlFor="publication-content">{t('modal_contenido')}</label>
           <input
             ref={fileInputRef}
             id="publication-content-input"
@@ -418,15 +422,15 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
             onChange={(e) => setFile(e.target.files?.[0] || null)}
           />
           <button id="publication-content" className="btn btn-outline w-full" onClick={() => fileInputRef.current?.click()} disabled={loading}>
-            {file ? `Archivo: ${file.name}` : 'Subir Archivo'}
+            {file ? `${t('modal_archivo')}${file.name}` : t('modal_subir_archivo')}
           </button>
-          <div className="form-hint">Imagen, video, audio o PDF/DOCX. Max 50MB.</div>
+          <div className="form-hint">{t('modal_hint_archivo')}</div>
         </div>
 
         <button className="btn btn-primary btn-full" style={{ marginTop: 8 }}
           onClick={handleCreate}
           disabled={loading}>
-          <Upload size={16} /> {loading ? 'Creando...' : 'Crear publicación'}
+          <Upload size={16} /> {loading ? t('modal_creando') : t('modal_crear_pub_btn')}
         </button>
       </div>
     </div>

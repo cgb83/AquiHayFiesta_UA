@@ -18,7 +18,7 @@ function shuffle(list) {
 }
 
 export default function HomePage({ onNavigate, searchQuery = '', categoryFilter = '' }) {
-  const { user, fiestas, fiestasLoading, fiestasError, reloadFiestas, categories, t } = useApp();
+  const { user, fiestas, fiestasLoading, fiestasError, reloadFiestas, categories, t, lang } = useApp();
   const [showCreate, setShowCreate] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -154,7 +154,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
                     />
                     <div className="card-info">
                       <div className="card-title">{f.title}</div>
-                      <div className="card-views">{formatViews(f.views)}</div>
+                      <div className="card-views">{formatViews(f.views, lang)}</div>
                     </div>
                   </div>
                 ))}
