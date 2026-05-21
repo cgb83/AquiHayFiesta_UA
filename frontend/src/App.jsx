@@ -122,6 +122,9 @@ function AppInner() {
                 key={route.page}
                 searchQuery={searchQuery}
                 onSearch={setSearchQuery}
+                onCategory={(catId) => {
+                  navigate('home', `cat:${catId}`);
+                }}
               />
             )}
 

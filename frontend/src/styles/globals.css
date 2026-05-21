@@ -778,6 +778,38 @@ select:focus-visible {
   pointer-events: none;
 }
 
+.category-select {
+  height: 44px;
+  padding: 0 var(--space-md);
+  padding-right: 28px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background: var(--color-primary-pale);
+  font-family: var(--font-ui);
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--color-primary);
+  cursor: pointer;
+  min-width: 140px;
+  transition: border-color var(--transition);
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.clear-category-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+}
+
 /* ─── Mobile category pills (horizontal scroll strip) ───────── */
 .mobile-cat-pills {
   display: flex;
