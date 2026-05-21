@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Plus, ChevronUp, ChevronDown } from 'lucide-react';
 import Sidebar from '../components/ui/Sidebar';
 import { CreateFiestaModal } from '../components/modals/CreateModals';
 import { formatViews } from '../data/mockData';
@@ -121,8 +122,9 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
         </h2>
         {user && (
           <button className="btn btn-outline" onClick={() => setShowCreate(true)}
-            style={{ fontSize: '0.88rem', padding: '8px 16px' }}>
-            ⊕ Crear fiesta
+            style={{ fontSize: '0.88rem', padding: '8px 18px', whiteSpace: 'nowrap' }}>
+            <Plus size={16} />
+            <span className="create-fiesta-text"> Crear fiesta</span>
           </button>
         )}
       </div>
@@ -136,14 +138,14 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
               {!searchLoading && searchResults.length === 0 && (
                 <p style={{ color: 'var(--color-muted)' }}>No hay resultados con tu busqueda.</p>
               )}
-              <div className="card-grid">
+              <div className="card-list">
                 {searchResults.slice(0, searchPage).map(f => (
-                  <div key={f.id} className="card-grid-item"
+                  <div key={f.id} className="card-item"
                     role="button" tabIndex={0}
                     onClick={() => onNavigate('fiesta', f.slug)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
                     <img
-                      className="card-grid-thumb"
+                      className="card-thumb"
                       src={f.image}
                       alt={f.title}
                       onError={(e) => {
@@ -151,7 +153,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
                         e.currentTarget.src = DEFAULT_FIESTA_IMAGE;
                       }}
                     />
-                    <div className="card-grid-info">
+                    <div className="card-info">
                       <div className="card-title">{f.title}</div>
                       <div className="card-views">{formatViews(f.views)}</div>
                     </div>
@@ -175,14 +177,14 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
             <div className="featured-section">
               <h3 className="section-title">Destacado</h3>
               {fiestasLoading && <p style={{ color: 'var(--color-muted)' }}>Cargando fiestas...</p>}
-              <div className="card-grid">
+              <div className="card-list">
                 {featured.map(f => (
-                  <div key={f.id} className="card-grid-item"
+                  <div key={f.id} className="card-item"
                     role="button" tabIndex={0}
                     onClick={() => onNavigate('fiesta', f.slug)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}>
                     <img
-                      className="card-grid-thumb"
+                      className="card-thumb"
                       src={f.image}
                       alt={f.title}
                       onError={(e) => {
@@ -190,7 +192,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
                         e.currentTarget.src = DEFAULT_FIESTA_IMAGE;
                       }}
                     />
-                    <div className="card-grid-info">
+                    <div className="card-info">
                       <div className="card-title">{f.title}</div>
                       <div className="card-views">{formatViews(f.views)}</div>
                     </div>
@@ -220,7 +222,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
                     onClick={() => setShowAllCategories(o => !o)}
                     title={showAllCategories ? 'Ver menos' : 'Ver más'}
                   >
-                    {showAllCategories ? '▲' : '▼'}
+                    {showAllCategories ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                   </button>
                 </div>
               )}

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
+import { PartyPopper, MapPin, Plus, Pencil, Trash2, FileText, Eraser, ChevronUp, ChevronDown } from 'lucide-react';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
 import { EditFiestaModal } from '../components/modals/CreateModals';
 import { useApp } from '../context/AppContext';
@@ -150,7 +151,7 @@ function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, on
           <div key={item.id} className="manage-thumb-item"
             onClick={() => onView(item, type)}>
             {type === 'document' ? (
-              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-primary-pale)', fontSize: '1.8rem' }}>📄</div>
+              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-primary-pale)', fontSize: '1.8rem' }}><FileText size={32} style={{ color: 'var(--color-primary)' }} /></div>
             ) : type === 'audio' ? (
               <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', background: 'var(--color-primary-pale)' }}>
                 <AudioWave />
@@ -164,12 +165,12 @@ function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, on
 
             <button className="manage-edit-btn"
               onClick={e => { e.stopPropagation(); onEdit(item, type); }}
-              aria-label="Editar publicación">✏
+              aria-label="Editar publicación"><Pencil size={12} />
             </button>
             <button className="manage-delete-btn"
               onClick={e => { e.stopPropagation(); onDelete(item.id, type); }}
               aria-label="Borrar publicacion">
-              🗑
+              <Trash2 size={12} />
             </button>
           </div>
         ))}
@@ -180,7 +181,7 @@ function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, on
           onClick={onToggleExpand}
           style={{ fontSize: '0.82rem', padding: '6px 14px', marginTop: 'var(--space-sm)' }}
         >
-          {expanded ? `▲ Ver menos (${items.length} total)` : `▼ Ver más (${items.length} total)`}
+          {expanded ? <><ChevronUp size={14} /> Ver menos ({items.length} total)</> : <><ChevronDown size={14} /> Ver más ({items.length} total)</>}
         </button>
       )}
     </div>
@@ -403,7 +404,7 @@ export default function ManagePage({ onNavigate }) {
           {!isAdmin && onNavigate && (
             <button className="btn btn-primary" style={{ fontSize: '0.85rem', padding: '6px 16px' }}
               onClick={() => onNavigate('create-fiesta')}>
-              ⊕ Crear mi primera fiesta
+              <Plus size={16} /> Crear mi primera fiesta
             </button>
           )}
         </div>
@@ -427,7 +428,7 @@ export default function ManagePage({ onNavigate }) {
             >
               {f.image
                 ? <img src={f.image} alt={f.title} className="manage-fiesta-thumb" />
-                : <div className="manage-fiesta-thumb manage-fiesta-thumb--empty">🎉</div>
+                : <PartyPopper size={24} style={{ color: 'var(--color-primary)' }} />
               }
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div className="manage-fiesta-title">
@@ -435,17 +436,21 @@ export default function ManagePage({ onNavigate }) {
                     {f.title}
                   </div>
                 </div>
-                {f.location?.city && <div className="text-muted" style={{ fontSize: '0.8rem' }}>📍 {f.location.city}</div>}
+                {f.location?.city && <div className="text-muted" style={{ fontSize: '0.8rem' }}><MapPin size={12} style={{ display: 'inline', marginRight: 4 }} />{f.location.city}</div>}
               </div>
               <div style={{ display: 'flex', gap: 8, flexShrink: 0 }} onClick={(e) => e.stopPropagation()}>
-                <button className="btn btn-outline" style={{ fontSize: '0.78rem', padding: '4px 10px' }}
-                  onClick={(e) => { e.stopPropagation(); setEditFiesta(f); }}>
-                  Editar
-                </button>
-                <button className="btn btn-outline btn-danger" style={{ fontSize: '0.78rem', padding: '4px 10px' }}
-                  onClick={(e) => { e.stopPropagation(); handleDeleteFiesta(f.id); }}>
-                  Borrar
-                </button>
+              <button className="btn btn-outline manage-fiesta-btn" style={{ fontSize: '0.78rem', padding: '4px 10px' }}
+                onClick={(e) => { e.stopPropagation(); setEditFiesta(f); }}
+                aria-label="Editar fiesta">
+                <Pencil size={14} />
+                <span className="manage-fiesta-btn-text"> Editar</span>
+              </button>
+              <button className="btn btn-outline btn-danger manage-fiesta-btn" style={{ fontSize: '0.78rem', padding: '4px 10px' }}
+                onClick={(e) => { e.stopPropagation(); handleDeleteFiesta(f.id); }}
+                aria-label="Borrar fiesta">
+                <Trash2 size={14} />
+                <span className="manage-fiesta-btn-text"> Borrar</span>
+              </button>
               </div>
             </div>
           ))}
@@ -466,9 +471,10 @@ export default function ManagePage({ onNavigate }) {
         <div key={sectionKey} className="manage-section">
           <div className="manage-section-header">
             <h3 style={{ fontFamily: 'var(--font-body)', fontSize: '1.2rem' }}>{sectionKey}</h3>
-            <button className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '6px 14px' }}
+            <button className="btn btn-outline manage-section-btn" style={{ fontSize: '0.82rem', padding: '6px 14px' }}
               onClick={() => handleDeleteAll(sectionKey)}>
-              Borrar todo
+              <Eraser size={14} />
+              <span className="manage-section-btn-text"> Borrar todo</span>
             </button>
           </div>
 

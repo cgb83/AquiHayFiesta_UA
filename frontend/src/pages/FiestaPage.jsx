@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Bookmark, MapPin, ArrowLeft, Plus, Download, Play, FileText } from 'lucide-react';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
 import { CreatePublicationModal } from '../components/modals/CreateModals';
 import { CATEGORIES, formatDownloads, formatViews } from '../data/mockData';
@@ -15,7 +16,7 @@ function AudioWave() {
         {[...Array(14)].map((_, i) => <span key={i} />)}
       </div>
       <div className="media-play" style={{ background: 'transparent' }}>
-        <div className="play-icon" style={{ position: 'absolute', right: 8, bottom: 8, width: 28, height: 28, fontSize: '0.8rem' }}>▶</div>
+        <div className="play-icon" style={{ position: 'absolute', right: 8, bottom: 8, width: 28, height: 28, fontSize: '0.8rem' }}><Play size={16} fill="currentColor" /></div>
       </div>
     </div>
   );
@@ -98,6 +99,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
         const item = {
           id: pub._id,
           title: pub.title,
+          description: pub.description || '',
           downloads: pub.downloads || 0,
           image: resolveMediaUrl(pub.thumbnailUrl || pub.fileUrl),
           fileUrl: resolveMediaUrl(pub.fileUrl),
@@ -186,7 +188,9 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
     <div>
       <div className="media-thumb" onClick={() => setActiveViewer({ item, type })}>
         {type === 'document' ? (
-          <div className="doc-thumb" style={{ position: 'static', background: 'var(--color-primary-pale)' }}>📄</div>
+          <div className="doc-thumb" style={{ position: 'static', background: 'var(--color-primary-pale)' }}>
+            <FileText size={32} style={{ color: 'var(--color-primary)' }} />
+          </div>
         ) : type === 'audio' ? (
           <AudioWave />
         ) : (
@@ -194,7 +198,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             <img src={item.image} alt={item.title} />
             {type === 'video' && (
               <div className="media-play">
-                <div className="play-icon">▶</div>
+                <div className="play-icon"><Play size={16} fill="currentColor" /></div>
               </div>
             )}
           </>
@@ -219,12 +223,16 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                   <button className={`bookmark-btn ${isSaved(fiesta.id) ? 'saved' : ''}`}
                     onClick={() => toggleSave(fiesta.id)}
                     aria-label={isSaved(fiesta.id) ? 'Quitar de guardados' : 'Guardar fiesta'}>
-                    {isSaved(fiesta.id) ? '❤️' : '🤍'}
+                    {isSaved(fiesta.id) 
+                      ? <Bookmark size={20} fill="var(--color-primary)" style={{ color: 'var(--color-primary)' }} />
+                      : <Bookmark size={20} style={{ color: 'var(--color-text-soft)' }} />
+                    }
                   </button>
                 )}
               </h1>
               <button onClick={() => onNavigate('home')} className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '5px 12px', flexShrink: 0, marginLeft: 'var(--space-md)' }} aria-label="Volver al inicio">
-                ← Volver
+                <ArrowLeft size={16} />
+                <span className="back-text"> Volver</span>
               </button>
             </div>
 
@@ -235,7 +243,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             <div style={{ display: 'flex', gap: 'var(--space-lg)', marginTop: 'var(--space-lg)', flexWrap: 'wrap' }}>
               {fiesta.location && (
                 <div className="fiesta-info-block">
-                  <span className="fiesta-info-label">📍 Lugar</span>
+                  <span className="fiesta-info-label"><MapPin size={14} style={{ display: 'inline', marginRight: 4 }} /> Lugar</span>
                   <span className="fiesta-info-value">{fiesta.location}</span>
                 </div>
               )}
@@ -282,10 +290,10 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
           <div className="flex-between mb-md">
             <h3 className="section-title" style={{ marginBottom: 0, borderBottom: 'none' }}>Contenido</h3>
             {user && (
-              <button className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '6px 14px', marginLeft: '10px' }}
+              <button className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '6px 14px' }}
                 onClick={() => setShowPublish(true)}>
-                ⊕ Publicar
-                
+                <Plus size={16} />
+                <span className="publish-text"> Publicar</span>
               </button>
             )}
           </div>
@@ -335,7 +343,8 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                         <button className="doc-row-download btn btn-outline"
                           onClick={() => handleDownload(item)}
                           aria-label={`Descargar ${item.title}`}>
-                          ⬇ Descargar
+                          <Download size={14} />
+                          <span className="doc-download-text"> Descargar</span>
                         </button>
                       </div>
                     ))}
@@ -361,7 +370,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                           <div className="audio-row-title">{item.title}</div>
                           <div className="audio-row-meta">{formatDownloads(item.downloads || 0)}</div>
                         </div>
-                        <div className="audio-row-play" aria-hidden="true">▶</div>
+                        <div className="audio-row-play" aria-hidden="true"><Play size={12} fill="currentColor" /></div>
                       </div>
                     ))}
                   </div>
@@ -420,12 +429,16 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                 <button className={`bookmark-btn ${isSaved(fiesta.id) ? 'saved' : ''}`}
                   onClick={() => toggleSave(fiesta.id)}
                   aria-label={isSaved(fiesta.id) ? 'Quitar de guardados' : 'Guardar fiesta'}>
-                  {isSaved(fiesta.id) ? '❤️' : '🤍'}
+                  {isSaved(fiesta.id) 
+                    ? <Bookmark size={30} fill="var(--color-primary)" style={{ color: 'var(--color-primary)' }} />
+                    : <Bookmark size={30} style={{ color: 'var(--color-text-soft)' }} />
+                  }
                 </button>
               )}
             </h1>
             <button onClick={() => onNavigate('home')} className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '5px 12px', flexShrink: 0, marginLeft: 'var(--space-md)' }} aria-label="Volver al inicio">
-              ← Volver
+              <ArrowLeft size={16} />
+              <span className="back-text"> Volver</span>
             </button>
           </div>
 
@@ -438,7 +451,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             <div style={{ display: 'flex', gap: 'var(--space-lg)', marginTop: 'var(--space-lg)', flexWrap: 'wrap' }}>
               {fiesta.location && (
                 <div className="fiesta-info-block">
-                  <span className="fiesta-info-label">📍 Lugar</span>
+                  <span className="fiesta-info-label"><MapPin size={14} style={{ display: 'inline', marginRight: 4 }} /> Lugar</span>
                   <span className="fiesta-info-value">{fiesta.location}</span>
                 </div>
               )}
@@ -456,7 +469,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             {user && (
               <button className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '6px 14px' }}
                 onClick={() => setShowPublish(true)}>
-                ⊕ Publicar
+                <Plus size={16} /> Publicar
               </button>
             )}
           </div>

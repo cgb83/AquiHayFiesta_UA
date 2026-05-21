@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Search, X, ChevronDown } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export default function SearchBar({ onSearch, onCategory, searchQuery = '', categoryFilter = '' }) {
@@ -30,6 +31,7 @@ export default function SearchBar({ onSearch, onCategory, searchQuery = '', cate
     <div className="search-row">
       <div className="search-input-wrap">
         <label className="sr-only" htmlFor="search-input">Buscar fiestas</label>
+        <Search size={18} className="search-icon" />
         <input
           id="search-input"
           className="search-input"
@@ -41,11 +43,14 @@ export default function SearchBar({ onSearch, onCategory, searchQuery = '', cate
       <div className="search-category-wrap">
         <label className="sr-only" htmlFor="category-select">Filtrar por categoria</label>
         <select id="category-select" className="category-select" value={cat} onChange={handleCat}>
-          <option value="">Categoría ▾</option>
+          <option value="">Categoría</option>
           {categories.map(c => (
             <option key={c.id} value={c.id}>{c.label}</option>
           ))}
         </select>
+        {!cat && (
+          <ChevronDown size={18} style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text)', pointerEvents: 'none' }} />
+        )}
         {cat && (
           <button
             className="clear-category-btn"
@@ -54,7 +59,7 @@ export default function SearchBar({ onSearch, onCategory, searchQuery = '', cate
             type="button"
             aria-label="Limpiar filtro de categoría"
           >
-            ✕
+            <X size={18} />
           </button>
         )}
       </div>

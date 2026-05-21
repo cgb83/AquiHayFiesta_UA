@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Save, Check, ChevronUp, ChevronDown, Eraser } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { fetchMe, updateProfile } from '../services/api';
 
@@ -100,7 +101,7 @@ export default function ProfilePage() {
           <div className="flex-between mb-md">
             <h3 className="section-title" style={{ marginBottom: 0, borderBottom: 'none' }}>Perfil</h3>
             <button className="btn btn-outline" style={{ fontSize: '0.82rem' }} onClick={handleClear}>
-              Limpiar contraseñas
+              <Eraser size={14} /> Limpiar contraseñas
             </button>
           </div>
 
@@ -163,7 +164,7 @@ export default function ProfilePage() {
             onClick={handleSave}
             disabled={saving}
             style={{ justifyContent: 'center', gap: 8 }}>
-            💾 {saving ? 'Guardando...' : (saved ? '¡Guardado!' : 'Guardar cambios')}
+            <Save size={16} /> {saving ? 'Guardando...' : (saved ? '¡Guardado!' : 'Guardar cambios')}
           </button>
         </div>
 
@@ -189,7 +190,7 @@ export default function ProfilePage() {
               <button className="show-more-btn"
                 title={showAllDownloads ? 'Ver menos' : 'Ver más'}
                 onClick={() => setShowAllDownloads(o => !o)}>
-                {showAllDownloads ? '▲' : '▼'}
+                {showAllDownloads ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               </button>
             </div>
           )}

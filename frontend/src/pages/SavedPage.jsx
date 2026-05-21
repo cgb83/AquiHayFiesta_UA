@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Bookmark, ChevronUp, ChevronDown } from 'lucide-react';
 import Sidebar from '../components/ui/Sidebar';
 import { formatViews } from '../data/mockData';
 import { useApp } from '../context/AppContext';
@@ -53,7 +54,7 @@ export default function SavedPage({ onNavigate }) {
             <div className="featured-section">
               {saved.length === 0 && (
                 <div style={{ textAlign: 'center', padding: 'var(--space-xl) 0' }}>
-                  <div style={{ fontSize: '2.5rem', marginBottom: 'var(--space-md)' }}>🤍</div>
+                  <div style={{ fontSize: '2.5rem', marginBottom: 'var(--space-md)' }}><Bookmark size={40} style={{ color: 'var(--color-muted)' }} /></div>
                   <p style={{ color: 'var(--color-muted)', marginBottom: 'var(--space-md)' }}>
                     Aún no has guardado ninguna fiesta.
                   </p>
@@ -89,7 +90,7 @@ export default function SavedPage({ onNavigate }) {
                     <button className="saved-bookmark"
                       onClick={(e) => { e.stopPropagation(); toggleSave(f.id); }}
                       aria-label="Quitar de guardados">
-                      ❤️
+                      <Bookmark size={28} fill="var(--color-primary)" style={{ color: 'var(--color-primary)' }} />
                     </button>
                   </div>
                 ))}
@@ -120,7 +121,7 @@ export default function SavedPage({ onNavigate }) {
                       onClick={() => setShowAllCategories(o => !o)}
                       title={showAllCategories ? 'Ver menos' : 'Ver más'}
                     >
-                      {showAllCategories ? '▲' : '▼'}
+                      {showAllCategories ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                     </button>
                   </div>
                 )}

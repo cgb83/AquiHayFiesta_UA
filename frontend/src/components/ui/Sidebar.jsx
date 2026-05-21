@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 import { formatDate, formatViews } from '../../data/mockData';
 import { useApp } from '../../context/AppContext';
 import Calendar from './Calendar';
@@ -53,7 +54,7 @@ export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
             onClick={() => setShowAll(o => !o)}
             title={showAll ? 'Ver menos' : 'Ver más'}
           >
-            {showAll ? '▲' : '▼'}
+            {showAll ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           </button>
         </div>
       </div>

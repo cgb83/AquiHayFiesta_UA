@@ -825,7 +825,7 @@ select:focus-visible {
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: var(--color-primary);
+  color: var(--color-text);
   font-size: 1rem;
   cursor: pointer;
   padding: 2px 4px;
@@ -946,28 +946,13 @@ select:focus-visible {
 }
 
 .card-thumb {
-  width: 100px;
-  height: 70px;
+  width: 140px;
+  height: 95px;
   border-radius: var(--radius-sm);
   object-fit: cover;
   flex-shrink: 0;
   background: var(--color-primary-pale);
-}
-
-@media (max-width: 768px) {
-  .card-item {
-    padding: 6px;
-    gap: 10px;
-  }
-
-  .card-thumb {
-    width: 80px;
-    height: 56px;
-  }
-
-  .card-title {
-    font-size: 0.95rem;
-  }
+  margin-right: 1em;
 }
 
 .card-thumb.placeholder {
@@ -977,20 +962,46 @@ select:focus-visible {
   font-size: 2rem;
 }
 
-.card-info { flex: 1; min-width: 0; }
+.card-info { 
+  flex: 1; 
+  min-width: 0; 
+}
 
 .card-title {
-  font-family: var(--font-body);
   font-size: 1rem;
-  font-weight: 500;
-  color: var(--color-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.featured-section {
+  min-width: 0;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .card-item {
+    padding: 6px;
+    gap: 10px;
+  }
+
+  .card-thumb {
+    width: 100px;
+    height: 70px;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
 }
 
 .card-views {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   color: var(--color-muted);
   margin-top: 2px;
 }
@@ -1046,6 +1057,10 @@ select:focus-visible {
 
   .card-grid-info {
     padding: 8px;
+  }
+
+  .create-fiesta-text {
+    display: none;
   }
 }
 
@@ -1211,6 +1226,7 @@ select:focus-visible {
 @media (max-width: 768px) {
   .categories-mobile {
     display: block;
+    margin-top: var(--space-xl);
   }
 }
 
@@ -1966,6 +1982,22 @@ select:focus-visible {
   padding: 6px 12px !important;
 }
 
+@media (max-width: 768px) {
+  .doc-download-text,
+  .publish-text,
+  .back-text {
+    display: none;
+  }
+
+  .doc-row-title,
+  .audio-row-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+}
+
 /* Audio waveform */
 .audio-thumb {
   background: var(--color-primary-pale);
@@ -2329,6 +2361,40 @@ textarea:focus-visible {
   justify-content: center;
   background: var(--color-primary-pale);
   font-size: 1.4rem;
+}
+
+.create-fiesta-buttons {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.create-fiesta-buttons .btn:first-child {
+  flex: 1;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .manage-fiesta-btn-text {
+    display: none;
+  }
+
+  .manage-section-btn-text {
+    display: none;
+  }
+
+  .create-btn-text {
+    display: none;
+  }
+
+  .create-fiesta-buttons {
+    justify-content: center;
+  }
+
+  .create-fiesta-buttons .btn:first-child {
+    flex: 0;
+    padding: 10px 25px;
+  }
 }
 
 /* ─── Toast notifications ────────────────────────────────────── */

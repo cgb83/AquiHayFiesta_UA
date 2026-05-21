@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Globe, LogIn, ChevronRight, ChevronDown } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { deleteMyAccount } from '../../services/api';
 
@@ -103,13 +104,8 @@ export default function Navbar({ onNavigate, currentPage }) {
               aria-expanded={langOpen}
               aria-controls="lang-menu"
               onClick={() => { setLangOpen(o => !o); setUserOpen(false); }}>
-              {lang} <span style={{ fontSize: '0.7rem' }}>▼</span>
-              <span style={{
-                fontSize: '1rem',
-                filter: 'none'
-              }}>
-                🌐
-              </span>
+              {lang} <ChevronDown size={12}/>
+              <Globe size={18} style={{ color: 'var(--color-text)' }} />
             </button>
             {langOpen && (
               <div className="dropdown-menu" id="lang-menu" role="menu">
@@ -123,7 +119,7 @@ export default function Navbar({ onNavigate, currentPage }) {
           {!user ? (
             <button type="button" className="btn btn-outline" style={{ padding: '6px 14px', fontSize: '0.85rem' }}
               onClick={() => nav('login')}>
-              Iniciar Sesión →
+              <LogIn size={16} /> Iniciar Sesión
             </button>
           ) : (
             <div className="dropdown-wrap" ref={userRef}>
@@ -132,7 +128,7 @@ export default function Navbar({ onNavigate, currentPage }) {
                 aria-expanded={userOpen}
                 aria-controls="user-menu"
                 onClick={() => { setUserOpen(o => !o); setLangOpen(false); }}>
-                {user.name} →
+                {user.name} <ChevronRight size={14}/>
               </button>
               {userOpen && (
                 <div className="dropdown-menu" id="user-menu" role="menu">

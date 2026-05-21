@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { Upload } from 'lucide-react';
 import { useModalAccessibility } from './useModalAccessibility';
 import { createFiesta, createPublication, updateFiesta } from '../../services/api';
 import { CATEGORIES as CATEGORY_OPTIONS } from '../../data/mockData';
@@ -175,7 +176,7 @@ export function CreateFiestaModal({ onClose, onCreated }) {
         <button className="btn btn-primary btn-full" style={{ marginTop: 8 }}
           onClick={handleSubmit}
           disabled={loading}>
-          {loading ? 'Publicando...' : 'Publicar'}
+          <Upload size={16} /> {loading ? 'Publicando...' : 'Publicar'}
         </button>
       </div>
     </div>
@@ -425,7 +426,7 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
         <button className="btn btn-primary btn-full" style={{ marginTop: 8 }}
           onClick={handleCreate}
           disabled={loading}>
-          {loading ? 'Creando...' : 'Crear publicación'}
+          <Upload size={16} /> {loading ? 'Creando...' : 'Crear publicación'}
         </button>
       </div>
     </div>

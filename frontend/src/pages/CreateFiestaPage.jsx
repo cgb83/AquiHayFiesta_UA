@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { Upload, Check, ArrowLeft } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useToast } from '../context/ToastContext';
 import { createFiesta } from '../services/api';
@@ -193,7 +194,7 @@ export default function CreateFiestaPage({ onNavigate }) {
             onClick={() => fileInputRef.current?.click()} 
             disabled={loading}
           >
-            {coverImage ? `✓ ${coverImage.name}` : ' Subir imagen'}
+            {coverImage ? <><Check size={16} /> {coverImage.name}</> : <><Upload size={16} /> Subir imagen</>}
           </button>
           <div className="form-hint">JPG, PNG, WEBP o GIF. Máximo 10MB.</div>
           {coverImage && (
@@ -314,14 +315,14 @@ export default function CreateFiestaPage({ onNavigate }) {
         </div>
 
         {/* Botones */}
-        <div style={{ display: 'flex', gap: 'var(--space-md)', marginTop: 'var(--space-lg)' }}>
+        <div className="create-fiesta-buttons">
           <button 
             type="submit"
-            className="btn btn-primary" 
-            style={{ flex: 1 }}
+            className="btn btn-primary"
             disabled={loading}
           >
-            {loading ? ' Publicando fiesta...' : ' Publicar fiesta'}
+            <Upload size={16} />
+            <span className="create-btn-text"> {loading ? 'Publicando fiesta...' : 'Publicar fiesta'}</span>
           </button>
           <button 
             type="button"
@@ -329,7 +330,8 @@ export default function CreateFiestaPage({ onNavigate }) {
             onClick={() => onNavigate('manage')}
             disabled={loading}
           >
-            Cancelar
+            <ArrowLeft size={16} />
+            <span className="create-btn-text"> Cancelar</span>
           </button>
         </div>
       </form>

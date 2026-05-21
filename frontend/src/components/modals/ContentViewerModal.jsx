@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { FileText, Download, ArrowLeft } from 'lucide-react';
 import { useModalAccessibility } from './useModalAccessibility';
 
 export default function ContentViewerModal({ item, type, onClose, onDownload, canDownload = true, onNavigate }) {
@@ -37,7 +38,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
           aria-label="Cerrar visor"
           onClick={onClose}
         >
-          ←
+          <ArrowLeft size={28} />
         </button>
 
         <div className="content-viewer">
@@ -78,7 +79,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
                   borderRadius: 8,
                   textAlign: 'center'
                 }}>
-                  <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>📄</div>
+                  <FileText size={64} style={{ color: 'var(--color-primary)', marginBottom: '1rem' }} />
                   
                 </div>
               </div>
@@ -100,7 +101,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
           {canDownload ? (
             <button className="btn btn-outline" style={{ gap: 6 }}
               onClick={handleDownload} disabled={loading}>
-              ⬇ {loading ? 'Descargando...' : 'Descargar'}
+              <Download size={16} /> {loading ? 'Descargando...' : 'Descargar'}
             </button>
           ) : (
             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-soft)' }}>
