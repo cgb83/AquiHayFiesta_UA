@@ -4,7 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { deleteMyAccount } from '../../services/api';
 
 export default function Navbar({ onNavigate, currentPage }) {
-  const { user, logout, lang, setLang } = useApp();
+  const { user, logout, lang, setLang, t } = useApp();
   const [menuOpen, setMenuOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
@@ -58,14 +58,14 @@ export default function Navbar({ onNavigate, currentPage }) {
         {/* Left: nav links (Desktop) */}
         <div className="navbar-links">
           <button type="button" className={`navbar-link ${currentPage === 'home' ? 'active' : ''}`}
-            onClick={() => nav('home')}>Inicio</button>
+            onClick={() => nav('home')}>{ t('nav_home') }</button>
           {user && <>
             <button type="button" className={`navbar-link ${currentPage === 'saved' ? 'active' : ''}`}
-              onClick={() => nav('saved')}>Guardados</button>
+              onClick={() => nav('saved')}>{ t('nav_saved') }</button>
             <button type="button" className={`navbar-link ${currentPage === 'manage' ? 'active' : ''}`}
-              onClick={() => nav('manage')}>Mis publicaciones</button>
+              onClick={() => nav('manage')}>{ t('nav_manage') }</button>
             <button type="button" className={`navbar-link ${currentPage === 'create-fiesta' ? 'active' : ''}`}
-              onClick={() => nav('create-fiesta')}>Crear Fiesta</button>
+              onClick={() => nav('create-fiesta')}>{ t('nav_create') }</button>
           </>}
         </div>
 
@@ -82,14 +82,14 @@ export default function Navbar({ onNavigate, currentPage }) {
           {menuOpen && (
             <div className="dropdown-menu" id="nav-menu" role="menu">
               <button type="button" className={`dropdown-item ${currentPage === 'home' ? 'active' : ''}`}
-                onClick={() => nav('home')}>Inicio</button>
+                onClick={() => nav('home')}>{ t('nav_home') }</button>
               {user && <>
                 <button type="button" className={`dropdown-item ${currentPage === 'saved' ? 'active' : ''}`}
-                  onClick={() => nav('saved')}>Guardados</button>
+                  onClick={() => nav('saved')}>{ t('nav_saved') }</button>
                 <button type="button" className={`dropdown-item ${currentPage === 'manage' ? 'active' : ''}`}
-                  onClick={() => nav('manage')}>Mis publicaciones</button>
+                  onClick={() => nav('manage')}>{ t('nav_manage') }</button>
                 <button type="button" className={`dropdown-item ${currentPage === 'create-fiesta' ? 'active' : ''}`}
-                  onClick={() => nav('create-fiesta')}>Crear Fiesta</button>
+                  onClick={() => nav('create-fiesta')}>{ t('nav_create') }</button>
               </>}
             </div>
           )}
@@ -119,7 +119,7 @@ export default function Navbar({ onNavigate, currentPage }) {
           {!user ? (
             <button type="button" className="btn btn-outline" style={{ padding: '6px 14px', fontSize: '0.85rem' }}
               onClick={() => nav('login')}>
-              <LogIn size={16} /> Iniciar Sesión
+              <LogIn size={16} /> { t('nav_login') }
             </button>
           ) : (
             <div className="dropdown-wrap" ref={userRef}>
@@ -132,9 +132,9 @@ export default function Navbar({ onNavigate, currentPage }) {
               </button>
               {userOpen && (
                 <div className="dropdown-menu" id="user-menu" role="menu">
-                  <button type="button" className="dropdown-item" onClick={() => { nav('profile'); setUserOpen(false); }}>Mi perfil</button>
-                  <button type="button" className="dropdown-item" onClick={() => { setShowLogoutConfirm(true); setUserOpen(false); }}>Cerrar sesión</button>
-                  <button type="button" className="dropdown-item danger" onClick={() => { setShowDeleteConfirm(true); setUserOpen(false); }}>Borrar cuenta</button>
+                  <button type="button" className="dropdown-item" onClick={() => { nav('profile'); setUserOpen(false); }}>{ t('nav_profile') }</button>
+                  <button type="button" className="dropdown-item" onClick={() => { setShowLogoutConfirm(true); setUserOpen(false); }}>{ t('nav_logout') }</button>
+                  <button type="button" className="dropdown-item danger" onClick={() => { setShowDeleteConfirm(true); setUserOpen(false); }}>{ t('nav_delete') }</button>
                 </div>
               )}
             </div>
@@ -146,10 +146,10 @@ export default function Navbar({ onNavigate, currentPage }) {
       {showLogoutConfirm && (
         <div className="modal-overlay" onClick={() => setShowLogoutConfirm(false)}>
           <div className="confirm-modal" role="dialog" aria-modal="true" aria-label="Confirmar cierre de sesion" onClick={e => e.stopPropagation()} tabIndex={-1}>
-            <p>¿Estás seguro de que quieres cerrar la sesión?</p>
+            <p>{ t('nav_logout_confirm') }</p>
             <div className="confirm-buttons">
-              <button type="button" className="confirm-btn" onClick={() => { logout(); setShowLogoutConfirm(false); nav('home'); }}>Sí</button>
-              <button type="button" className="confirm-btn" onClick={() => setShowLogoutConfirm(false)}>No</button>
+              <button type="button" className="confirm-btn" onClick={() => { logout(); setShowLogoutConfirm(false); nav('home'); }}>{ t('nav_yes') }</button>
+              <button type="button" className="confirm-btn" onClick={() => setShowLogoutConfirm(false)}>{ t('nav_no') }</button>
             </div>
           </div>
         </div>
@@ -159,8 +159,8 @@ export default function Navbar({ onNavigate, currentPage }) {
       {showDeleteConfirm && (
         <div className="modal-overlay" onClick={() => { if (!deleteLoading) setShowDeleteConfirm(false); }}>
           <div className="confirm-modal" role="dialog" aria-modal="true" aria-label="Confirmar borrado de cuenta" onClick={e => e.stopPropagation()} tabIndex={-1}>
-            <p>¿Estás seguro de que quieres eliminar tu cuenta?</p>
-            <p style={{ fontSize: '0.88rem', color: 'var(--color-text-soft)' }}>Esta acción no se puede deshacer.</p>
+            <p>{ t('nav_delete_confirm') }</p>
+            <p style={{ fontSize: '0.88rem', color: 'var(--color-text-soft)' }}>{ t('nav_delete_warning') }</p>
             <div className="confirm-buttons">
               <button type="button" className="confirm-btn" disabled={deleteLoading}
                 onClick={async () => {
@@ -176,9 +176,9 @@ export default function Navbar({ onNavigate, currentPage }) {
                     nav('home');
                   }
                 }}>
-                {deleteLoading ? 'Eliminando...' : 'Eliminar'}
+                { deleteLoading ? t('nav_deleting') : t('nav_eliminar') }
               </button>
-              <button type="button" className="confirm-btn" disabled={deleteLoading} onClick={() => setShowDeleteConfirm(false)}>No</button>
+              <button type="button" className="confirm-btn" disabled={deleteLoading} onClick={() => setShowDeleteConfirm(false)}>{ t('nav_no') }</button>
             </div>
           </div>
         </div>

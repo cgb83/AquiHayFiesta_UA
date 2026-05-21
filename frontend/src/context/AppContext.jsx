@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { CATEGORIES } from '../data/mockData';
 import { fetchFiestas, fetchMe, resolveMediaUrl, toggleSaveFiesta } from '../services/api';
 
+import { t as translate } from '../i18n';
+
 const AppContext = createContext(null);
 
 const STORAGE_KEYS = {
@@ -44,6 +46,7 @@ const normalizeFiesta = (fiesta) => ({
 export function AppProvider({ children }) {
   const [user, setUser] = useState(() => parseJSON(STORAGE_KEYS.user, null));
   const [lang, setLang] = useState(() => localStorage.getItem(STORAGE_KEYS.lang) || 'ES');
+  const t = (key) => translate(lang, key);
   const [theme, setTheme] = useState(() => localStorage.getItem(STORAGE_KEYS.theme) || 'standard');
   const [savedItems, setSavedItems] = useState(() => parseJSON(STORAGE_KEYS.savedItems, []));
   const [fiestas, setFiestas] = useState([]);
@@ -213,6 +216,7 @@ export function AppProvider({ children }) {
       updateFiestaViews,
       authLoading,
       refreshCurrentUser,
+      t,
     }}>
       {children}
     </AppContext.Provider>

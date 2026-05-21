@@ -18,7 +18,7 @@ function shuffle(list) {
 }
 
 export default function HomePage({ onNavigate, searchQuery = '', categoryFilter = '' }) {
-  const { user, fiestas, fiestasLoading, fiestasError, reloadFiestas, categories } = useApp();
+  const { user, fiestas, fiestasLoading, fiestasError, reloadFiestas, categories, t } = useApp();
   const [showCreate, setShowCreate] = useState(false);
   const [searchResults, setSearchResults] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
@@ -113,18 +113,17 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
         </p>
       )}
       {searchLoading && (
-        <p style={{ marginBottom: 'var(--space-md)', color: 'var(--color-muted)' }}>Buscando...</p>
+        <p style={{ marginBottom: 'var(--space-md)', color: 'var(--color-muted)' }}>{t('home_buscando')}</p>
       )}
 
       <div className="flex-between mb-lg">
         <h2 className="section-title" style={{ borderBottom: 'none', marginBottom: 0 }}>
-          Descubre tu próxima fiesta
+          {t('home_title')}
         </h2>
         {user && (
           <button className="btn btn-outline" onClick={() => setShowCreate(true)}
             style={{ fontSize: '0.88rem', padding: '8px 18px', whiteSpace: 'nowrap' }}>
-            <Plus size={16} />
-            <span className="create-fiesta-text"> Crear fiesta</span>
+            <Plus size={16} /> {t('home_create')}
           </button>
         )}
       </div>
@@ -134,9 +133,9 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
         <div className="main-content">
           {hasSearch && (
             <div className="mb-lg">
-              <h3 className="section-title">Resultados</h3>
+              <h3 className="section-title">{t('home_resultados')}</h3>
               {!searchLoading && searchResults.length === 0 && (
-                <p style={{ color: 'var(--color-muted)' }}>No hay resultados con tu busqueda.</p>
+                <p style={{ color: 'var(--color-muted)' }}>{t('home_no_results')}</p>
               )}
               <div className="card-list">
                 {searchResults.slice(0, searchPage).map(f => (
@@ -175,8 +174,8 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
           {/* Featured + Categorías lado a lado */}
           <div className="featured-categories-row mb-lg">
             <div className="featured-section">
-              <h3 className="section-title">Destacado</h3>
-              {fiestasLoading && <p style={{ color: 'var(--color-muted)' }}>Cargando fiestas...</p>}
+              <h3 className="section-title">{t('home_featured')}</h3>
+              {fiestasLoading && <p style={{ color: 'var(--color-muted)' }}>{t('home_loading')}</p>}
               <div className="card-list">
                 {featured.map(f => (
                   <div key={f.id} className="card-item"
@@ -203,7 +202,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
 
             {/* Categorías - solo en mobile, a la derecha */}
             <div className="categories-mobile">
-              <h3 className="section-title">Categorías</h3>
+              <h3 className="section-title">{t('home_categorias')}</h3>
               <div className="sidebar-categories">
                 {displayedCategories.map(c => (
                   <button
@@ -233,9 +232,9 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
           <div className="no-perder-acerca-row mb-lg">
             {/* No te pierdas */}
             <div className="no-perder-section">
-              <h3 className="section-title">No te pierdas...</h3>
+              <h3 className="section-title">{t('home_no_pierdas')}</h3>
               {!fiestasLoading && noPerder.length === 0 && (
-                <p style={{ color: 'var(--color-muted)' }}>No hay resultados con los filtros actuales.</p>
+                <p style={{ color: 'var(--color-muted)' }}>{t('home_no_filters')}</p>
               )}
               <div className="noperder-grid">
                 {noPerder.map(f => (
@@ -267,9 +266,9 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
 
             {/* Se acerca - en paralelo en mobile */}
             <div className="acerca-section">
-              <h3 className="section-title">Se acerca...</h3>
+              <h3 className="section-title">{t('home_se_acerca')}</h3>
               {seAcerca.length === 0 && (
-                <p style={{ color: 'var(--color-muted)' }}>No hay fiestas próximas.</p>
+                <p style={{ color: 'var(--color-muted)' }}>{t('home_no_upcoming')}</p>
               )}
               <div className="upcoming-list">
                 {seAcerca.map(f => (
@@ -281,7 +280,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
                     onClick={() => onNavigate('fiesta', f.slug)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}
                   >
-                    <div className="upcoming-date">{f.date ? new Date(f.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) : 'Próximamente'}</div>
+                    <div className="upcoming-date">{f.date ? new Date(f.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) : t('home_proximamente')}</div>
                     <img
                       className="upcoming-thumb"
                       src={f.image}

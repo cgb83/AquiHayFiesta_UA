@@ -28,7 +28,7 @@ function getFileExt(fileName) {
   return ext.length <= 4 ? ext : 'DOC';
 }
 export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
-  const { user, fiestas, toggleSave, isSaved } = useApp();
+  const { user, fiestas, toggleSave, isSaved, t } = useApp();
   const [activeViewer, setActiveViewer] = useState(null); // { item, type }
   const [showPublish, setShowPublish] = useState(false);
   const [content, setContent] = useState({ videos: [], images: [], documents: [], audios: [] });
@@ -137,7 +137,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
     return shuffled.slice(0, 3);
   }, [fiestas, slug]);
 
-  if (!fiesta && !fiestaLoading) return <div className="page-content"><p>Fiesta no encontrada.</p></div>;
+  if (!fiesta && !fiestaLoading) return <div className="page-content"><p> {t('fiesta_not_found')}</p></div>;
   if (!fiesta && fiestaLoading) return <div className="page-content" style={{ minHeight: '60vh' }}><SkeletonContent /></div>;
 
   const downloadBlob = async (url, fileName) => {
@@ -232,7 +232,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
               </h1>
               <button onClick={() => onNavigate('home')} className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '5px 12px', flexShrink: 0, marginLeft: 'var(--space-md)' }} aria-label="Volver al inicio">
                 <ArrowLeft size={16} />
-                <span className="back-text"> Volver</span>
+                <span className="back-text"> {t('fiesta_volver')}</span>
               </button>
             </div>
 
@@ -243,7 +243,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             <div style={{ display: 'flex', gap: 'var(--space-lg)', marginTop: 'var(--space-lg)', flexWrap: 'wrap' }}>
               {fiesta.location && (
                 <div className="fiesta-info-block">
-                  <span className="fiesta-info-label"><MapPin size={14} style={{ display: 'inline', marginRight: 4 }} /> Lugar</span>
+                  <span className="fiesta-info-label"><MapPin size={14} style={{ display: 'inline', marginRight: 4 }} /> {t('fiesta_lugar')}</span>
                   <span className="fiesta-info-value">{fiesta.location}</span>
                 </div>
               )}
@@ -259,7 +259,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
 
             {/* Categories */}
             <div className="fiesta-categories-mobile-sidebar">
-              <h3 className="section-title" style={{ textAlign: 'left' }}>Categorías</h3>
+              <h3 className="section-title" style={{ textAlign: 'left' }}>{t('fiesta_categorias')}</h3>
               {fiesta.subcategories?.length > 0 ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0 }}>
                   {fiesta.subcategories.map(s => {
@@ -278,7 +278,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                   })}
                 </div>
               ) : (
-                <p className="text-muted" style={{ textAlign: 'right', fontSize: '0.85rem' }}>Esta fiesta no tiene categorías</p>
+                <p className="text-muted" style={{ textAlign: 'right', fontSize: '0.85rem' }}>{t('fiesta_no_cats')}</p>
               )}
             </div>
           </div>
@@ -288,12 +288,12 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
         <div className="fiesta-content-mobile">
           {/* Content header */}
           <div className="flex-between mb-md">
-            <h3 className="section-title" style={{ marginBottom: 0, borderBottom: 'none' }}>Contenido</h3>
+            <h3 className="section-title" style={{ marginBottom: 0, borderBottom: 'none' }}>{t('fiesta_contenido')}</h3>
             {user && (
               <button className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '6px 14px' }}
                 onClick={() => setShowPublish(true)}>
                 <Plus size={16} />
-                <span className="publish-text"> Publicar</span>
+                <span className="publish-text"> {t('fiesta_publicar')}</span>
               </button>
             )}
           </div>
@@ -307,7 +307,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
               {/* Videos carousel */}
               {filteredContent.videos.length > 0 && (
                 <div className="mb-lg">
-                  <div className="section-subtitle">Vídeos</div>
+                  <div className="section-subtitle">{t('fiesta_videos')}</div>
                   <div className="media-grid">
                     {filteredContent.videos.map(item => <MediaThumb key={item.id} item={item} type="video" />)}
                   </div>
@@ -317,7 +317,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
               {/* Images carousel */}
               {filteredContent.images.length > 0 && (
                 <div className="mb-lg">
-                  <div className="section-subtitle">Imágenes</div>
+                  <div className="section-subtitle">{t('fiesta_imagenes')}</div>
                   <div className="media-grid">
                     {filteredContent.images.map(item => <MediaThumb key={item.id} item={item} type="image" />)}
                   </div>
@@ -327,7 +327,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
               {/* Documents — filas con badge + botón descargar */}
               {filteredContent.documents.length > 0 && (
                 <div className="mb-lg">
-                  <div className="section-subtitle">Documentos</div>
+                  <div className="section-subtitle">{t('fiesta_documentos')}</div>
                   <div className="doc-list">
                     {filteredContent.documents.map(item => (
                       <div key={item.id} className="doc-row">
@@ -344,7 +344,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                           onClick={() => handleDownload(item)}
                           aria-label={`Descargar ${item.title}`}>
                           <Download size={14} />
-                          <span className="doc-download-text"> Descargar</span>
+                          <span className="doc-download-text"> {t('fiesta_descargar')}</span>
                         </button>
                       </div>
                     ))}
@@ -355,7 +355,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
               {/* Audios — filas tipo playlist */}
               {filteredContent.audios.length > 0 && (
                 <div className="mb-lg">
-                  <div className="section-subtitle">Audios</div>
+                  <div className="section-subtitle">{t('fiesta_audios')}</div>
                   <div className="audio-list">
                     {filteredContent.audios.map(item => (
                       <div key={item.id} className="audio-row" role="button" tabIndex={0}
@@ -381,7 +381,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                 filteredContent.images.length === 0 &&
                 filteredContent.documents.length === 0 &&
                 filteredContent.audios.length === 0 && (
-                  <p className="text-muted">{searchQuery ? 'No hay resultados para tu búsqueda.' : 'No hay publicaciones todavia para esta fiesta.'}</p>
+                  <p className="text-muted">{t(searchQuery ? 'fiesta_no_search' : 'fiesta_no_content')}</p>
                 )}
             </>
           )}
@@ -392,20 +392,20 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
           {/* Creator Profile */}
           {fiesta.creatorName && (
             <div className="creator-profile">
-              <h3 className="section-title">Creador</h3>
+              <h3 className="section-title">{t('fiesta_creador')}</h3>
               <div className="creator-card">
                 {fiesta.creatorAvatar && (
                   <img src={fiesta.creatorAvatar} alt={fiesta.creatorName} className="creator-avatar" />
                 )}
                 <div className="creator-info">
                   <div className="creator-name">{fiesta.creatorName}</div>
-                  <div className="creator-meta">Creador de fiestas</div>
+                  <div className="creator-meta">{t('fiesta_creador_meta')}</div>
                 </div>
               </div>
             </div>
           )}
 
-          <h3 className="section-title" style={{ textAlign: 'left' }}>Explorar fiestas</h3>
+          <h3 className="section-title" style={{ textAlign: 'left' }}>{t('fiesta_explorar')}</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {exploreFiestas.map(f => (
               <div key={f.id} className="explore-item" onClick={() => onNavigate('fiesta', f.slug)}>
@@ -438,7 +438,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             </h1>
             <button onClick={() => onNavigate('home')} className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '5px 12px', flexShrink: 0, marginLeft: 'var(--space-md)' }} aria-label="Volver al inicio">
               <ArrowLeft size={16} />
-              <span className="back-text"> Volver</span>
+              <span className="back-text"> {t('fiesta_volver')}</span>
             </button>
           </div>
 
@@ -451,7 +451,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             <div style={{ display: 'flex', gap: 'var(--space-lg)', marginTop: 'var(--space-lg)', flexWrap: 'wrap' }}>
               {fiesta.location && (
                 <div className="fiesta-info-block">
-                  <span className="fiesta-info-label"><MapPin size={14} style={{ display: 'inline', marginRight: 4 }} /> Lugar</span>
+                  <span className="fiesta-info-label"><MapPin size={14} style={{ display: 'inline', marginRight: 4 }} /> {t('fiesta_lugar')}</span>
                   <span className="fiesta-info-value">{fiesta.location}</span>
                 </div>
               )}
@@ -465,11 +465,11 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
 
           {/* Content sections */}
           <div className="flex-between mb-md">
-            <h3 className="section-title" style={{ marginBottom: 0, borderBottom: 'none' }}>Contenido</h3>
+            <h3 className="section-title" style={{ marginBottom: 0, borderBottom: 'none' }}>{t('fiesta_contenido')}</h3>
             {user && (
               <button className="btn btn-outline" style={{ fontSize: '0.82rem', padding: '6px 14px' }}
                 onClick={() => setShowPublish(true)}>
-                <Plus size={16} /> Publicar
+                <Plus size={16} /> {t('fiesta_publicar')}
               </button>
             )}
           </div>
@@ -483,7 +483,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
               {/* Videos */}
               {filteredContent.videos.length > 0 && (
                 <div className="mb-lg">
-                  <div className="section-subtitle">Vídeos</div>
+                  <div className="section-subtitle">{t('fiesta_videos')}</div>
                   <div className="media-grid">
                     {filteredContent.videos.map(item => <MediaThumb key={item.id} item={item} type="video" />)}
                   </div>
@@ -493,7 +493,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
               {/* Images */}
               {filteredContent.images.length > 0 && (
                 <div className="mb-lg">
-                  <div className="section-subtitle">Imágenes</div>
+                  <div className="section-subtitle">{t('fiesta_imagenes')}</div>
                   <div className="media-grid">
                     {filteredContent.images.map(item => <MediaThumb key={item.id} item={item} type="image" />)}
                   </div>
@@ -503,7 +503,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
               {/* Documents */}
               {filteredContent.documents.length > 0 && (
                 <div className="mb-lg">
-                  <div className="section-subtitle">Documentos</div>
+                  <div className="section-subtitle">{t('fiesta_documentos')}</div>
                   <div className="media-grid">
                     {filteredContent.documents.map(item => <MediaThumb key={item.id} item={item} type="document" />)}
                   </div>
@@ -513,7 +513,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
               {/* Audios */}
               {filteredContent.audios.length > 0 && (
                 <div className="mb-lg">
-                  <div className="section-subtitle">Audios</div>
+                  <div className="section-subtitle">{t('fiesta_audios')}</div>
                   <div className="media-grid">
                     {filteredContent.audios.map(item => <MediaThumb key={item.id} item={item} type="audio" />)}
                   </div>
@@ -524,7 +524,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                 filteredContent.images.length === 0 &&
                 filteredContent.documents.length === 0 &&
                 filteredContent.audios.length === 0 && (
-                  <p className="text-muted">{searchQuery ? 'No hay resultados para tu búsqueda.' : 'No hay publicaciones todavia para esta fiesta.'}</p>
+                  <p className="text-muted">{t(searchQuery ? 'fiesta_no_search' : 'fiesta_no_content')}</p>
                 )}
             </>
           )}
@@ -539,7 +539,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
 
           {/* Categories */}
           <div className="mb-lg">
-            <h3 className="section-title" style={{ textAlign: 'right' }}>Categorías</h3>
+            <h3 className="section-title" style={{ textAlign: 'right' }}>{t('fiesta_categorias')}</h3>
             {fiesta.subcategories?.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0 }}>
                 {fiesta.subcategories.map(s => {
@@ -558,7 +558,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                 })}
               </div>
             ) : (
-              <p className="text-muted" style={{ textAlign: 'right', fontSize: '0.85rem' }}>Esta fiesta no tiene categorías</p>
+              <p className="text-muted" style={{ textAlign: 'right', fontSize: '0.85rem' }}>{t('fiesta_no_cats')}</p>
             )}
           </div>
 
@@ -567,20 +567,20 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             {/* Creator Profile */}
             {fiesta.creatorName && (
               <div className="creator-profile mb-lg">
-                <h3 className="section-title" style={{ textAlign: 'right' }}>Creador</h3>
+                <h3 className="section-title" style={{ textAlign: 'right' }}>{t('fiesta_creador')}</h3>
                 <div className="creator-card">
                   {fiesta.creatorAvatar && (
                     <img src={fiesta.creatorAvatar} alt={fiesta.creatorName} className="creator-avatar" />
                   )}
                   <div className="creator-info">
                     <div className="creator-name">{fiesta.creatorName}</div>
-                    <div className="creator-meta">Creador de fiestas</div>
+                    <div className="creator-meta">{t('fiesta_creador_meta')}</div>
                   </div>
                 </div>
               </div>
             )}
 
-            <h3 className="section-title" style={{ textAlign: 'right' }}>Explorar fiestas</h3>
+            <h3 className="section-title" style={{ textAlign: 'right' }}>{t('fiesta_explorar')}</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {exploreFiestas.map(f => (
                 <div key={f.id} className="explore-item" onClick={() => onNavigate('fiesta', f.slug)}>

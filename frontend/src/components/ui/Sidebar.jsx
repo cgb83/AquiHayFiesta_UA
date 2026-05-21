@@ -7,7 +7,7 @@ import Calendar from './Calendar';
 const DEFAULT_FIESTA_IMAGE = 'https://picsum.photos/seed/ahf-fiesta/640/360';
 
 export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
-  const { categories, fiestas } = useApp();
+  const { categories, fiestas, t } = useApp();
   const [showAll, setShowAll] = useState(false);
   const displayed = showAll ? categories : categories.slice(0, 3);
   const today = new Date();
@@ -36,7 +36,7 @@ export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
       )}
 
       <div className="mb-lg">
-        <h3 className="section-title" style={{ textAlign: 'right' }}>Categorías</h3>
+        <h3 className="section-title" style={{ textAlign: 'right' }}>{t('home_categorias')}</h3>
         <div className="sidebar-categories">
           {displayed.map(c => (
             <button
@@ -60,10 +60,10 @@ export default function Sidebar({ onNavigate, onCategory, fiesta = null }) {
       </div>
 
       <div>
-        <h3 className="section-title" style={{ textAlign: 'right' }}>Se acerca...</h3>
+        <h3 className="section-title" style={{ textAlign: 'right' }}>{t('home_se_acerca')}</h3>
         <div className="upcoming-list">
           {upcoming.length === 0 && (
-            <p className="text-muted" style={{ textAlign: 'right' }}>No hay fiestas próximas.</p>
+            <p className="text-muted" style={{ textAlign: 'right' }}>{t('home_no_upcoming')}</p>
           )}
           {upcoming.map(f => (
             <div

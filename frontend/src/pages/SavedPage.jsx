@@ -7,7 +7,7 @@ import { useApp } from '../context/AppContext';
 const DEFAULT_FIESTA_IMAGE = 'https://picsum.photos/seed/ahf-fiesta/640/360';
 
 export default function SavedPage({ onNavigate }) {
-  const { toggleSave, isSaved, fiestas, categories } = useApp();
+  const { toggleSave, isSaved, fiestas, categories, t } = useApp();
   const [catFilter, setCatFilter] = useState('all');
   const [showAllCategories, setShowAllCategories] = useState(false);
 
@@ -42,7 +42,7 @@ export default function SavedPage({ onNavigate }) {
   return (
     <>
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700, marginBottom: 'var(--space-lg)' }}>
-        Guardados
+        {t('saved_title')}
       </h2>
 
       <div className="content-grid">
@@ -56,15 +56,15 @@ export default function SavedPage({ onNavigate }) {
                 <div style={{ textAlign: 'center', padding: 'var(--space-xl) 0' }}>
                   <div style={{ fontSize: '2.5rem', marginBottom: 'var(--space-md)' }}><Bookmark size={40} style={{ color: 'var(--color-muted)' }} /></div>
                   <p style={{ color: 'var(--color-muted)', marginBottom: 'var(--space-md)' }}>
-                    Aún no has guardado ninguna fiesta.
+                    {t('saved_empty')}
                   </p>
                   <button className="btn btn-primary" onClick={() => onNavigate('home')}>
-                    Explorar fiestas
+                    {t('saved_explore')}
                   </button>
                 </div>
               )}
               {saved.length > 0 && filtered.length === 0 && (
-                <p style={{ color: 'var(--color-muted)' }}>No hay guardados en esta categoría.</p>
+                <p style={{ color: 'var(--color-muted)' }}>{t('saved_no_cat')}</p>
               )}
 
               <div className="card-list">
@@ -101,7 +101,7 @@ export default function SavedPage({ onNavigate }) {
             <div className="categories-mobile">
               {/* Categorías */}
               <div style={{ marginBottom: 'var(--space-lg)' }}>
-                <h3 className="section-title">Categorías</h3>
+                <h3 className="section-title">{t('home_categorias')}</h3>
                 <div className="sidebar-categories">
                   
                   {displayedCategories.map(c => (
@@ -129,9 +129,9 @@ export default function SavedPage({ onNavigate }) {
 
               {/* Se acerca */}
               <div>
-                <h3 className="section-title">Se acerca...</h3>
+                <h3 className="section-title">{t('home_se_acerca')}</h3>
                 {seAcerca.length === 0 && (
-                  <p style={{ color: 'var(--color-muted)' }}>No hay fiestas próximas.</p>
+                  <p style={{ color: 'var(--color-muted)' }}>{t('home_no_upcoming')}</p>
                 )}
                 <div className="upcoming-list">
                   {seAcerca.map(f => (
@@ -143,7 +143,7 @@ export default function SavedPage({ onNavigate }) {
                       onClick={() => onNavigate('fiesta', f.slug)}
                       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('fiesta', f.slug); } }}
                     >
-                      <div className="upcoming-date">{f.date ? new Date(f.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) : 'Próximamente'}</div>
+                      <div className="upcoming-date">{f.date ? new Date(f.date).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) : t('home_proximamente')}</div>
                       <img
                         className="upcoming-thumb"
                         src={f.image}
