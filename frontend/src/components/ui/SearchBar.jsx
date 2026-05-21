@@ -3,7 +3,7 @@ import { Search, X, ChevronDown } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export default function SearchBar({ onSearch, onCategory, searchQuery = '', categoryFilter = '' }) {
-  const { categories } = useApp();
+  const { categories, t } = useApp();
   const [query, setQuery] = useState(searchQuery);
   const [cat, setCat] = useState(categoryFilter);
 
@@ -30,20 +30,20 @@ export default function SearchBar({ onSearch, onCategory, searchQuery = '', cate
   return (
     <div className="search-row">
       <div className="search-input-wrap">
-        <label className="sr-only" htmlFor="search-input">Buscar fiestas</label>
+        <label className="sr-only" htmlFor="search-input">{t('search_label')}</label>
         <Search size={18} className="search-icon" />
         <input
           id="search-input"
           className="search-input"
-          placeholder="Buscar..."
+          placeholder={t('search_placeholder')}
           value={query}
           onChange={handleSearch}
         />
       </div>
       <div className="search-category-wrap">
-        <label className="sr-only" htmlFor="category-select">Filtrar por categoria</label>
+        <label className="sr-only" htmlFor="category-select">{t('search_cat_label')}</label>
         <select id="category-select" className="category-select" value={cat} onChange={handleCat}>
-          <option value="">Categoría</option>
+          <option value="">{t('search_cat_placeholder')}</option>
           {categories.map(c => (
             <option key={c.id} value={c.id}>{c.label}</option>
           ))}
@@ -55,9 +55,9 @@ export default function SearchBar({ onSearch, onCategory, searchQuery = '', cate
           <button
             className="clear-category-btn"
             onClick={clearCategory}
-            title="Limpiar categoría"
+            title={t('search_clear')}
             type="button"
-            aria-label="Limpiar filtro de categoría"
+            aria-label={t('search_clear')}
           >
             <X size={18} />
           </button>

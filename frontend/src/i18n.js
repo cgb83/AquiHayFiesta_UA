@@ -104,7 +104,25 @@ export const translations = {
         profile_guardado: '¡Guardado!',
         profile_historial: 'Historial de descargas',
         profile_no_descargas: 'Aun no hay descargas registradas.',
-    
+        
+        // SearchBar
+        search_label: 'Buscar fiestas',
+        search_placeholder: 'Buscar...',
+        search_cat_label: 'Filtrar por categoría',
+        search_cat_placeholder: 'Categoría',
+        search_clear: 'Limpiar categoría',
+
+        // Footer
+        footer_contact: 'Contacto',
+        footer_privacy: 'Privacidad',
+
+        // Calendar
+        cal_titulo: 'Calendario',
+        cal_no_fecha: 'Fecha no especificada',
+        cal_evento: 'Evento',
+        cal_rango: 'Rango de la fiesta',
+        cal_fecha: 'Fecha principal de la fiesta',
+
         // Common
         guardar: 'Guardar cambios',
         guardando: 'Guardando...',
@@ -219,6 +237,24 @@ export const translations = {
         profile_historial: 'Download history',
         profile_no_descargas: 'No downloads registered yet.',
     
+        // SearchBar
+        search_label: 'Search parties',
+        search_placeholder: 'Search...',
+        search_cat_label: 'Filter by category',
+        search_cat_placeholder: 'Category',
+        search_clear: 'Clear category',
+
+        // Footer
+        footer_contact: 'Contact',
+        footer_privacy: 'Privacy',
+
+        // Calendar
+        cal_titulo: 'Calendar',
+        cal_no_fecha: 'Date not specified',
+        cal_evento: 'Event',
+        cal_rango: 'Party range',
+        cal_fecha: 'Main party date',
+        
         // Common
         guardar: 'Save changes',
         guardando: 'Saving...',

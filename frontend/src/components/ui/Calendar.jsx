@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useApp } from '../../context/AppContext';
 import ReactCalendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 
@@ -26,6 +27,8 @@ function isDateInRange(date, startDate, endDate) {
 }
 
 export default function Calendar({ fiesta }) {
+  const { t, lang } = useApp();
+  const locale = lang === 'EN' ? 'en-US' : 'es-ES';
   const startDate = useMemo(() => parseIsoDateToLocal(fiesta?.startDate), [fiesta?.startDate]);
   const endDate = useMemo(() => parseIsoDateToLocal(fiesta?.endDate), [fiesta?.endDate]);
   const fiestaDate = startDate || useMemo(() => parseIsoDateToLocal(fiesta?.date), [fiesta?.date]);
@@ -34,33 +37,33 @@ export default function Calendar({ fiesta }) {
   const longDate = useMemo(() => {
     if (!fiestaDate) return '';
     if (startDate && endDate && !isSameDate(startDate, endDate)) {
-      const start = new Intl.DateTimeFormat('es-ES', {
+      const start = new Intl.DateTimeFormat(locale, {
         day: 'numeric',
         month: 'long',
       }).format(startDate);
-      const end = new Intl.DateTimeFormat('es-ES', {
+      const end = new Intl.DateTimeFormat(locale, {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
       }).format(endDate);
       return start + ' - ' + end;
     }
-    return new Intl.DateTimeFormat('es-ES', {
+    return new Intl.DateTimeFormat(locale, {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
       year: 'numeric',
     }).format(fiestaDate);
-  }, [fiestaDate, startDate, endDate]);
+  }, [fiestaDate, startDate, endDate, locale]);
 
   if (!fiesta?.startDate && !fiesta?.date) {
     return (
       <div className="calendar-card">
         <div className="calendar-topbar">
-          <h3 className="section-subtitle" style={{ marginBottom: 0 }}>Calendario</h3>
+          <h3 className="section-subtitle" style={{ marginBottom: 0 }}>{t('cal_titulo')}</h3>
         </div>
         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-soft)' }}>
-          Fecha no especificada
+          {t('cal_no_fecha')}
         </p>
       </div>
     );
@@ -69,15 +72,15 @@ export default function Calendar({ fiesta }) {
   return (
     <div className="calendar-card">
       <div className="calendar-topbar">
-        <h3 className="section-subtitle" style={{ marginBottom: 0 }}>Calendario</h3>
-        <span className="calendar-chip">Evento</span>
+        <h3 className="section-subtitle" style={{ marginBottom: 0 }}>{t('cal_titulo')}</h3>
+        <span className="calendar-chip">{t('cal_evento')}</span>
       </div>
       <p className="calendar-date-text">{longDate}</p>
 
       <div className="calendar-wrapper">
         <ReactCalendar
           value={fiestaDate}
-          locale="es-ES"
+          locale={lang === 'EN' ? 'en-US' : 'es-ES'}
           activeStartDate={activeMonth}
           next2Label={null}
           prev2Label={null}
@@ -95,7 +98,7 @@ export default function Calendar({ fiesta }) {
 
       <div className="calendar-legend">
         <span className="legend-dot" aria-hidden="true" />
-        <span>{endDate && !isSameDate(startDate, endDate) ? 'Rango de la fiesta' : 'Fecha principal de la fiesta'}</span>
+        <span>{endDate && !isSameDate(startDate, endDate) ? t('cal_rango') : t('cal_fecha')}</span>
       </div>
     </div>
   );
