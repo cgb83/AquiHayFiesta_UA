@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Upload } from 'lucide-react';
+import { Upload, Save } from 'lucide-react';
 import { useModalAccessibility } from './useModalAccessibility';
 import { createFiesta, createPublication, updateFiesta } from '../../services/api';
 import { CATEGORIES as CATEGORY_OPTIONS } from '../../data/mockData';
@@ -317,7 +317,7 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
 
         <button className="btn btn-primary btn-full" style={{ marginTop: 8 }}
           onClick={handleSubmit} disabled={loading}>
-          {loading ? 'Guardando...' : 'Guardar cambios'}
+          <Save size={16} /> {loading ? 'Guardando...' : 'Guardar cambios'}
         </button>
       </div>
     </div>

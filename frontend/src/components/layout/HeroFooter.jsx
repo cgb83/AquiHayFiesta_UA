@@ -1,3 +1,5 @@
+import { Phone, Shield } from 'lucide-react';
+
 export function Hero() {
   return (
   <div className="hero">
@@ -16,14 +18,14 @@ export function Footer({ onNavigate }) {
         className="footer-link"
         onClick={() => onNavigate?.('contact')}
       >
-        Contacto
+        <Phone size={14} /> Contacto
       </button>
       <button 
         type="button"
         className="footer-link"
         onClick={() => onNavigate?.('privacy')}
       >
-        Privacidad
+        <Shield size={14} /> Privacidad
       </button>
     </footer>
   );
