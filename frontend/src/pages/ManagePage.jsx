@@ -19,16 +19,16 @@ function AudioWave() {
   );
 }
 
-function ConfirmDialog({ title, message, onCancel, onConfirm, loading }) {
+function ConfirmDialog({ title, message, onCancel, onConfirm, loading, t }) {
   return (
     <div className="modal-overlay" onClick={onCancel}>
       <div className="confirm-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
         <p>{title}</p>
         <div style={{ color: 'var(--color-text-soft)', marginBottom: 'var(--space-lg)', fontSize: '0.92rem' }}>{message}</div>
         <div className="confirm-buttons">
-          <button className="confirm-btn" type="button" onClick={onCancel} disabled={loading}>Cancelar</button>
+          <button className="confirm-btn" type="button" onClick={onCancel} disabled={loading}>{t('cancelar')}</button>
           <button className="confirm-btn" type="button" onClick={onConfirm} disabled={loading}>
-            {loading ? 'Procesando...' : 'Confirmar'}
+            {loading ? t('procesando') : t('confirmar')}
           </button>
         </div>
       </div>
@@ -36,7 +36,7 @@ function ConfirmDialog({ title, message, onCancel, onConfirm, loading }) {
   );
 }
 
-function EditPublicationModal({ item, onClose, onSaved }) {
+function EditPublicationModal({ item, onClose, onSaved, t }) {
   const [title, setTitle]       = useState(item.title || '');
   const [description, setDesc]  = useState(item.description || '');
   const [loading, setLoading]   = useState(false);
@@ -75,14 +75,14 @@ function EditPublicationModal({ item, onClose, onSaved }) {
             onChange={e => setDesc(e.target.value)} disabled={loading} />
         </div>
         <button className="btn btn-primary btn-full" onClick={handleSave} disabled={loading}>
-          {loading ? 'Guardando...' : 'Guardar cambios'}
+          {loading ? t('guardando') : t('guardar')}
         </button>
       </div>
     </div>
   );
 }
 
-function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, onToggleExpand }) {
+function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, onToggleExpand, t }) {
   if (!items || items.length === 0) return null;
   
   const gridRef = useRef(null);
@@ -181,7 +181,7 @@ function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, on
           onClick={onToggleExpand}
           style={{ fontSize: '0.82rem', padding: '6px 14px', marginTop: 'var(--space-sm)' }}
         >
-          {expanded ? <><ChevronUp size={14} /> Ver menos ({items.length} total)</> : <><ChevronDown size={14} /> Ver más ({items.length} total)</>}
+          {expanded ? <><ChevronUp size={14} /> {t('manage_ver_menos')} ({items.length} total)</> : <><ChevronDown size={14} /> {t('manage_ver_mas')} ({items.length} total)</>}
         </button>
       )}
     </div>
@@ -189,7 +189,7 @@ function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, on
 }
 
 export default function ManagePage({ onNavigate }) {
-  const { user, reloadFiestas } = useApp();
+  const { user, reloadFiestas, t } = useApp();
   const { addToast } = useToast();
   const isAdmin = user?.role === 'admin';
 
@@ -306,8 +306,8 @@ export default function ManagePage({ onNavigate }) {
 
   const handleDeleteFiesta = (fiestaId) => {
     setConfirmDialog({
-      title: 'Borrar fiesta',
-      message: 'Se eliminará la fiesta y no se puede deshacer. ¿Continuar?',
+      title: t('manage_borrar_fiesta_title'),
+      message: t('manage_borrar_fiesta_msg'),
       onConfirm: async () => {
         try {
           setConfirmLoading(true);
@@ -327,8 +327,8 @@ export default function ManagePage({ onNavigate }) {
 
   const handleDelete = async (sectionKey, itemId, type) => {
     setConfirmDialog({
-      title: 'Borrar publicación',
-      message: 'Esta acción no se puede deshacer. ¿Quieres continuar?',
+      title: t('manage_borrar_pub_title'),
+      message: t('manage_borrar_pub_msg'),
       onConfirm: async () => {
         try {
           setConfirmLoading(true);
@@ -361,8 +361,8 @@ export default function ManagePage({ onNavigate }) {
     ].map((item) => item.id);
 
     setConfirmDialog({
-      title: 'Borrar sección completa',
-      message: 'Se eliminarán todos los archivos de esta sección. Esta acción no se puede deshacer.',
+      title: t('manage_borrar_seccion_title'),
+      message: t('manage_borrar_seccion_msg'),
       onConfirm: async () => {
         try {
           setConfirmLoading(true);
@@ -383,7 +383,7 @@ export default function ManagePage({ onNavigate }) {
     <>
       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-md)', marginBottom: 'var(--space-xl)' }}>
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700 }}>
-          {isAdmin ? 'Panel de administración' : 'Gestiona tu contenido'}
+          {isAdmin ? t('manage_admin_title') : t('manage_title')}
         </h2>
         {isAdmin && (
           <span style={{ background: 'var(--color-primary)', color: '#fff', fontSize: '0.72rem', fontWeight: 700, padding: '3px 10px', borderRadius: 20, letterSpacing: '0.05em' }}>
@@ -394,17 +394,17 @@ export default function ManagePage({ onNavigate }) {
 
       {/* ── Mis Fiestas ─────────────────────────────── */}
       <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 700, marginBottom: 'var(--space-md)' }}>
-        {isAdmin ? 'Todas las fiestas' : 'Mis Fiestas'}
+        {isAdmin ? t('manage_todas_fiestas') : t('manage_mis_fiestas')}
       </h3>
 
       {fiestaLoading && <p className="text-muted">Cargando fiestas...</p>}
       {!fiestaLoading && myFiestas.length === 0 && (
         <div style={{ marginBottom: 'var(--space-xl)', display: 'flex', alignItems: 'center', gap: 'var(--space-md)', flexWrap: 'wrap' }}>
-          <p className="text-muted">{isAdmin ? 'No hay fiestas en la plataforma.' : 'Todavía no has creado ninguna fiesta.'}</p>
+          <p className="text-muted">{isAdmin ? t('manage_no_fiestas_admin') : t('manage_no_fiestas')}</p>
           {!isAdmin && onNavigate && (
             <button className="btn btn-primary" style={{ fontSize: '0.85rem', padding: '6px 16px' }}
               onClick={() => onNavigate('create-fiesta')}>
-              <Plus size={16} /> Crear mi primera fiesta
+              <Plus size={16} /> {t('manage_primera_fiesta')}
             </button>
           )}
         </div>
@@ -443,13 +443,13 @@ export default function ManagePage({ onNavigate }) {
                 onClick={(e) => { e.stopPropagation(); setEditFiesta(f); }}
                 aria-label="Editar fiesta">
                 <Pencil size={14} />
-                <span className="manage-fiesta-btn-text"> Editar</span>
+                <span className="manage-fiesta-btn-text"> {t('manage_editar')}</span>
               </button>
               <button className="btn btn-outline btn-danger manage-fiesta-btn" style={{ fontSize: '0.78rem', padding: '4px 10px' }}
                 onClick={(e) => { e.stopPropagation(); handleDeleteFiesta(f.id); }}
                 aria-label="Borrar fiesta">
                 <Trash2 size={14} />
-                <span className="manage-fiesta-btn-text"> Borrar</span>
+                <span className="manage-fiesta-btn-text"> {t('manage_borrar')}</span>
               </button>
               </div>
             </div>
@@ -458,13 +458,13 @@ export default function ManagePage({ onNavigate }) {
       )}
 
       <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 700, marginBottom: 'var(--space-md)' }}>
-        {isAdmin ? 'Todas las publicaciones' : 'Mis Publicaciones'}
+        {isAdmin ? t('manage_todas_pubs') : t('manage_mis_pubs')}
       </h3>
 
-      {loading && <p className="text-muted">Cargando publicaciones...</p>}
+      {loading && <p className="text-muted">{t('manage_cargando_fiestas')}</p>}
       {error && <p role="alert" className="alerta">{error}</p>}
       {!loading && Object.keys(content).length === 0 && (
-        <p className="text-muted">{isAdmin ? 'No hay publicaciones en la plataforma.' : 'Todavía no tienes publicaciones creadas.'}</p>
+        <p className="text-muted">{isAdmin ? t('manage_no_pubs_admin') : t('manage_no_pubs')}</p>
       )}
 
       {Object.entries(content).map(([sectionKey, types]) => (
@@ -474,14 +474,14 @@ export default function ManagePage({ onNavigate }) {
             <button className="btn btn-outline manage-section-btn" style={{ fontSize: '0.82rem', padding: '6px 14px' }}
               onClick={() => handleDeleteAll(sectionKey)}>
               <Eraser size={14} />
-              <span className="manage-section-btn-text"> Borrar todo</span>
+              <span className="manage-section-btn-text"> {t('manage_borrar_todo')}</span>
             </button>
           </div>
 
-          <MediaGroup label="Vídeos"     items={types.videos}    type="video"    onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'video')} expanded={expandedGroups[`${sectionKey}-video`] || false} onToggleExpand={() => setExpandedGroups(prev => ({ ...prev, [`${sectionKey}-video`]: !prev[`${sectionKey}-video`] }))} />
-          <MediaGroup label="Imágenes"   items={types.images}    type="image"    onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'image')} expanded={expandedGroups[`${sectionKey}-image`] || false} onToggleExpand={() => setExpandedGroups(prev => ({ ...prev, [`${sectionKey}-image`]: !prev[`${sectionKey}-image`] }))} />
-          <MediaGroup label="Documentos" items={types.documents} type="document" onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'document')} expanded={expandedGroups[`${sectionKey}-document`] || false} onToggleExpand={() => setExpandedGroups(prev => ({ ...prev, [`${sectionKey}-document`]: !prev[`${sectionKey}-document`] }))} />
-          <MediaGroup label="Audios"     items={types.audios}    type="audio"    onView={(i,t) => setViewer({item:i,type:t})} onEdit={i => setEditPublication(i)} onDelete={(id,t) => handleDelete(sectionKey, id, 'audio')} expanded={expandedGroups[`${sectionKey}-audio`] || false} onToggleExpand={() => setExpandedGroups(prev => ({ ...prev, [`${sectionKey}-audio`]: !prev[`${sectionKey}-audio`] }))} />
+          <MediaGroup label={t('fiesta_videos')}     items={types.videos}    type="video"    onView={(i,tp) => setViewer({item:i,type:tp})} onEdit={i => setEditPublication(i)} onDelete={(id,tp) => handleDelete(sectionKey, id, 'video')} expanded={expandedGroups[`${sectionKey}-video`] || false} onToggleExpand={() => setExpandedGroups(prev => ({ ...prev, [`${sectionKey}-video`]: !prev[`${sectionKey}-video`] }))} t={t}/>
+          <MediaGroup label={t('fiesta_imagenes')}   items={types.images}    type="image"    onView={(i,tp) => setViewer({item:i,type:tp})} onEdit={i => setEditPublication(i)} onDelete={(id,tp) => handleDelete(sectionKey, id, 'image')} expanded={expandedGroups[`${sectionKey}-image`] || false} onToggleExpand={() => setExpandedGroups(prev => ({ ...prev, [`${sectionKey}-image`]: !prev[`${sectionKey}-image`] }))}  t={t}/>
+          <MediaGroup label={t('fiesta_documentos')} items={types.documents} type="document" onView={(i,tp) => setViewer({item:i,type:tp})} onEdit={i => setEditPublication(i)} onDelete={(id,tp) => handleDelete(sectionKey, id, 'document')} expanded={expandedGroups[`${sectionKey}-document`] || false} onToggleExpand={() => setExpandedGroups(prev => ({ ...prev, [`${sectionKey}-document`]: !prev[`${sectionKey}-document`] }))}  t={t}/>
+          <MediaGroup label={t('fiesta_audios')}     items={types.audios}    type="audio"    onView={(i,tp) => setViewer({item:i,type:tp})} onEdit={i => setEditPublication(i)} onDelete={(id,tp) => handleDelete(sectionKey, id, 'audio')} expanded={expandedGroups[`${sectionKey}-audio`] || false} onToggleExpand={() => setExpandedGroups(prev => ({ ...prev, [`${sectionKey}-audio`]: !prev[`${sectionKey}-audio`] }))}  t={t}/>
         </div>
       ))}
 
@@ -493,6 +493,7 @@ export default function ManagePage({ onNavigate }) {
             handleEditPublicationSaved(id, title, desc);
             addToast('Publicación actualizada correctamente.');
           }}
+          t={t}
         />
       )}
 
@@ -521,6 +522,7 @@ export default function ManagePage({ onNavigate }) {
             if (!confirmLoading) setConfirmDialog(null);
           }}
           onConfirm={confirmDialog.onConfirm}
+          t={t}
         />
       )}
     </>

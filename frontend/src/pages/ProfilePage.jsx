@@ -12,7 +12,7 @@ const STYLES = [
 ];
 
 export default function ProfilePage() {
-  const { user, theme, setTheme, lang, refreshCurrentUser } = useApp();
+  const { user, theme, setTheme, lang, refreshCurrentUser, t } = useApp();
   const [form, setForm] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -92,16 +92,16 @@ export default function ProfilePage() {
   return (
     <>
       <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem,4vw,2.2rem)', fontWeight: 700, marginBottom: 'var(--space-xl)' }}>
-        Mi perfil
+        {t('profile_title')}
       </h2>
 
       <div className="profile-grid">
         {/* Left: form */}
         <div>
           <div className="flex-between mb-md">
-            <h3 className="section-title" style={{ marginBottom: 0, borderBottom: 'none' }}>Perfil</h3>
+            <h3 className="section-title" style={{ marginBottom: 0, borderBottom: 'none' }}>{t('profile_perfil')}</h3>
             <button className="btn btn-outline" style={{ fontSize: '0.82rem' }} onClick={handleClear}>
-              <Eraser size={14} /> Limpiar contraseñas
+              <Eraser size={14} /> {t('profile_limpiar')}
             </button>
           </div>
 
@@ -114,42 +114,42 @@ export default function ProfilePage() {
           )}
 
           <div className="form-group">
-            <label className="form-label" htmlFor="profile-name">Nombre de usuario</label>
-            <input id="profile-name" className="form-input" placeholder="Nombre de usuario"
+            <label className="form-label" htmlFor="profile-name">{t('profile_nombre')}</label>
+            <input id="profile-name" className="form-input" placeholder={t('profile_nombre')}
               value={form.name} onChange={e => set('name', e.target.value)} />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="profile-email">Correo electronico</label>
-            <input id="profile-email" className="form-input" placeholder="Correo electrónico" type="email"
+            <label className="form-label" htmlFor="profile-email">{t('profile_email')}</label>
+            <input id="profile-email" className="form-input" placeholder={t('profile_email')} type="email"
               value={form.email} onChange={e => set('email', e.target.value)} />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="profile-password">Nueva contraseña</label>
-            <input id="profile-password" className="form-input" placeholder="Nueva contraseña" type="password"
+            <label className="form-label" htmlFor="profile-password">{t('profile_password')}</label>
+            <input id="profile-password" className="form-input" placeholder={t('profile_password')} type="password"
               autoComplete="new-password"
               value={form.password} onChange={e => set('password', e.target.value)} />
-            <div className="form-hint">*Si no se rellena, se mantendrá la contraseña actual</div>
+            <div className="form-hint">{t('profile_hint')}</div>
           </div>
 
           <div className="form-row form-group">
-            <label className="sr-only" htmlFor="profile-country">Pais</label>
-            <input id="profile-country" className="form-input" placeholder="País"
+            <label className="sr-only" htmlFor="profile-country">{t('profile_pais')}</label>
+            <input id="profile-country" className="form-input" placeholder={t('profile_pais')}
               value={form.country} onChange={e => set('country', e.target.value)} />
-            <label className="sr-only" htmlFor="profile-city">Ciudad</label>
-            <input id="profile-city" className="form-input" placeholder="Ciudad"
+            <label className="sr-only" htmlFor="profile-city">{t('profile_ciudad')}</label>
+            <input id="profile-city" className="form-input" placeholder={t('profile_ciudad')}
               value={form.city} onChange={e => set('city', e.target.value)} />
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="profile-current-password">Escribe tu contraseña para verificar los cambios:</label>
-            <input id="profile-current-password" className="form-input" placeholder="Contraseña actual" type="password"
+            <label className="form-label" htmlFor="profile-current-password">{t('profile_verify')}</label>
+            <input id="profile-current-password" className="form-input" placeholder={t('profile_pass_actual')} type="password"
               autoComplete="current-password"
               value={form.currentPassword} onChange={e => set('currentPassword', e.target.value)} />
           </div>
 
           {/* Style picker */}
           <div className="mt-lg">
-            <h3 className="section-title">Estilo</h3>
+            <h3 className="section-title">{t('profile_estilo')}</h3>
             <div style={{ height: 1, background: 'var(--color-border)', marginBottom: 'var(--space-md)' }} />
             <label className="sr-only" htmlFor="profile-theme">Estilo visual</label>
             <select id="profile-theme" className="style-select" value={theme}
@@ -164,13 +164,13 @@ export default function ProfilePage() {
             onClick={handleSave}
             disabled={saving}
             style={{ justifyContent: 'center', gap: 8 }}>
-            <Save size={16} /> {saving ? 'Guardando...' : (saved ? '¡Guardado!' : 'Guardar cambios')}
+            <Save size={16} /> {saving ? t('profile_guardando') : (saved ? t('profile_guardado') : t('profile_guardar'))}
           </button>
         </div>
 
         {/* Right: download history */}
         <div>
-          <h3 className="section-title" style={{ textAlign: 'right' }}>Historial de descargas</h3>
+          <h3 className="section-title" style={{ textAlign: 'right' }}>{t('profile_historial')}</h3>
           <div style={{ height: 1, background: 'var(--color-border)', marginBottom: 'var(--space-md)' }} />
 
           <div className="download-history">
@@ -181,14 +181,14 @@ export default function ProfilePage() {
               </div>
             ))}
             {downloadHistory.length === 0 && (
-              <p className="text-muted">Aun no hay descargas registradas.</p>
+              <p className="text-muted">{t('profile_no_descargas')}</p>
             )}
           </div>
 
           {downloadHistory.length > 5 && (
             <div className="sidebar-show-more">
               <button className="show-more-btn"
-                title={showAllDownloads ? 'Ver menos' : 'Ver más'}
+                title={showAllDownloads ? t('manage_ver_menos') : t('manage_ver_mas')}
                 onClick={() => setShowAllDownloads(o => !o)}>
                 {showAllDownloads ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
               </button>
