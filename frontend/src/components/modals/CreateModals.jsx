@@ -93,86 +93,88 @@ export function CreateFiestaModal({ onClose, onCreated }) {
 
         {error && <p role="alert" style={{ color: '#c0392b', marginBottom: 12 }}>{error}</p>}
 
-        <div className="form-row mb-md">
-          <div className="form-group">
-            <label className="form-label" htmlFor="fiesta-title">{t('modal_titulo')}</label>
-            <input id="fiesta-title" className="form-input" placeholder="Ej: Fiestas del pueblo"
-              value={form.title} onChange={e => set('title', e.target.value)} disabled={loading} />
+        <div className="create-fiesta-scrollable">
+          <div className="form-row mb-md">
+            <div className="form-group">
+              <label className="form-label" htmlFor="fiesta-title">{t('modal_titulo')}</label>
+              <input id="fiesta-title" className="form-input" placeholder="Ej: Fiestas del pueblo"
+                value={form.title} onChange={e => set('title', e.target.value)} disabled={loading} />
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="fiesta-cover">{t('modal_portada')}</label>
+              <input
+                ref={fileInputRef}
+                id="fiesta-cover-input"
+                type="file"
+                className="sr-only"
+                accept="image/*"
+                onChange={(e) => setCoverImage(e.target.files?.[0] || null)}
+              />
+              <button id="fiesta-cover" className="btn btn-outline w-full" onClick={() => fileInputRef.current?.click()} disabled={loading}>
+                {coverImage ? `${t('modal_archivo')}${coverImage.name}` : t('modal_subir_archivo')}
+              </button>
+              <div className="form-hint">{t('modal_hint_imagen')}</div>
+            </div>
           </div>
-          <div className="form-group">
-            <label className="form-label" htmlFor="fiesta-cover">{t('modal_portada')}</label>
-            <input
-              ref={fileInputRef}
-              id="fiesta-cover-input"
-              type="file"
-              className="sr-only"
-              accept="image/*"
-              onChange={(e) => setCoverImage(e.target.files?.[0] || null)}
-            />
-            <button id="fiesta-cover" className="btn btn-outline w-full" onClick={() => fileInputRef.current?.click()} disabled={loading}>
-              {coverImage ? `${t('modal_archivo')}${coverImage.name}` : t('modal_subir_archivo')}
-            </button>
-            <div className="form-hint">{t('modal_hint_imagen')}</div>
-          </div>
-        </div>
 
-        <div className="form-group mb-md">
-          <label className="form-label" htmlFor="fiesta-description">{t('modal_descripcion')}</label>
-          <input id="fiesta-description" className="form-input" placeholder="Ej: Tutorial para hacer un regalo especial."
-            value={form.description} onChange={e => set('description', e.target.value)} disabled={loading} />
-        </div>
+          <div className="form-group mb-md">
+            <label className="form-label" htmlFor="fiesta-description">{t('modal_descripcion')}</label>
+            <input id="fiesta-description" className="form-input" placeholder="Ej: Tutorial para hacer un regalo especial."
+              value={form.description} onChange={e => set('description', e.target.value)} disabled={loading} />
+          </div>
 
-        <div className="form-group mb-md">
-          <label className="form-label">{t('modal_categorias')}</label>
-          <div className="category-multi-grid" role="group" aria-label="Categorias">
-            {CATEGORY_OPTIONS.map((category) => {
-              const active = form.categories.includes(category.id);
-              return (
-                <button
-                  key={category.id}
-                  type="button"
-                  className={`category-pill ${active ? 'is-active' : ''}`}
-                  onClick={() => toggleCategory(category.id)}
-                  disabled={loading}
-                  aria-pressed={active}
-                >
-                  {category.label}
-                </button>
-              );
-            })}
+          <div className="form-group mb-md">
+            <label className="form-label">{t('modal_categorias')}</label>
+            <div className="category-multi-grid" role="group" aria-label="Categorias">
+              {CATEGORY_OPTIONS.map((category) => {
+                const active = form.categories.includes(category.id);
+                return (
+                  <button
+                    key={category.id}
+                    type="button"
+                    className={`category-pill ${active ? 'is-active' : ''}`}
+                    onClick={() => toggleCategory(category.id)}
+                    disabled={loading}
+                    aria-pressed={active}
+                  >
+                    {category.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-        <div className="form-row mb-md">
-          <div className="form-group">
-            <label className="form-label" htmlFor="fiesta-start">{t('modal_fecha_inicio')}</label>
-            <input id="fiesta-start" className="form-input" type="date"
-              value={form.startDate} onChange={e => set('startDate', e.target.value)} disabled={loading} />
+          <div className="form-row mb-md">
+            <div className="form-group">
+              <label className="form-label" htmlFor="fiesta-start">{t('modal_fecha_inicio')}</label>
+              <input id="fiesta-start" className="form-input" type="date"
+                value={form.startDate} onChange={e => set('startDate', e.target.value)} disabled={loading} />
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="fiesta-end">{t('modal_fecha_fin')}</label>
+              <input id="fiesta-end" className="form-input" type="date"
+                value={form.endDate} onChange={e => set('endDate', e.target.value)} disabled={loading} />
+            </div>
           </div>
-          <div className="form-group">
-            <label className="form-label" htmlFor="fiesta-end">{t('modal_fecha_fin')}</label>
-            <input id="fiesta-end" className="form-input" type="date"
-              value={form.endDate} onChange={e => set('endDate', e.target.value)} disabled={loading} />
-          </div>
-        </div>
 
-        <div className="form-row mb-md">
-          <div className="form-group">
-            <label className="form-label" htmlFor="fiesta-city">{t('modal_ciudad')}</label>
-            <input id="fiesta-city" className="form-input" placeholder={t('modal_ciudad')}
-              value={form.city} onChange={e => set('city', e.target.value)} disabled={loading} />
+          <div className="form-row mb-md">
+            <div className="form-group">
+              <label className="form-label" htmlFor="fiesta-city">{t('modal_ciudad')}</label>
+              <input id="fiesta-city" className="form-input" placeholder={t('modal_ciudad')}
+                value={form.city} onChange={e => set('city', e.target.value)} disabled={loading} />
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="fiesta-country">{t('modal_pais')}</label>
+              <input id="fiesta-country" className="form-input" placeholder={t('modal_pais')}
+                value={form.country} onChange={e => set('country', e.target.value)} disabled={loading} />
+            </div>
           </div>
-          <div className="form-group">
-            <label className="form-label" htmlFor="fiesta-country">{t('modal_pais')}</label>
-            <input id="fiesta-country" className="form-input" placeholder={t('modal_pais')}
-              value={form.country} onChange={e => set('country', e.target.value)} disabled={loading} />
-          </div>
-        </div>
 
-        <div className="form-group mb-md">
-          <label className="form-label" htmlFor="fiesta-address">{t('modal_direccion')}</label>
-          <input id="fiesta-address" className="form-input" placeholder={t('modal_direccion')}
-            value={form.address} onChange={e => set('address', e.target.value)} disabled={loading} />
+          <div className="form-group mb-md">
+            <label className="form-label" htmlFor="fiesta-address">{t('modal_direccion')}</label>
+            <input id="fiesta-address" className="form-input" placeholder={t('modal_direccion')}
+              value={form.address} onChange={e => set('address', e.target.value)} disabled={loading} />
+          </div>
         </div>
 
         <button className="btn btn-primary btn-full" style={{ marginTop: 8 }}
@@ -258,66 +260,69 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
 
         {error && <p role="alert" style={{ color: '#c0392b', marginBottom: 12 }}>{error}</p>}
 
-        <div className="form-row mb-md">
-          <div className="form-group">
-            <label className="form-label" htmlFor="edit-fiesta-title">{t('modal_titulo')}</label>
-            <input id="edit-fiesta-title" className="form-input"
-              value={form.title} onChange={e => set('title', e.target.value)} disabled={loading} />
+        <div className="modal-scrollable">
+          <div className="form-row mb-md">
+            <div className="form-group">
+              <label className="form-label" htmlFor="edit-fiesta-title">{t('modal_titulo')}</label>
+              <input id="edit-fiesta-title" className="form-input"
+                value={form.title} onChange={e => set('title', e.target.value)} disabled={loading} />
+            </div>
+          </div>
+
+          <div className="form-group mb-md">
+            <label className="form-label" htmlFor="edit-fiesta-desc">{t('modal_descripcion')}</label>
+            <input id="edit-fiesta-desc" className="form-input"
+              value={form.description} onChange={e => set('description', e.target.value)} disabled={loading} />
+          </div>
+
+          <div className="form-group mb-md">
+            <label className="form-label">{t('modal_categorias')}</label>
+            <div className="category-multi-grid" role="group" aria-label="Categorias">
+              {CATEGORY_OPTIONS.map(cat => (
+                <button key={cat.id} type="button"
+                  className={`category-pill ${form.categories.includes(cat.id) ? 'is-active' : ''}`}
+                  onClick={() => toggleCategory(cat.id)} disabled={loading}
+                  aria-pressed={form.categories.includes(cat.id)}>
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="form-row mb-md">
+            <div className="form-group">
+              <label className="form-label" htmlFor="edit-fiesta-start">{t('modal_fecha_inicio')}</label>
+              <input id="edit-fiesta-start" className="form-input" type="date"
+                value={form.startDate} onChange={e => set('startDate', e.target.value)} disabled={loading} />
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="edit-fiesta-end">{t('modal_fecha_fin')}</label>
+              <input id="edit-fiesta-end" className="form-input" type="date"
+                value={form.endDate} onChange={e => set('endDate', e.target.value)} disabled={loading} />
+            </div>
+          </div>
+
+          <div className="form-row mb-md">
+            <div className="form-group">
+              <label className="form-label" htmlFor="edit-fiesta-city">{t('modal_ciudad')}</label>
+              <input id="edit-fiesta-city" className="form-input"
+                value={form.city} onChange={e => set('city', e.target.value)} disabled={loading} />
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="edit-fiesta-country">{t('modal_pais')}</label>
+              <input id="edit-fiesta-country" className="form-input"
+                value={form.country} onChange={e => set('country', e.target.value)} disabled={loading} />
+            </div>
+          </div>
+
+          <div className="form-group mb-md">
+            <label className="form-label" htmlFor="edit-fiesta-address">{t('modal_direccion')}</label>
+            <input id="edit-fiesta-address" className="form-input"
+              value={form.address} onChange={e => set('address', e.target.value)} disabled={loading} />
           </div>
         </div>
 
-        <div className="form-group mb-md">
-          <label className="form-label" htmlFor="edit-fiesta-desc">{t('modal_descripcion')}</label>
-          <input id="edit-fiesta-desc" className="form-input"
-            value={form.description} onChange={e => set('description', e.target.value)} disabled={loading} />
-        </div>
-
-        <div className="form-group mb-md">
-          <label className="form-label">{t('modal_categorias')}</label>
-          <div className="category-multi-grid" role="group" aria-label="Categorias">
-            {CATEGORY_OPTIONS.map(cat => (
-              <button key={cat.id} type="button"
-                className={`category-pill ${form.categories.includes(cat.id) ? 'is-active' : ''}`}
-                onClick={() => toggleCategory(cat.id)} disabled={loading}
-                aria-pressed={form.categories.includes(cat.id)}>
-                {cat.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="form-row mb-md">
-          <div className="form-group">
-            <label className="form-label" htmlFor="edit-fiesta-start">{t('modal_fecha_inicio')}</label>
-            <input id="edit-fiesta-start" className="form-input" type="date"
-              value={form.startDate} onChange={e => set('startDate', e.target.value)} disabled={loading} />
-          </div>
-          <div className="form-group">
-            <label className="form-label" htmlFor="edit-fiesta-end">{t('modal_fecha_fin')}</label>
-            <input id="edit-fiesta-end" className="form-input" type="date"
-              value={form.endDate} onChange={e => set('endDate', e.target.value)} disabled={loading} />
-          </div>
-        </div>
-
-        <div className="form-row mb-md">
-          <div className="form-group">
-            <label className="form-label" htmlFor="edit-fiesta-city">{t('modal_ciudad')}</label>
-            <input id="edit-fiesta-city" className="form-input"
-              value={form.city} onChange={e => set('city', e.target.value)} disabled={loading} />
-          </div>
-          <div className="form-group">
-            <label className="form-label" htmlFor="edit-fiesta-country">{t('modal_pais')}</label>
-            <input id="edit-fiesta-country" className="form-input"
-              value={form.country} onChange={e => set('country', e.target.value)} disabled={loading} />
-          </div>
-        </div>
-
-        <div className="form-group mb-md">
-          <label className="form-label" htmlFor="edit-fiesta-address">{t('modal_direccion')}</label>
-          <input id="edit-fiesta-address" className="form-input"
-            value={form.address} onChange={e => set('address', e.target.value)} disabled={loading} />
-        </div>
-
+        {/* Botón fuera del contenedor scrolleable */}
         <button className="btn btn-primary btn-full" style={{ marginTop: 8 }}
           onClick={handleSubmit} disabled={loading}>
           <Save size={16} /> {loading ? t('modal_guardando') : t('modal_guardar')}

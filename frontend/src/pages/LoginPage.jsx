@@ -5,7 +5,7 @@ import { loginUser } from '../services/api';
 const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
 
 export default function LoginPage({ onNavigate }) {
-  const { login } = useApp();
+  const { login, t } = useApp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -53,21 +53,21 @@ export default function LoginPage({ onNavigate }) {
   return (
     <div className="auth-bg">
       <div className="auth-card">
-        <h2 className="auth-title">Inicia Sesión</h2>
+        <h2 className="auth-title">{t('login_title')}</h2>
 
         {error && <p role="alert" style={{ color: '#c0392b', fontSize: '0.85rem', textAlign: 'center', marginBottom: 12 }}>{error}</p>}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label" htmlFor="login-email">Correo electronico</label>
-            <input className="form-input" placeholder="Correo electrónico" type="email"
+            <label className="form-label" htmlFor="login-email">{t('profile_email')}</label>
+            <input className="form-input" placeholder={t('profile_email')} type="email"
               id="login-email"
               aria-invalid={Boolean(error)}
               value={email} onChange={e => setEmail(e.target.value)} disabled={loading} />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="login-password">Contraseña</label>
-            <input className="form-input" placeholder="Contraseña" type="password"
+            <label className="form-label" htmlFor="login-password">{t('login_password')}</label>
+            <input className="form-input" placeholder={t('login_password')} type="password"
               id="login-password"
               autoComplete="current-password"
               aria-invalid={Boolean(error)}
@@ -76,9 +76,9 @@ export default function LoginPage({ onNavigate }) {
           </div>
 
           <div className="form-row mt-md">
-            <button type="button" className="btn btn-outline w-full" onClick={handleClear} disabled={loading}>Borrar</button>
+            <button type="button" className="btn btn-outline w-full" onClick={handleClear} disabled={loading}>{t('borrar')}</button>
             <button type="submit" className="btn btn-primary w-full" disabled={loading}>
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading ? t('login_loading') : t('login_btn')}
             </button>
           </div>
         </form>
@@ -86,21 +86,17 @@ export default function LoginPage({ onNavigate }) {
         <div className="auth-links mt-md">
           <p>
             <button className="auth-link" onClick={() => setShowForgotMsg(v => !v)}>
-              ¿Has olvidado tu contraseña?
+              {t('login_forgot')}
             </button>
           </p>
           {showForgotMsg && (
             <p style={{ fontSize: '0.82rem', color: 'var(--color-text-soft)', marginTop: 6, textAlign: 'center' }}>
-              Escríbenos a{' '}
-              <a href="mailto:info@aquihayfiesta.es" style={{ color: 'var(--color-primary)' }}>
-                info@aquihayfiesta.es
-              </a>{' '}
-              y te ayudamos a recuperarla.
+              {t('login_forgot_msg')}
             </p>
           )}
           <p style={{ marginTop: 6 }}>
-            ¿No tienes cuenta?{' '}
-            <button className="auth-link" onClick={() => onNavigate('register')}>Regístrate</button>
+            {t('login_no_cuenta')}{' '}
+            <button className="auth-link" onClick={() => onNavigate('register')}>{t('login_register')}</button>
           </p>
         </div>
       </div>

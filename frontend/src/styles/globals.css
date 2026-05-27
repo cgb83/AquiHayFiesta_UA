@@ -1482,7 +1482,14 @@ select:focus-visible {
   box-shadow: var(--shadow-lg);
   animation: slideUp 200ms ease;
   max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-scrollable {
+  flex: 1;
   overflow-y: auto;
+  padding-right: 8px;
 }
 
 @media (max-width: 768px) {
@@ -1491,6 +1498,10 @@ select:focus-visible {
     max-width: calc(100vw - 16px);
     max-height: 75vh;
     border-radius: var(--radius-lg);
+  }
+
+  .modal-scrollable {
+    padding-right: 4px;
   }
 }
 
@@ -2107,12 +2118,22 @@ textarea:focus-visible {
   width: 100%;
   max-width: 420px;
   box-shadow: var(--shadow-lg);
+  max-height: 90vh; /* Limita la altura total del modal */
+  display: flex;
+  flex-direction: column; /* Asegura que los hijos se organicen verticalmente */
+}
+
+.auth-card-scrollable {
+  flex: 1; /* Permite que el contenedor ocupe el espacio disponible */
+  overflow-y: auto; /* Habilita el scroll vertical */
+  padding-right: 8px; /* Espaciado para evitar que el scroll tape el contenido */
 }
 
 @media (max-width: 768px) {
   .auth-card {
     padding: var(--space-md);
     max-width: calc(100vw - 16px);
+    max-height: 75vh; /* Ajusta para pantallas pequeñas */
   }
 }
 
@@ -2361,6 +2382,13 @@ textarea:focus-visible {
   justify-content: center;
   background: var(--color-primary-pale);
   font-size: 1.4rem;
+}
+
+.create-fiesta-scrollable {
+  flex: 1; /* Permite que el contenedor ocupe el espacio disponible */
+  overflow-y: auto; /* Habilita el scroll vertical */
+  padding-right: 8px; /* Espaciado para evitar que el scroll tape el contenido */
+  margin-bottom: var(--space-lg); /* Espaciado inferior para separar del botón */
 }
 
 .create-fiesta-buttons {

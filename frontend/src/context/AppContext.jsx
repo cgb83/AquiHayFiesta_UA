@@ -197,6 +197,10 @@ export function AppProvider({ children }) {
   }, [lang]);
 
   useEffect(() => {
+    document.documentElement.lang = lang === 'EN' ? 'en' : 'es';
+  }, [lang]);
+
+  useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.theme, theme);
   }, [theme]);
 
