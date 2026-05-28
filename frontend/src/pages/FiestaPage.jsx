@@ -268,7 +268,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
         )}
       </div>
       <div className="media-label">{item.title}</div>
-      <div className="text-muted" style={{ fontSize: '0.72rem' }}>{formatDownloads(item.downloads || 0)}</div>
+      <div className="text-muted" style={{ fontSize: '0.72rem' }}>{formatDownloads(item.downloads || 0, lang)}</div>
     </div>
   );
 
@@ -401,7 +401,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                           onClick={() => setActiveViewer({ item, type: 'document' })}
                           onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveViewer({ item, type: 'document' }); } }}>
                           <div className="doc-row-title">{item.title}</div>
-                          <div className="doc-row-meta">{formatDownloads(item.downloads || 0)}</div>
+                          <div className="doc-row-meta">{formatDownloads(item.downloads || 0, lang)}</div>
                         </div>
                         <button className="doc-row-download btn btn-outline"
                           onClick={() => handleDownload(item)}
@@ -431,7 +431,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                         </div>
                         <div className="audio-row-info">
                           <div className="audio-row-title">{item.title}</div>
-                          <div className="audio-row-meta">{formatDownloads(item.downloads || 0)}</div>
+                          <div className="audio-row-meta">{formatDownloads(item.downloads || 0, lang)}</div>
                         </div>
                         <div className="audio-row-play" aria-hidden="true"><Play size={12} fill="currentColor" /></div>
                       </div>

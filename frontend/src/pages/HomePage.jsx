@@ -193,7 +193,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
                     />
                     <div className="card-info">
                       <div className="card-title">{f.title}</div>
-                      <div className="card-views">{formatViews(f.views)}</div>
+                      <div className="card-views">{formatViews(f.views, lang)}</div>
                     </div>
                   </div>
                 ))}
@@ -257,7 +257,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
                     />
                     <div className="noperder-info">
                       <div className="card-title" style={{ fontSize: '0.82rem' }}>{f.title}</div>
-                      <div className="card-views">{formatViews(f.views)}</div>
+                      <div className="card-views">{formatViews(f.views, lang)}</div>
                     </div>
                   </div>
                 ))}
@@ -291,7 +291,7 @@ export default function HomePage({ onNavigate, searchQuery = '', categoryFilter 
                       }}
                     />
                     <div className="upcoming-title">{f.title}</div>
-                    <div className="text-muted">{formatViews(f.views)}</div>
+                    <div className="text-muted">{formatViews(f.views, lang)}</div>
                   </div>
                 ))}
               </div>
