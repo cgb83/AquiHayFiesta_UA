@@ -50,7 +50,7 @@ export function AppProvider({ children }) {
   const [theme, setTheme] = useState(() => localStorage.getItem(STORAGE_KEYS.theme) || 'standard');
   const [savedItems, setSavedItems] = useState(() => parseJSON(STORAGE_KEYS.savedItems, []));
   const [fiestas, setFiestas] = useState([]);
-  const [fiestasLoading, setFiestasLoading] = useState(false);
+  const [fiestasLoading, setFiestasLoading] = useState(true);
   const [fiestasError, setFiestasError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
 

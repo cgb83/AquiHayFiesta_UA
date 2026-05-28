@@ -23,7 +23,7 @@ import './styles/globals.css';
 const SHELL_PAGES = ['home', 'fiesta', 'category', 'saved', 'manage', 'create-fiesta', 'profile', 'contact', 'privacy'];
 
 function AppInner() {
-  const { user, t } = useApp();
+  const { user, t, fiestasLoading } = useApp();
   // route = { page, param } e.g. { page: 'fiesta', param: 'san-valentin' }
   const [route, setRoute] = useState(() => {
     try {
@@ -93,12 +93,13 @@ function AppInner() {
 
   // Elimina el splash screen al montar la app
   useEffect(() => {
+    if (fiestasLoading) return;
     const splash = document.getElementById('splash');
     if (!splash) return;
     splash.classList.add('fade-out');
-    const t = setTimeout(() => splash.remove(), 500);
-    return () => clearTimeout(t);
-  }, []);
+    const timer = setTimeout(() => splash.remove(), 500);
+    return () => clearTimeout(timer);
+  }, [fiestasLoading]);
 
   useEffect(() => {
     if (!authModal) return;

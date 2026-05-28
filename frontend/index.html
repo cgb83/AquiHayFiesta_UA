@@ -21,17 +21,13 @@
         transition: opacity 0.45s ease;
       }
       #splash.fade-out { opacity: 0; pointer-events: none; }
-      #splash img {
-        width: 110px;
-        height: auto;
-        animation: ahf-pulse 1.6s ease-in-out infinite;
-      }
       #splash-name {
         font-family: Georgia, 'Times New Roman', serif;
-        font-size: 1.45rem;
+        font-size: 2.8rem;
         font-weight: 700;
         color: #7d3048;
         letter-spacing: 0.03em;
+        animation: ahf-pulse 1.6s ease-in-out infinite;
       }
       #splash-dots {
         display: flex;
@@ -59,7 +55,6 @@
   </head>
   <body>
     <div id="splash">
-      <img src="/assets/logo.png" alt="AquiHayFiesta" />
       <div id="splash-name">AquiHayFiesta</div>
       <div id="splash-dots"><span></span><span></span><span></span></div>
     </div>

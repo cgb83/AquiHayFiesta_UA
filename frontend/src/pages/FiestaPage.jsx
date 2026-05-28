@@ -534,7 +534,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                 <button className="btn btn-primary"
                   onClick={handleAddComment}
                   disabled={addingComment}
-                  style={{ alignSelf: 'flex-end' }}>
+                  style={{ alignSelf: 'flex-start' }}>
                   {addingComment ? t('procesando') : t('fiesta_submit_comment')}
                 </button>
               </div>
@@ -742,7 +742,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                 <button className="btn btn-primary"
                   onClick={handleAddComment}
                   disabled={addingComment}
-                  style={{ alignSelf: 'flex-end' }}>
+                  style={{ alignSelf: 'flex-start' }}>
                   {addingComment ? t('procesando') : t('fiesta_submit_comment')}
                 </button>
               </div>
