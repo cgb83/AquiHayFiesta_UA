@@ -91,6 +91,15 @@ function AppInner() {
 
   const isShell = SHELL_PAGES.includes(route.page);
 
+  // Elimina el splash screen al montar la app
+  useEffect(() => {
+    const splash = document.getElementById('splash');
+    if (!splash) return;
+    splash.classList.add('fade-out');
+    const t = setTimeout(() => splash.remove(), 500);
+    return () => clearTimeout(t);
+  }, []);
+
   useEffect(() => {
     if (!authModal) return;
 
