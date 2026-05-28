@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useToast } from '../context/ToastContext';
+import { useApp } from '../context/AppContext';
 
 const EMAIL_REGEX = /^\S+@\S+\.\S+$/;
 
 export default function ContactPage() {
+  const { t } = useApp();
   const { addToast } = useToast();
   const [formData, setFormData] = useState({
     name: '',
@@ -34,23 +36,23 @@ export default function ContactPage() {
     const newErrors = {};
     
     if (!formData.name.trim()) {
-      newErrors.name = 'El nombre es requerido';
+      newErrors.name = t('contact_error_name');
     }
     
     if (!formData.email.trim()) {
-      newErrors.email = 'El correo es requerido';
+      newErrors.email = t('contact_error_email');
     } else if (!EMAIL_REGEX.test(formData.email)) {
-      newErrors.email = 'Correo inválido';
+      newErrors.email = t('contact_error_email_invalid');
     }
     
     if (!formData.subject.trim()) {
-      newErrors.subject = 'El asunto es requerido';
+      newErrors.subject = t('contact_error_subject');
     }
     
     if (!formData.message.trim()) {
-      newErrors.message = 'El mensaje es requerido';
+      newErrors.message = t('contact_error_message');
     } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'El mensaje debe tener al menos 10 caracteres';
+      newErrors.message = t('contact_error_message_short');
     }
     
     setErrors(newErrors);
@@ -61,7 +63,7 @@ export default function ContactPage() {
     e.preventDefault();
     
     if (!validateForm()) {
-      addToast('error', 'Por favor, corrige los errores del formulario.');
+      addToast('error', t('contact_toast_error'));
       return;
     }
 
@@ -75,7 +77,7 @@ export default function ContactPage() {
       // await sendContactMessage(formData);
       
       setSent(true);
-      addToast('success', '¡Mensaje enviado! Nos pondremos en contacto pronto.');
+      addToast('success', t('contact_toast_success'));
       
       // Resetear después de 3 segundos
       setTimeout(() => {
@@ -83,7 +85,7 @@ export default function ContactPage() {
         setSent(false);
       }, 3000);
     } catch (error) {
-      addToast('error', 'Error al enviar el mensaje. Intenta de nuevo.');
+      addToast('error', t('contact_toast_fail'));
     } finally {
       setLoading(false);
     }
@@ -95,8 +97,8 @@ export default function ContactPage() {
         <div className="contact-container">
           <div className="contact-success">
             <div className="success-icon">✓</div>
-            <h2>¡Mensaje Enviado!</h2>
-            <p>Gracias por contactarnos. Revisaremos tu mensaje y te responderemos pronto.</p>
+            <h2>{t('contact_sent_title')}</h2>
+            <p>{t('contact_sent_msg')}</p>
           </div>
         </div>
       </div>
@@ -106,12 +108,12 @@ export default function ContactPage() {
   return (
     <div className="contact-page">
       <div className="contact-container">
-        <h1 className="contact-title">Contacto</h1>
-        <p className="contact-subtitle">¿Tienes preguntas o sugerencias? Nos encantaría escucharte.</p>
+        <h1 className="contact-title">{t('contact_title')}</h1>
+        <p className="contact-subtitle">{t('contact_subtitle')}</p>
 
         <form className="contact-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="name" className="form-label">Nombre *</label>
+            <label htmlFor="name" className="form-label">{t('contact_nombre')} <span class="alert">*</span></label>
             <input
               id="name"
               type="text"
@@ -119,14 +121,14 @@ export default function ContactPage() {
               value={formData.name}
               onChange={handleChange}
               className={`form-input ${errors.name ? 'form-input-error' : ''}`}
-              placeholder="Tu nombre"
+              placeholder={t('contact_nombre_placeholder')}
               disabled={loading}
             />
             {errors.name && <span className="form-error">{errors.name}</span>}
           </div>
 
           <div className="form-group">
-            <label htmlFor="email" className="form-label">Correo *</label>
+            <label htmlFor="email" className="form-label">{t('contact_email')} <span class="alert">*</span></label>
             <input
               id="email"
               type="email"
@@ -141,7 +143,7 @@ export default function ContactPage() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="subject" className="form-label">Asunto *</label>
+            <label htmlFor="subject" className="form-label">{t('contact_asunto')} <span class="alert">*</span></label>
             <input
               id="subject"
               type="text"
@@ -149,26 +151,26 @@ export default function ContactPage() {
               value={formData.subject}
               onChange={handleChange}
               className={`form-input ${errors.subject ? 'form-input-error' : ''}`}
-              placeholder="Asunto de tu mensaje"
+              placeholder={t('contact_asunto_placeholder')}
               disabled={loading}
             />
             {errors.subject && <span className="form-error">{errors.subject}</span>}
           </div>
 
           <div className="form-group">
-            <label htmlFor="message" className="form-label">Mensaje *</label>
+            <label htmlFor="message" className="form-label">{t('contact_mensaje')} <span class="alert">*</span></label>
             <textarea
               id="message"
               name="message"
               value={formData.message}
               onChange={handleChange}
               className={`form-input form-textarea ${errors.message ? 'form-input-error' : ''}`}
-              placeholder="Cuéntanos qué piensas..."
+              placeholder={t('contact_mensaje_placeholder')}
               rows="6"
               disabled={loading}
             />
             {errors.message && <span className="form-error">{errors.message}</span>}
-            <span className="char-count">{formData.message.length} caracteres</span>
+            <span className="char-count">{formData.message.length} {t('contact_caracteres')}</span>
           </div>
 
           <button
@@ -176,14 +178,7 @@ export default function ContactPage() {
             className="btn btn-primary contact-submit-btn"
             disabled={loading}
           >
-            {loading ? (
-              <>
-                <span className="spinner" />
-                Enviando...
-              </>
-            ) : (
-              'Enviar mensaje'
-            )}
+            {loading ? <><span className="spinner" />{t('contact_enviando')}</> : t('contact_enviar')}
           </button>
         </form>
       </div>

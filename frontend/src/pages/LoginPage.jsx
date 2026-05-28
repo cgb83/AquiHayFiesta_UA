@@ -16,12 +16,12 @@ export default function LoginPage({ onNavigate }) {
     const emailValue = email.trim().toLowerCase();
 
     if (!emailValue || !password) {
-      setError('Rellena todos los campos.');
+      setError(t('error_campos'));
       return;
     }
 
     if (!EMAIL_REGEX.test(emailValue)) {
-      setError('Introduce un correo valido.');
+      setError(t('error_email'));
       return;
     }
 
@@ -33,7 +33,7 @@ export default function LoginPage({ onNavigate }) {
       login(response.user, response.token);
       onNavigate('home');
     } catch (err) {
-      setError(err.message || 'No se pudo iniciar sesion.');
+      setError(err.message || t('error_login'));
     } finally {
       setLoading(false);
     }

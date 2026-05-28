@@ -1,9 +1,11 @@
 import { useState, useRef } from 'react';
 import { FileText, Download, ArrowLeft } from 'lucide-react';
 import { useModalAccessibility } from './useModalAccessibility';
+import { useApp } from '../../context/AppContext';
 
 export default function ContentViewerModal({ item, type, onClose, onDownload, canDownload = true, onNavigate }) {
   const modalRef = useRef(null);
+  const { t } = useApp();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   useModalAccessibility({ modalRef, isOpen: true, onClose });
@@ -15,7 +17,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
       setError('');
       await onDownload(item);
     } catch (err) {
-      setError(err.message || 'No se pudo descargar el contenido.');
+      setError(err.message || t('error_descarga'));
     } finally {
       setLoading(false);
     }
@@ -35,7 +37,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
       >
         <button 
           className="content-viewer-close"
-          aria-label="Cerrar visor"
+          aria-label={t('cerrar')}
           onClick={onClose}
         >
           <ArrowLeft size={28} />
@@ -50,7 +52,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
                 controls
                 style={{ width: '100%', borderRadius: 8, maxHeight: 'clamp(200px, 60vh, 360px)' }}
               >
-                Tu navegador no soporta la reproducción de vídeo.
+                {t('no_video')}
               </video>
             )}
             {type === 'image' && item.image && (
@@ -67,7 +69,7 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
                   controls
                   style={{ width: '100%' }}
                 >
-                  Tu navegador no soporta la reproducción de audio.
+                  {t('no_audio')}
                 </audio>
               </div>
             )}
@@ -101,15 +103,15 @@ export default function ContentViewerModal({ item, type, onClose, onDownload, ca
           {canDownload ? (
             <button className="btn btn-outline" style={{ gap: 6 }}
               onClick={handleDownload} disabled={loading}>
-              <Download size={16} /> {loading ? 'Descargando...' : 'Descargar'}
+              <Download size={16} /> {loading ? t('descargando') : t('fiesta_descargar')}
             </button>
           ) : (
             <p style={{ fontSize: '0.85rem', color: 'var(--color-text-soft)' }}>
               <button className="auth-link" onClick={() => onNavigate?.('login')} 
                 style={{ cursor: 'pointer', textDecoration: 'underline', color: 'var(--color-primary)' }}>
-                Inicia sesión
+                {t('fiesta_login_link')}
               </button>
-              {' '}para descargar este contenido.
+              {' '}{t('login_download')}
             </p>
           )}
         </div>
