@@ -46,32 +46,32 @@ export function CreateFiestaModal({ onClose, onCreated }) {
 
   const handleSubmit = async () => {
     if (!form.title.trim() || form.categories.length === 0) {
-      setError('Titulo y al menos una categoria son obligatorios.');
+      setError(t('error_titulo_cat'));
       return;
     }
 
     if (!form.city.trim()) {
-      setError('La ciudad es obligatoria.');
+      setError(t('error_ciudad'));
       return;
     }
 
     if (!form.startDate) {
-      setError('La fecha de inicio es obligatoria.');
+      setError(t('error_fecha_inicio'));
       return;
     }
 
     if (!coverImage) {
-      setError('La portada es obligatoria.');
+      setError(t('error_portada'));
       return;
     }
 
     if (coverImage) {
       if (!IMAGE_TYPES.includes(coverImage.type)) {
-        setError('La portada debe ser una imagen JPG, PNG, WEBP o GIF.');
+        setError(t('error_portada_tipo'));
         return;
       }
       if (coverImage.size > MAX_IMAGE_SIZE) {
-        setError('La portada no puede superar 10MB.');
+        setError(t('error_portada_size'));
         return;
       }
     }
@@ -83,7 +83,7 @@ export function CreateFiestaModal({ onClose, onCreated }) {
       onCreated?.();
       onClose();
     } catch (err) {
-      setError(err.message || 'No se pudo crear la fiesta.');
+      setError(err.message || t('error_fiesta'));
     } finally {
       setLoading(false);
     }
@@ -258,9 +258,20 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
 
   const handleSubmit = async () => {
     if (!form.title.trim() || form.categories.length === 0) {
-      setError('Título y al menos una categoría son obligatorios.');
+      setError(t('error_titulo_cat'));
       return;
     }
+
+    if (!form.city.trim()) {
+      setError(t('error_ciudad'));
+      return;
+    }
+
+    if (!form.startDate) {
+      setError(t('error_fecha_inicio'));
+      return;
+    }
+
     try {
       setLoading(true);
       setError('');
@@ -276,7 +287,7 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
       onUpdated?.();
       onClose();
     } catch (err) {
-      setError(err.message || 'No se pudo actualizar la fiesta.');
+      setError(err.message || t('error_fiesta'));
     } finally {
       setLoading(false);
     }
@@ -346,7 +357,7 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
 
           <div className="form-row mb-md">
             <div className="form-group">
-              <label className="form-label" htmlFor="edit-fiesta-city">{t('modal_ciudad')}</label>
+              <label className="form-label" htmlFor="edit-fiesta-city">{t('modal_ciudad')} <span className="alerta">*</span></label>
               <input id="edit-fiesta-city" className="form-input"
                 value={form.city} onChange={e => set('city', e.target.value)} disabled={loading} />
             </div>
@@ -399,22 +410,22 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
 
   const handleCreate = async () => {
     if (!form.title.trim() || !fiestaId) {
-      setError('Titulo y fiesta son obligatorios.');
+      setError(t('error_titulo'));
       return;
     }
 
     if (!file) {
-      setError('Selecciona un archivo para publicar.');
+      setError(t('error_archivo'));
       return;
     }
 
     if (!FILE_TYPES.includes(file.type)) {
-      setError('Tipo de archivo no permitido.');
+      setError(t('error_archivo_tipo'));
       return;
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      setError('El archivo no puede superar 50MB.');
+      setError(t('error_archivo_size'));
       return;
     }
 
@@ -430,7 +441,7 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
       onCreated?.();
       onClose();
     } catch (err) {
-      setError(err.message || 'No se pudo crear la publicación.');
+      setError(err.message || t('error_publi'));
     } finally {
       setLoading(false);
     }

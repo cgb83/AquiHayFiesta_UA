@@ -63,35 +63,35 @@ export default function CreateFiestaPage({ onNavigate }) {
 
   // Validaciones
   if (!form.title.trim()) {
-    setError('El título es obligatorio.');
+    setError(t('error_titulo'));
     return;
   }
   if (!coverImage) {
-    setError('La portada es obligatoria.');
+    setError(t('error_portada'));
     return;
   }
   if (!form.city.trim()) {
-    setError('La ciudad es obligatoria.');
+    setError(t('error_ciudad'));
     return;
   }
   if (form.categories.length === 0) {
-    setError('Debes seleccionar al menos una categoría.');
+    setError(t('error_categorias'));
     return;
   }
   if (!form.startDate) {
-    setError('La fecha de inicio es obligatoria.');
+    setError(t('error_fecha_inicio'));
     return;
   }
   if (form.endDate && form.endDate < form.startDate) {
-    setError('La fecha de fin no puede ser anterior a la de inicio.');
+    setError(t('error_fecha_fin'));
     return;
   }
   if (coverImage && !IMAGE_TYPES.includes(coverImage.type)) {
-    setError('La portada debe ser una imagen JPG, PNG, WEBP o GIF.');
+    setError(t('error_portada_tipo'));
     return;
   }
   if (coverImage && coverImage.size > MAX_IMAGE_SIZE) {
-    setError('La portada no puede superar 10MB.');
+    setError(t('error_portada_size'));
     return;
   }
 
@@ -125,8 +125,8 @@ export default function CreateFiestaPage({ onNavigate }) {
         onNavigate('manage');
       }, 1500);
     } catch (err) {
-      setError(err.message || 'No se pudo crear la fiesta.');
-      addToast(err.message || 'Error al crear la fiesta', 'error');
+      setError(err.message || t('error_fiesta'));
+      addToast(err.message || t('error_fiesta'), 'error');
     } finally {
       setLoading(false);
     }
