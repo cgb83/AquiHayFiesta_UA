@@ -34,7 +34,7 @@ export default function CreateFiestaPage({ onNavigate }) {
     startDate: '',
     endDate: '',
     city: '',
-    country: 'España',
+    country: '',
     address: '',
   });
   const [coverImage, setCoverImage] = useState(null);
@@ -70,8 +70,8 @@ export default function CreateFiestaPage({ onNavigate }) {
     setError('La portada es obligatoria.');
     return;
   }
-  if (!form.description.trim()) {
-    setError('La descripción es obligatoria.');
+  if (!form.city.trim()) {
+    setError('La ciudad es obligatoria.');
     return;
   }
   if (form.categories.length === 0) {
@@ -115,7 +115,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         startDate: '',
         endDate: '',
         city: '',
-        country: 'España',
+        country: '',
         address: '',
       });
       setCoverImage(null);
@@ -147,6 +147,10 @@ export default function CreateFiestaPage({ onNavigate }) {
       <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.8rem,5vw,2.5rem)', fontWeight: 700, marginBottom: 'var(--space-lg)' }}>
         {t('create_title')}
       </h1>
+
+      <p style={{ fontSize: '0.82rem', color: 'var(--color-text-soft)', marginBottom: 'var(--space-lg)' }}>
+        <span style={{ color: 'var(--color-primary)', fontWeight: 700 }}>*</span> {t('campos_obligatorios')}
+      </p>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
         {error && (
@@ -207,7 +211,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Descripción */}
         <div className="form-group">
           <label className="form-label" htmlFor="create-description">
-            {t('modal_descripcion')}  <span className="alerta">*</span>
+            {t('modal_descripcion')}
           </label>
           <textarea
             id="create-description"
@@ -216,7 +220,6 @@ export default function CreateFiestaPage({ onNavigate }) {
             value={form.description}
             onChange={e => set('description', e.target.value)}
             disabled={loading}
-            required
             rows={7}
           />
         </div>
@@ -224,7 +227,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Categorías */}
         <div className="form-group">
           <label className="form-label" style={{ marginBottom: 'var(--space-sm)' }}>
-            {t('modal_categorias')} <span className="alerta">*</span> (puedes elegir varias)
+            {t('modal_categorias')} <span className="alerta">*</span>
           </label>
           <div className="category-multi-grid" role="group" aria-label="Categorías">
             {CATEGORY_OPTIONS.map((category) => {
@@ -278,7 +281,7 @@ export default function CreateFiestaPage({ onNavigate }) {
         {/* Ubicación */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
           <div className="form-group">
-            <label className="form-label" htmlFor="create-city">{t('modal_ciudad')}</label>
+            <label className="form-label" htmlFor="create-city">{t('modal_ciudad')} <span className="alerta">*</span></label>
             <input 
               id="create-city" 
               className="form-input" 

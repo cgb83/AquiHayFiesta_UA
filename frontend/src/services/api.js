@@ -59,7 +59,7 @@ export async function createFiesta(data) {
   formData.append('location', JSON.stringify({ 
     address: data.address || '',
     city: data.city || '', 
-    country: data.country || 'España' 
+    country: data.country || '' 
   }));
   if (data.coverImage) formData.append('coverImage', data.coverImage);
   return request('/fiestas', { method: 'POST', headers: authHeaders(), body: formData });

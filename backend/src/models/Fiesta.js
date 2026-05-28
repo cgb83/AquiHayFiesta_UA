@@ -74,7 +74,7 @@ const fiestaSchema = new mongoose.Schema(
     location: {
       address: { type: String, default: '' },
       city:    { type: String, default: '' },
-      country: { type: String, default: 'España' },
+      country: { type: String, default: '' },
     },
     // Quién creó esta fiesta
     createdBy: {

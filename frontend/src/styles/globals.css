@@ -905,7 +905,7 @@ select:focus-visible {
   .section-title {
     font-size: 1.2rem;
     margin-bottom: 12px;
-    padding-bottom: 8px;
+    padding-bottom: 0;
   }
 
 }
@@ -2488,7 +2488,7 @@ textarea:focus-visible {
   display: flex;
   gap: var(--space-xl);
   align-items: flex-start;
-  padding: var(--space-md) 0;
+  padding: var(--space-xl) 0 var(--space-md) 0;
   background: var(--color-surface);
 }
 
@@ -2544,11 +2544,13 @@ textarea:focus-visible {
 
 /* Close button and download area for modal */
 .content-viewer-close {
+  position: absolute;
+  top: var(--space-md);
+  left: var(--space-md);
   background: none;
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  margin-bottom: 8px;
   padding: 4px 8px;
   transition: opacity var(--transition);
   color: var(--color-text);

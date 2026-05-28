@@ -90,8 +90,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
         slug: data.slug,
         title: data.title,
         description: data.description || '',
-        category: data.category,
-        subcategories: data.subcategories?.length > 0 ? data.subcategories : data.categories || [],
+        categories: data.categories || [],
         views: data.views || 0,
         image: resolveMediaUrl(data.coverImage || ''),
         date: data.startDate ? String(data.startDate).slice(0, 10) : null,
@@ -102,6 +101,9 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
         creatorName: data.createdBy?.username || data.creator?.username || 'Anónimo',
         creatorAvatar: resolveMediaUrl(data.createdBy?.avatar || data.creator?.avatar || ''),
         creatorId: data.createdBy?._id || data.creator?._id,
+        address: data.location?.address || null,
+        city: data.location?.city || null,
+        country: data.location?.country || null,
       });
     } catch {
       // API error
@@ -304,12 +306,16 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             </p>
 
             <div style={{ display: 'flex', gap: 'var(--space-lg)', marginTop: 'var(--space-lg)', flexWrap: 'wrap' }}>
-              {fiesta.location && (
-                <div className="fiesta-info-block">
-                  <span className="fiesta-info-label"><MapPin size={14} style={{ display: 'inline', marginRight: 4 }} /> {t('fiesta_lugar')}</span>
-                  <span className="fiesta-info-value">{fiesta.location}</span>
-                </div>
-              )}
+            {(fiesta.address || fiesta.location) && (
+              <div className="fiesta-info-block">
+                <span className="fiesta-info-label">
+                  <MapPin size={14} style={{ display: 'inline', marginRight: 4 }} /> {t('fiesta_lugar')}
+                </span>
+                <span className="fiesta-info-value">
+                  {[fiesta.country, fiesta.city, fiesta.address].filter(Boolean).join(' - ')}
+                </span>
+              </div>
+            )}
             </div>
           </div>
 
@@ -323,9 +329,9 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             {/* Categories */}
             <div className="fiesta-categories-mobile-sidebar">
               <h3 className="section-title" style={{ textAlign: 'left' }}>{t('fiesta_categorias')}</h3>
-              {fiesta.subcategories?.length > 0 ? (
+              {fiesta.categories?.length > 0 ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 0 }}>
-                  {fiesta.subcategories.map(s => {
+                  {fiesta.categories.map(s => {
                     const cat = CATEGORIES.find(c => c.id === s);
                     return (
                       <button
@@ -589,12 +595,16 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             </p>
             {/* Info block: date + location */}
             <div style={{ display: 'flex', gap: 'var(--space-lg)', marginTop: 'var(--space-lg)', flexWrap: 'wrap' }}>
-              {fiesta.location && (
-                <div className="fiesta-info-block">
-                  <span className="fiesta-info-label"><MapPin size={14} style={{ display: 'inline', marginRight: 4 }} /> {t('fiesta_lugar')}</span>
-                  <span className="fiesta-info-value">{fiesta.location}</span>
-                </div>
-              )}
+            {(fiesta.address || fiesta.location) && (
+              <div className="fiesta-info-block">
+                <span className="fiesta-info-label">
+                  <MapPin size={14} style={{ display: 'inline', marginRight: 4 }} /> {t('fiesta_lugar')}
+                </span>
+                <span className="fiesta-info-value">
+                  {[fiesta.country, fiesta.city, fiesta.address].filter(Boolean).join(' - ')}
+                </span>
+              </div>
+            )}
             </div>
           </div>
 
@@ -757,9 +767,9 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
           {/* Categories */}
           <div className="mb-lg">
             <h3 className="section-title" style={{ textAlign: 'right' }}>{t('fiesta_categorias')}</h3>
-            {fiesta.subcategories?.length > 0 ? (
+            {fiesta.categories?.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0 }}>
-                {fiesta.subcategories.map(s => {
+                {fiesta.categories.map(s => {
                   const cat = CATEGORIES.find(c => c.id === s);
                   return (
                     <button

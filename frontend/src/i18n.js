@@ -166,6 +166,7 @@ export const translations = {
         create_desc_placeholder: 'Describe tu fiesta...',
         create_publicando: 'Publicando fiesta...',
         create_publicar: 'Publicar',
+        campos_obligatorios: 'Los campos marcados con asterisco son obligatorios.',
 
         // LoginPage
         login_title: 'Inicia Sesión',
@@ -373,6 +374,7 @@ export const translations = {
         create_desc_placeholder: 'Describe your party...',
         create_publicando: 'Publishing party...',
         create_publicar: 'Publish',
+        campos_obligatorios: 'Fields marked with an asterisk are required.',
 
         // LoginPage
         login_title: 'Log In',

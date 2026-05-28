@@ -27,7 +27,7 @@ export function CreateFiestaModal({ onClose, onCreated }) {
     startDate: '',
     endDate: '',
     city: '',
-    country: 'España',
+    country: '',
     address: '',
   });
   const [coverImage, setCoverImage] = useState(null);
@@ -37,7 +37,7 @@ export function CreateFiestaModal({ onClose, onCreated }) {
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
   const handleClear = () => {
-    setForm({ title: '', description: '', categories: ['familia'], startDate: '', endDate: '', city: '', country: 'España', address: '' });
+    setForm({ title: '', description: '', categories: ['familia'], startDate: '', endDate: '', city: '', country: '', address: '' });
     setCoverImage(null);
     setError('');
   };
@@ -47,6 +47,16 @@ export function CreateFiestaModal({ onClose, onCreated }) {
   const handleSubmit = async () => {
     if (!form.title.trim() || form.categories.length === 0) {
       setError('Titulo y al menos una categoria son obligatorios.');
+      return;
+    }
+
+    if (!form.city.trim()) {
+      setError('La ciudad es obligatoria.');
+      return;
+    }
+
+    if (!form.startDate) {
+      setError('La fecha de inicio es obligatoria.');
       return;
     }
 
@@ -103,12 +113,16 @@ export function CreateFiestaModal({ onClose, onCreated }) {
         <button className="modal-close" onClick={onClose} aria-label="Cerrar modal">✕</button>
         <h2 id="create-fiesta-title" className="modal-title">{t('modal_crear_fiesta')}</h2>
 
+        <p style={{ fontSize: '0.82rem', color: 'var(--color-text-soft)', marginBottom: 'var(--space-md)', textAlign: 'center' }}>
+          <span style={{ color: 'var(--color-primary)', fontWeight: 700 }}>*</span> {t('campos_obligatorios')}
+        </p>
+
         {error && <p role="alert" style={{ color: '#c0392b', marginBottom: 12 }}>{error}</p>}
 
         <div className="create-fiesta-scrollable">
           <div className="form-row mb-md">
             <div className="form-group">
-              <label className="form-label" htmlFor="fiesta-title">{t('modal_titulo')}</label>
+              <label className="form-label" htmlFor="fiesta-title">{t('modal_titulo')} <span className="alerta">*</span></label>
               <input id="fiesta-title" className="form-input" placeholder="Ej: Fiestas del pueblo"
                 value={form.title} onChange={e => set('title', e.target.value)} disabled={loading} />
             </div>
@@ -137,7 +151,7 @@ export function CreateFiestaModal({ onClose, onCreated }) {
           </div>
 
           <div className="form-group mb-md">
-            <label className="form-label">{t('modal_categorias')}</label>
+            <label className="form-label">{t('modal_categorias')} <span className="alerta">*</span></label>
             <div className="category-multi-grid" role="group" aria-label="Categorias">
               {CATEGORY_OPTIONS.map((category) => {
                 const active = form.categories.includes(category.id);
@@ -172,7 +186,7 @@ export function CreateFiestaModal({ onClose, onCreated }) {
 
           <div className="form-row mb-md">
             <div className="form-group">
-              <label className="form-label" htmlFor="fiesta-city">{t('modal_ciudad')}</label>
+              <label className="form-label" htmlFor="fiesta-city">{t('modal_ciudad')} <span className="alerta">*</span></label>
               <input id="fiesta-city" className="form-input" placeholder={t('modal_ciudad')}
                 value={form.city} onChange={e => set('city', e.target.value)} disabled={loading} />
             </div>
@@ -215,7 +229,7 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
     startDate:   fiesta.startDate ? String(fiesta.startDate).slice(0, 10) : '',
     endDate:     fiesta.endDate   ? String(fiesta.endDate).slice(0, 10)   : '',
     city:        fiesta.location?.city    || '',
-    country:     fiesta.location?.country || 'España',
+    country:     fiesta.location?.country || '',
     address:     fiesta.location?.address || '',
   });
   const [loading, setLoading] = useState(false);
@@ -224,7 +238,7 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
   const handleClear = () => {
-    setForm({ title: '', description: '', categories: [], startDate: '', endDate: '', city: '', country: 'España', address: '' });
+    setForm({ title: '', description: '', categories: [], startDate: '', endDate: '', city: '', country: '', address: '' });
     setError('');
   };
 
@@ -282,12 +296,16 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
         <button className="modal-close" onClick={onClose} aria-label="Cerrar modal">✕</button>
         <h2 id="edit-fiesta-modal-title" className="modal-title">{t('modal_editar_fiesta')}</h2>
 
+        <p style={{ fontSize: '0.82rem', color: 'var(--color-text-soft)', marginBottom: 'var(--space-md)', textAlign: 'center' }}>
+          <span style={{ color: 'var(--color-primary)', fontWeight: 700 }}>*</span> {t('campos_obligatorios')}
+        </p>
+
         {error && <p role="alert" style={{ color: '#c0392b', marginBottom: 12 }}>{error}</p>}
 
         <div className="modal-scrollable">
           <div className="form-row mb-md">
             <div className="form-group">
-              <label className="form-label" htmlFor="edit-fiesta-title">{t('modal_titulo')}</label>
+              <label className="form-label" htmlFor="edit-fiesta-title">{t('modal_titulo')} <span className="alerta">*</span></label>
               <input id="edit-fiesta-title" className="form-input"
                 value={form.title} onChange={e => set('title', e.target.value)} disabled={loading} />
             </div>
@@ -300,7 +318,7 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
           </div>
 
           <div className="form-group mb-md">
-            <label className="form-label">{t('modal_categorias')}</label>
+            <label className="form-label">{t('modal_categorias')} <span className="alerta">*</span></label>
             <div className="category-multi-grid" role="group" aria-label="Categorias">
               {CATEGORY_OPTIONS.map(cat => (
                 <button key={cat.id} type="button"
@@ -315,7 +333,7 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
 
           <div className="form-row mb-md">
             <div className="form-group">
-              <label className="form-label" htmlFor="edit-fiesta-start">{t('modal_fecha_inicio')}</label>
+              <label className="form-label" htmlFor="edit-fiesta-start">{t('modal_fecha_inicio')} <span className="alerta">*</span></label>
               <input id="edit-fiesta-start" className="form-input" type="date"
                 value={form.startDate} onChange={e => set('startDate', e.target.value)} disabled={loading} />
             </div>
@@ -432,11 +450,15 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
         <button className="modal-close" onClick={onClose} aria-label="Cerrar modal">✕</button>
         <h2 id="create-publication-title" className="modal-title">{t('modal_crear_pub')}</h2>
 
+        <p style={{ fontSize: '0.82rem', color: 'var(--color-text-soft)', marginBottom: 'var(--space-md)', textAlign: 'center' }}>
+          <span style={{ color: 'var(--color-primary)', fontWeight: 700 }}>*</span> {t('campos_obligatorios')}
+        </p>
+
         {error && <p role="alert" style={{ color: '#c0392b', marginBottom: 12 }}>{error}</p>}
 
         <div className="form-row mb-md">
           <div className="form-group">
-            <label className="form-label" htmlFor="publication-title">{t('modal_titulo')}</label>
+            <label className="form-label" htmlFor="publication-title">{t('modal_titulo')} <span className="alerta">*</span></label>
             <input id="publication-title" className="form-input" placeholder="Ej: Regalo romantico"
               value={form.title} onChange={e => set('title', e.target.value)} disabled={loading} />
           </div>
@@ -455,7 +477,7 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
         </div>
 
         <div className="form-group mb-md">
-          <label className="form-label" htmlFor="publication-content">{t('modal_contenido')}</label>
+          <label className="form-label" htmlFor="publication-content">{t('modal_contenido')} <span className="alerta">*</span></label>
           <input
             ref={fileInputRef}
             id="publication-content-input"
@@ -471,7 +493,7 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
 
         <div style={{ display: 'flex', gap: 'var(--space-md)', marginTop: 8 }}>
           <button className="btn btn-primary btn-full"
-            onClick={handleSubmit}
+            onClick={handleCreate}
             disabled={loading}>
             <Upload size={16} /> {loading ? t('modal_publicando') : t('modal_publicar')}
           </button>
