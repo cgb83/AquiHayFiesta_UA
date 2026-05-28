@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Upload, Save } from 'lucide-react';
+import { Upload, Save, Eraser } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useModalAccessibility } from './useModalAccessibility';
 import { createFiesta, createPublication, updateFiesta } from '../../services/api';
@@ -35,6 +35,13 @@ export function CreateFiestaModal({ onClose, onCreated }) {
   const [error, setError] = useState('');
 
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
+
+  const handleClear = () => {
+    setForm({ title: '', description: '', categories: ['familia'], startDate: '', endDate: '', city: '', country: 'España', address: '' });
+    setCoverImage(null);
+    setError('');
+  };
+
   useModalAccessibility({ modalRef, isOpen: true, onClose });
 
   const handleSubmit = async () => {
@@ -124,7 +131,8 @@ export function CreateFiestaModal({ onClose, onCreated }) {
 
           <div className="form-group mb-md">
             <label className="form-label" htmlFor="fiesta-description">{t('modal_descripcion')}</label>
-            <input id="fiesta-description" className="form-input" placeholder="Ej: Tutorial para hacer un regalo especial."
+            <textarea id="fiesta-description" className="form-input" rows={7}
+              placeholder="Ej: Tutorial para hacer un regalo especial."
               value={form.description} onChange={e => set('description', e.target.value)} disabled={loading} />
           </div>
 
@@ -181,12 +189,17 @@ export function CreateFiestaModal({ onClose, onCreated }) {
               value={form.address} onChange={e => set('address', e.target.value)} disabled={loading} />
           </div>
         </div>
-
-        <button className="btn btn-primary btn-full" style={{ marginTop: 8 }}
-          onClick={handleSubmit}
-          disabled={loading}>
-          <Upload size={16} /> {loading ? t('modal_publicando') : t('modal_publicar')}
-        </button>
+        
+        <div style={{ display: 'flex', gap: 'var(--space-md)', marginTop: 8 }}>
+          <button className="btn btn-primary btn-full"
+            onClick={handleSubmit}
+            disabled={loading}>
+            <Upload size={16} /> {loading ? t('modal_publicando') : t('modal_publicar')}
+          </button>
+          <button className="btn btn-outline" type="button" onClick={handleClear} disabled={loading}>
+            <Eraser size={16} /> {t('borrar')}
+          </button>
+        </div>  
       </div>
     </div>
   );
@@ -209,6 +222,12 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
   const [error, setError]     = useState('');
 
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
+
+  const handleClear = () => {
+    setForm({ title: '', description: '', categories: [], startDate: '', endDate: '', city: '', country: 'España', address: '' });
+    setError('');
+  };
+
   useModalAccessibility({ modalRef, isOpen: true, onClose });
 
   const toggleCategory = (id) => {
@@ -276,7 +295,7 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
 
           <div className="form-group mb-md">
             <label className="form-label" htmlFor="edit-fiesta-desc">{t('modal_descripcion')}</label>
-            <input id="edit-fiesta-desc" className="form-input"
+            <textarea id="edit-fiesta-desc" className="form-input" rows={7}
               value={form.description} onChange={e => set('description', e.target.value)} disabled={loading} />
           </div>
 
@@ -327,11 +346,16 @@ export function EditFiestaModal({ fiesta, onClose, onUpdated }) {
           </div>
         </div>
 
-        {/* Botón fuera del contenedor scrolleable */}
-        <button className="btn btn-primary btn-full" style={{ marginTop: 8 }}
-          onClick={handleSubmit} disabled={loading}>
-          <Save size={16} /> {loading ? t('modal_guardando') : t('modal_guardar')}
-        </button>
+        <div style={{ display: 'flex', gap: 'var(--space-md)', marginTop: 8 }}>
+          <button className="btn btn-primary btn-full"
+            onClick={handleSubmit}
+            disabled={loading}>
+            <Upload size={16} /> {loading ? t('modal_publicando') : t('modal_publicar')}
+          </button>
+          <button className="btn btn-outline" type="button" onClick={handleClear} disabled={loading}>
+            <Eraser size={16} /> {t('borrar')}
+          </button>
+        </div> 
       </div>
     </div>
   );
@@ -346,6 +370,13 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
+
+  const handleClear = () => {
+    setForm({ title: '', description: '' });
+    setFile(null);
+    setError('');
+  };
+
   useModalAccessibility({ modalRef, isOpen: true, onClose });
 
   const handleCreate = async () => {
@@ -418,7 +449,8 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
 
         <div className="form-group mb-md">
           <label className="form-label" htmlFor="publication-description">{t('modal_descripcion')}</label>
-          <input id="publication-description" className="form-input" placeholder="Ej: Tutorial para hacer un regalo especial."
+          <textarea id="publication-description" className="form-input" rows={4}
+            placeholder="Ej: Tutorial para hacer un regalo especial."
             value={form.description} onChange={e => set('description', e.target.value)} disabled={loading} />
         </div>
 
@@ -437,11 +469,16 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
           <div className="form-hint">{t('modal_hint_archivo')}</div>
         </div>
 
-        <button className="btn btn-primary btn-full" style={{ marginTop: 8 }}
-          onClick={handleCreate}
-          disabled={loading}>
-          <Upload size={16} /> {loading ? t('modal_creando') : t('modal_crear_pub_btn')}
-        </button>
+        <div style={{ display: 'flex', gap: 'var(--space-md)', marginTop: 8 }}>
+          <button className="btn btn-primary btn-full"
+            onClick={handleSubmit}
+            disabled={loading}>
+            <Upload size={16} /> {loading ? t('modal_publicando') : t('modal_publicar')}
+          </button>
+          <button className="btn btn-outline" type="button" onClick={handleClear} disabled={loading}>
+            <Eraser size={16} /> {t('borrar')}
+          </button>
+        </div> 
       </div>
     </div>
   );

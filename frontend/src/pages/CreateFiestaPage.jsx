@@ -209,14 +209,15 @@ export default function CreateFiestaPage({ onNavigate }) {
           <label className="form-label" htmlFor="create-description">
             {t('modal_descripcion')}  <span className="alerta">*</span>
           </label>
-          <input 
-            id="create-description" 
-            className="form-input" 
+          <textarea
+            id="create-description"
+            className="form-input"
             placeholder={t('create_desc_placeholder')}
-            value={form.description} 
-            onChange={e => set('description', e.target.value)} 
+            value={form.description}
+            onChange={e => set('description', e.target.value)}
             disabled={loading}
             required
+            rows={7}
           />
         </div>
 

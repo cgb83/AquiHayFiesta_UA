@@ -165,7 +165,7 @@ export const translations = {
         create_tamano: 'Tamaño: ',
         create_desc_placeholder: 'Describe tu fiesta...',
         create_publicando: 'Publicando fiesta...',
-        create_publicar: 'Publicar fiesta',
+        create_publicar: 'Publicar',
 
         // LoginPage
         login_title: 'Inicia Sesión',
@@ -372,7 +372,7 @@ export const translations = {
         create_tamano: 'Size: ',
         create_desc_placeholder: 'Describe your party...',
         create_publicando: 'Publishing party...',
-        create_publicar: 'Publish party',
+        create_publicar: 'Publish',
 
         // LoginPage
         login_title: 'Log In',

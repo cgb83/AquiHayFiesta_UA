@@ -2418,10 +2418,6 @@ textarea:focus-visible {
     display: none;
   }
 
-  .create-btn-text {
-    display: none;
-  }
-
   .create-fiesta-buttons {
     justify-content: center;
   }
