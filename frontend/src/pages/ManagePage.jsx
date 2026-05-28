@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { PartyPopper, MapPin, Plus, Pencil, Trash2, FileText, Eraser, ChevronUp, ChevronDown } from 'lucide-react';
+import { PartyPopper, MapPin, Play, Plus, Pencil, Trash2, FileText, Eraser, ChevronUp, ChevronDown } from 'lucide-react';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
 import { EditFiestaModal } from '../components/modals/CreateModals';
 import { useApp } from '../context/AppContext';
@@ -156,10 +156,23 @@ function MediaGroup({ label, items, type, onView, onDelete, onEdit, expanded, on
               <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '8px', background: 'var(--color-primary-pale)' }}>
                 <AudioWave />
               </div>
-            ) : item.image ? (
-              <img src={item.image} alt={item.title} />
             ) : (
-              <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-primary-pale)', fontSize: '1.8rem' }}>🎵</div>
+              <>
+                <img 
+                  src={item.image} 
+                  alt={item.title}
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.nextSibling.style.display = 'flex';
+                  }}
+                />
+                <div style={{ display: 'none', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', background: 'var(--color-primary-pale)', position: 'absolute', inset: 0 }}>
+                  {item.contentType === 'video' 
+                    ? <div className="play-icon"><Play size={16} fill="currentColor" /></div>
+                    : <span style={{ fontSize: '1.8rem' }}>🎵</span>
+                  }
+                </div>
+              </>
             )}
 
 
@@ -236,7 +249,12 @@ export default function ManagePage({ onNavigate }) {
       id: item._id,
       title: item.title,
       description: item.description || '',
-      image: resolveMediaUrl(item.thumbnailUrl || item.fileUrl),
+      image: item.thumbnailUrl
+        ? resolveMediaUrl(item.thumbnailUrl)
+        : item.contentType === 'video'
+          ? resolveMediaUrl(item.fileUrl).replace('/video/upload/', '/video/upload/so_0/').replace(/\.(mp4|webm|mov)$/, '.jpg')
+          : resolveMediaUrl(item.fileUrl),
+      contentType: item.contentType,
     }));
 
   const loadContent = async () => {
