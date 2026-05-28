@@ -174,6 +174,7 @@ export const translations = {
         error_email: 'Introduce un correo válido.',
         error_login: 'No se pudo iniciar sesión.',
         error_descarga: 'No se pudo descargar el contenido.',
+        error_api: 'No se pudo cargar la API.',
 
         // ContentViewerModal
         cerrar: 'Cerrar',
@@ -328,6 +329,9 @@ export const translations = {
         priv_s11_p2: 'Nos comprometemos a responder a todas las solicitudes dentro de 30 días hábiles.',
         priv_footer: 'Nota Legal: Esta política de privacidad se proporciona con fines informativos. Para asuntos legales específicos, consulta con un abogado especializado.',
 
+        // App
+        skip_link: 'Saltar al contenido',
+        
         // Common
         guardar: 'Guardar cambios',
         guardando: 'Guardando...',
@@ -511,6 +515,7 @@ export const translations = {
         error_email: 'Please enter a valid email.',
         error_login: 'Could not log in.',
         error_descarga: 'Could not download the content.',
+        error_api: 'Could not load the API.',
 
         // ContentViewerModal
         cerrar: 'Close',
@@ -664,6 +669,9 @@ export const translations = {
         priv_s11_link: 'contact page',
         priv_s11_p2: 'We are committed to responding to all requests within 30 business days.',
         priv_footer: 'Legal Note: This privacy policy is provided for informational purposes. For specific legal matters, consult a specialized lawyer.',
+
+        //App
+        skip_link: 'Skip to content',
         
         // Common
         guardar: 'Save changes',

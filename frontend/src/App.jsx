@@ -23,7 +23,7 @@ import './styles/globals.css';
 const SHELL_PAGES = ['home', 'fiesta', 'category', 'saved', 'manage', 'create-fiesta', 'profile', 'contact', 'privacy'];
 
 function AppInner() {
-  const { user } = useApp();
+  const { user, t } = useApp();
   // route = { page, param } e.g. { page: 'fiesta', param: 'san-valentin' }
   const [route, setRoute] = useState(() => {
     try {
@@ -115,7 +115,7 @@ function AppInner() {
 
   return (
     <div className={`app-shell ${authModal ? 'modal-open' : ''}`}>
-      <a className="skip-link" href="#main-content">Saltar al contenido</a>
+      <a className="skip-link" href="#main-content">{t('skip_link')}</a>
       {/* Hero only on shell pages */}
       {isShell && <Hero />}
 
@@ -159,7 +159,7 @@ function AppInner() {
             className="auth-modal-content"
             role="dialog"
             aria-modal="true"
-            aria-label={authModal === 'login' ? 'Iniciar sesion' : 'Crear cuenta'}
+            aria-label={authModal === 'login' ? t('nav_login') : t('register_create')}
             onClick={(e) => e.stopPropagation()}
           >
             <button className="auth-modal-close" onClick={closeAuthModal} aria-label="Cerrar">

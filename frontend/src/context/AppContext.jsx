@@ -178,7 +178,7 @@ export function AppProvider({ children }) {
       }
     } catch {
       setFiestas([]);
-      setFiestasError('No se pudo cargar la API.');
+      setFiestasError(translate(lang, 'error_api'));
     } finally {
       setFiestasLoading(false);
     }
