@@ -63,41 +63,26 @@ npm run dev
 
 ### Backend (`backend/`)
 - `npm install` - Instalar dependencias
+- `npm install express-rate-limit` - middleware para Express. Limita el número de peticiones que un cliente puede hacer a la API en un período de tiempo determinado.
 - `npm run dev` - Iniciar servidor con nodemon (puerto 5000)
-- `npm start` - Iniciar servidor (sin hot reload)
-- `npm run seed` - Cargar datos de prueba en la BD (15 usuarios, 13 fiestas, 22 publicaciones)
+- `npm start` - Iniciar servidor
 
 ## Base de datos
 
 Usuarios de prueba:
-- **Usuario normal**: `silvia@aquihayfiesta.es` / `Prueba123`
+- **Usuario normal**: `carlos@aquihayfiesta.es` / `Prueba123`
 - **Admin**: `admin.fiestas@aquihayfiesta.es` / `Admin123`
-
-Datos incluidos:
-- 15 usuarios normales + 2 admins
-- 10 fiestas oficiales (San Valentín, Halloween, Navidad, etc.)
-- 3 fiestas creadas por usuarios (Moros y Cristianos, Boda, Bando Murcia)
-- 22 publicaciones con distintos tipos de contenido
 
 ## Arranque rapido recomendado
 
 1. Terminal A (backend):
 	- `cd backend`
-	- `npm run dev`
+	- `npm start`
 2. Terminal B (frontend):
 	- `cd frontend`
 	- `npm run dev`
 3. Abrir la URL que muestre Vite (normalmente `http://localhost:5173` o `http://localhost:5174`)
 4. Comprobar backend en `http://localhost:5000/api/health`
 
-## Estado actual
-
-- Estructura separada front/back y comandos dedicados.
-- Login y registro del frontend conectados al backend.
-- Validaciones basicas en formularios de autenticacion.
-- Persistencia local de sesion, idioma, tema y guardados en `localStorage`.
-
-## Siguientes pasos recomendados
-
-- Preparar el despliegue (frontend y backend) en una plataforma gratuita.
-- Añadir tests basicos de autenticacion y API.
+## OTRA OPCIÓN:
+Ver la app desplegada en [htt](https://aquihayfiesta.onrender.com/)
