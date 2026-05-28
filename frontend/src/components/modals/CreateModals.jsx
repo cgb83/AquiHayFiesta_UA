@@ -43,6 +43,11 @@ export function CreateFiestaModal({ onClose, onCreated }) {
       return;
     }
 
+    if (!coverImage) {
+      setError('La portada es obligatoria.');
+      return;
+    }
+
     if (coverImage) {
       if (!IMAGE_TYPES.includes(coverImage.type)) {
         setError('La portada debe ser una imagen JPG, PNG, WEBP o GIF.');

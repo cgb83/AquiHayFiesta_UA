@@ -23,7 +23,8 @@ const fiestaSchema = new mongoose.Schema(
     },
     // Imagen de portada
     coverImage: {
-      type: String, // URL o ruta del archivo
+      type: String,
+      required: [true, 'La portada es obligatoria'],
       default: '',
     },
     // Categoría principal
