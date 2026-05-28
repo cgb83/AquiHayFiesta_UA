@@ -20,7 +20,7 @@ const CATEGORY_OPTIONS = [
 ];
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_IMAGE_SIZE = 30 * 1024 * 1024; // 30MB
 
 export default function CreateFiestaPage({ onNavigate }) {
   const { user, t } = useApp();

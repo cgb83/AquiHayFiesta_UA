@@ -13,7 +13,7 @@ const FILE_TYPES = [
   'application/pdf', 'application/msword',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ];
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_IMAGE_SIZE = 30 * 1024 * 1024; // 30MB
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
 export function CreateFiestaModal({ onClose, onCreated }) {
@@ -482,7 +482,7 @@ export function CreatePublicationModal({ fiestaTitle = 'San Valentín', fiestaId
 
         <div className="form-group mb-md">
           <label className="form-label" htmlFor="publication-description">{t('modal_descripcion')}</label>
-          <textarea id="publication-description" className="form-input" rows={4}
+          <textarea id="publication-description" className="form-input" rows={2}
             placeholder="Ej: Tutorial para hacer un regalo especial."
             value={form.description} onChange={e => set('description', e.target.value)} disabled={loading} />
         </div>
