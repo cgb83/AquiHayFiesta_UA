@@ -53,6 +53,13 @@ export const translations = {
         fiesta_not_found: 'Fiesta no encontrada.',
         fiesta_login_download: 'para descargar este contenido.',
         fiesta_login_link: 'Inicia sesión',
+        fiesta_comentarios: 'Comentarios',
+        fiesta_no_comments: 'Aún no hay comentarios.',
+        fiesta_add_comment: 'Añadir comentario',
+        fiesta_comment_placeholder: 'Escribe tu comentario...',
+        fiesta_submit_comment: 'Publicar comentario',
+        fiesta_comment_rating_required: 'Debes seleccionar al menos una estrella.',
+        fiesta_login_comment: 'para escribir un comentario.',
 
         // SavedPage
         saved_title: 'Guardados',
@@ -253,6 +260,13 @@ export const translations = {
         fiesta_not_found: 'Party not found.',
         fiesta_login_download: 'to download this content.',
         fiesta_login_link: 'Log in',
+        fiesta_comentarios: 'Comments',
+        fiesta_no_comments: 'No comments yet.',
+        fiesta_add_comment: 'Add a comment',
+        fiesta_comment_placeholder: 'Write your comment...',
+        fiesta_submit_comment: 'Post comment',
+        fiesta_comment_rating_required: 'You must select at least one star.',
+        fiesta_login_comment: 'to write a comment.',
 
         // SavedPage
         saved_title: 'Saved',

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Bookmark, MapPin, ArrowLeft, Plus, Download, Play, FileText } from 'lucide-react';
+import { Bookmark, MapPin, ArrowLeft, Plus, Download, Play, FileText, Trash2 } from 'lucide-react';
 import ContentViewerModal from '../components/modals/ContentViewerModal';
 import { CreatePublicationModal } from '../components/modals/CreateModals';
 import { CATEGORIES, formatDownloads, formatViews } from '../data/mockData';
 import { useApp } from '../context/AppContext';
-import { fetchFiestaBySlug, fetchPublicationsByFiesta, registerDownload, resolveMediaUrl } from '../services/api';
+import { fetchFiestaBySlug, fetchPublicationsByFiesta, registerDownload, resolveMediaUrl, fetchComments as fetchCommentsApi, addComment as addCommentApi, deleteComment as deleteCommentApi } from '../services/api';
 
 import Calendar from '../components/ui/Calendar';
 import { SkeletonContent } from '../components/ui/SkeletonLoader';
@@ -39,6 +39,31 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
   const lastDetailSlugRef = useRef(null);
 
   const fiesta = fiestaDetail;
+
+  const [comments, setComments] = useState([]);
+  const [page, setPage] = useState(1); 
+  const [totalComments, setTotalComments] = useState(0);
+  const [loadingComments, setLoadingComments] = useState(false);
+  const [newComment, setNewComment] = useState({ rating: 0, comment: '' });
+  const [addingComment, setAddingComment] = useState(false);
+  const [commentError, setCommentError] = useState('');
+
+  const fetchComments = useCallback(async (reset = false) => {
+    try {
+      setLoadingComments(true);
+      const currentPage = reset ? 1 : page;
+      const response = await fetchCommentsApi(fiesta?.id, currentPage, 5);
+      if (response.success) {
+        setComments(prev => reset ? response.comments : [...prev, ...response.comments]);
+        setTotalComments(response.total);
+        if (reset) setPage(1);
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setLoadingComments(false);
+    }
+  }, [fiesta?.id]);
 
   // Filtrar contenido basado en searchQuery
   const filteredContent = useMemo(() => {
@@ -131,6 +156,10 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
     loadContent();
   }, [loadContent]);
 
+  useEffect(() => {
+    if (fiesta?.id) fetchComments();
+  }, [fiesta?.id, page]);
+
   const exploreFiestas = useMemo(() => {
     const candidates = fiestas.filter((f) => f.slug !== slug);
     const shuffled = [...candidates].sort(() => Math.random() - 0.5);
@@ -139,6 +168,40 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
 
   if (!fiesta && !fiestaLoading) return <div className="page-content"><p> {t('fiesta_not_found')}</p></div>;
   if (!fiesta && fiestaLoading) return <div className="page-content" style={{ minHeight: '60vh' }}><SkeletonContent /></div>;
+
+  const handleAddComment = async () => {
+    if (!newComment.rating) {
+      setCommentError(t('fiesta_comment_rating_required'));
+      return;
+    }
+    if (!newComment.comment.trim()) return;
+    setCommentError('');
+    try {
+      setAddingComment(true);
+      await addCommentApi(fiesta.id, { 
+        rating: Number(newComment.rating), 
+        comment: newComment.comment.trim() 
+      });
+      setNewComment({ rating: 0, comment: '' });
+      setComments([]);
+      setPage(1);
+      fetchComments(true);
+    } catch (err) {
+      console.error('Error al añadir comentario:', err);
+    } finally {
+      setAddingComment(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await deleteCommentApi(fiesta.id, commentId);
+      setComments(prev => prev.filter(c => c._id !== commentId));
+      setTotalComments(prev => prev - 1);
+    } catch (err) {
+      console.error('Error al borrar comentario:', err);
+    }
+  };
 
   const downloadBlob = async (url, fileName) => {
     const res = await fetch(url);
@@ -385,10 +448,7 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                 )}
             </>
           )}
-        </div>
 
-        {/* Mobile Explore */}
-        <div className="fiesta-explore-mobile">
           {/* Creator Profile */}
           {fiesta.creatorName && (
             <div className="creator-profile">
@@ -405,6 +465,86 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
             </div>
           )}
 
+          {/* Comments */}
+          <div className="comments-section">
+            <h3 className="section-title">{t('fiesta_comentarios')}</h3>
+
+            {/* Lista de comentarios */}
+            {comments.length === 0 && !loadingComments && (
+              <p className="text-muted">{t('fiesta_no_comments')}</p>
+            )}
+            {comments.map((c) => (
+              <div key={c._id} className="comment-item">
+                <div className="comment-header">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span className="comment-author">{c.user?.username || 'Anónimo'}</span>
+                    <div className="comment-stars">
+                      {[1,2,3,4,5].map(s => (
+                        <span key={s} style={{ color: s <= c.rating ? 'var(--color-text)' : 'var(--color-muted)', fontSize: '0.9rem' }}>★</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span className="comment-date">{new Date(c.createdAt).toLocaleDateString(lang === 'EN' ? 'en-US' : 'es-ES')}</span>
+                    {user && (c.user?._id === user.id || user.role === 'admin') && (
+                      <button className="comment-delete-btn"
+                        onClick={() => handleDeleteComment(c._id)}
+                        aria-label="Borrar comentario">
+                        <Trash2 size={12} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="comment-text">{c.comment}</div>
+              </div>
+            ))}
+
+            {comments.length < totalComments && (
+              <button className="btn btn-outline" style={{ marginTop: 'var(--space-md)', fontSize: '0.85rem' }}
+                onClick={() => setPage(p => p + 1)} disabled={loadingComments}>
+                {loadingComments ? t('home_buscando') : t('ver_mas')}
+              </button>
+            )}
+
+            {/* Formulario añadir comentario */}
+            {user ? (
+              <div className="add-comment-form">
+                <h4 className="section-subtitle">{t('fiesta_add_comment')}</h4>
+                {commentError && (
+                  <p role="alert" style={{ color: '#c0392b', fontSize: '0.85rem', marginBottom: 4 }}>
+                    {commentError}
+                  </p>
+                )}
+                <div className="star-picker">
+                  {[1,2,3,4,5].map(s => (
+                    <button key={s} type="button" className={`star-btn ${s <= newComment.rating ? 'active' : ''}`}
+                      onClick={() => setNewComment(prev => ({ ...prev, rating: s }))}>★</button>
+                  ))}
+                </div>
+                <textarea className="form-input" rows={3}
+                  placeholder={t('fiesta_comment_placeholder')}
+                  value={newComment.comment}
+                  onChange={e => setNewComment(prev => ({ ...prev, comment: e.target.value }))} />
+                <button className="btn btn-primary"
+                  onClick={handleAddComment}
+                  disabled={addingComment}
+                  style={{ alignSelf: 'flex-end' }}>
+                  {addingComment ? t('procesando') : t('fiesta_submit_comment')}
+                </button>
+              </div>
+            ) : (
+              <p style={{ fontSize: '0.88rem', color: 'var(--color-text-soft)', marginTop: 'var(--space-md)' }}>
+                <button className="auth-link" onClick={() => onNavigate('login')}>
+                  {t('fiesta_login_link')}
+                </button>
+                {' '}{t('fiesta_login_comment')}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Explore */}
+        <div className="fiesta-explore-mobile">
           <h3 className="section-title" style={{ textAlign: 'left' }}>{t('fiesta_explorar')}</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {exploreFiestas.map(f => (
@@ -528,6 +668,83 @@ export default function FiestaPage({ slug, onNavigate, searchQuery = '' }) {
                 )}
             </>
           )}
+
+          {/* Comments */}
+          <div className="comments-section">
+            <h3 className="section-title">{t('fiesta_comentarios')}</h3>
+
+            {/* Lista de comentarios */}
+            {comments.length === 0 && !loadingComments && (
+              <p className="text-muted">{t('fiesta_no_comments')}</p>
+            )}
+            {comments.map((c) => (
+              <div key={c._id} className="comment-item">
+                <div className="comment-header">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span className="comment-author">{c.user?.username || 'Anónimo'}</span>
+                    <div className="comment-stars">
+                      {[1,2,3,4,5].map(s => (
+                        <span key={s} style={{ color: s <= c.rating ? 'var(--color-text)' : 'var(--color-muted)', fontSize: '0.9rem' }}>★</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span className="comment-date">{new Date(c.createdAt).toLocaleDateString(lang === 'EN' ? 'en-US' : 'es-ES')}</span>
+                    {user && (c.user?._id === user.id || user.role === 'admin') && (
+                      <button className="comment-delete-btn"
+                        onClick={() => handleDeleteComment(c._id)}
+                        aria-label="Borrar comentario">
+                        <Trash2 size={12} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="comment-text">{c.comment}</div>
+              </div>
+            ))}
+
+            {comments.length < totalComments && (
+              <button className="btn btn-outline" style={{ marginTop: 'var(--space-md)', fontSize: '0.85rem' }}
+                onClick={() => setPage(p => p + 1)} disabled={loadingComments}>
+                {loadingComments ? t('home_buscando') : t('ver_mas')}
+              </button>
+            )}
+
+            {/* Formulario añadir comentario */}
+            {user ? (
+              <div className="add-comment-form">
+                <h4 className="section-subtitle">{t('fiesta_add_comment')}</h4>
+                {commentError && (
+                  <p role="alert" style={{ color: '#c0392b', fontSize: '0.85rem', marginBottom: 4 }}>
+                    {commentError}
+                  </p>
+                )}
+                <div className="star-picker">
+                  {[1,2,3,4,5].map(s => (
+                    <button key={s} type="button" className={`star-btn ${s <= newComment.rating ? 'active' : ''}`}
+                      onClick={() => setNewComment(prev => ({ ...prev, rating: s }))}>★</button>
+                  ))}
+                </div>
+                <textarea className="form-input" rows={3}
+                  placeholder={t('fiesta_comment_placeholder')}
+                  value={newComment.comment}
+                  onChange={e => setNewComment(prev => ({ ...prev, comment: e.target.value }))} />
+                <button className="btn btn-primary"
+                  onClick={handleAddComment}
+                  disabled={addingComment}
+                  style={{ alignSelf: 'flex-end' }}>
+                  {addingComment ? t('procesando') : t('fiesta_submit_comment')}
+                </button>
+              </div>
+            ) : (
+              <p style={{ fontSize: '0.88rem', color: 'var(--color-text-soft)', marginTop: 'var(--space-md)' }}>
+                <button className="auth-link" onClick={() => onNavigate('login')}>
+                  {t('fiesta_login_link')}
+                </button>
+                {' '}{t('fiesta_login_comment')}
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Sidebar */}

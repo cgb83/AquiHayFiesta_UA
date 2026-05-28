@@ -44,6 +44,9 @@ export const deleteMyAccount = () => request('/auth/delete', { method: 'DELETE',
 export const fetchFiestas = (p = {}) => request(`/fiestas?${new URLSearchParams(p)}`);
 export const fetchFiestaBySlug = (s) => request(`/fiestas/${s}`, { headers: authHeaders() });
 export const fetchMyFiestas = () => request('/fiestas/my', { headers: authHeaders() }); // AÑADIDA
+export const fetchComments = (fiestaId, page = 1, limit = 5) => request(`/fiestas/${fiestaId}/comments?page=${page}&limit=${limit}`);
+export const addComment = (fiestaId, data) => request(`/fiestas/${fiestaId}/comments`, { method: 'POST', headers: authHeaders(), body: JSON.stringify(data) });
+export const deleteComment = (fiestaId, commentId) => request(`/fiestas/${fiestaId}/comments/${commentId}`, { method: 'DELETE', headers: authHeaders() });
 
 export async function createFiesta(data) {
   const formData = new FormData();

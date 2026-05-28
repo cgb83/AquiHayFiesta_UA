@@ -35,7 +35,18 @@ const getFiestas = async (req, res) => {
         filter.$or = searchFilter;
       }
     }
-    const fiestas = await Fiesta.find(filter).populate('createdBy', 'username email country city').sort({ createdAt: -1 });
+
+    const fiestas = await Fiesta.find(filter)
+      .populate('createdBy', 'username email country city')
+      .sort({ createdAt: -1 })
+      .lean();
+      
+    fiestas.forEach((fiesta) => {
+      if (fiesta.comments && fiesta.comments.length > 3) {
+        fiesta.comments = fiesta.comments.slice(-3); // Mantén solo los últimos 3 comentarios
+      }
+    });
+
     res.json({ success: true, count: fiestas.length, fiestas });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Error al obtener las fiestas.' });
@@ -62,9 +73,7 @@ const createFiesta = async (req, res) => {
     const fiesta = await Fiesta.create({
       title,
       description,
-      category: safeCategories[0] || 'familia',
-      categories: safeCategories.length > 0 ? safeCategories : ['familia'],
-      subcategories: subcategories ? JSON.parse(subcategories) : [],
+      categories: safeCategories.length > 0 ? safeCategories : ['sin categoría'],
       startDate:  startDate  || null,
       endDate:    endDate    || null,
       location:   location   ? JSON.parse(location) : {},
@@ -98,14 +107,12 @@ const updateFiesta = async (req, res) => {
     if (startDate !== undefined) allowedUpdate.startDate = startDate || null;
     if (endDate !== undefined) allowedUpdate.endDate = endDate || null;
     if (location !== undefined) allowedUpdate.location = location;
-    if (subcategories !== undefined) allowedUpdate.subcategories = subcategories;
     if (categories !== undefined) {
       const safe = Array.from(new Set(
         (Array.isArray(categories) ? categories : [categories]).filter(c => ALLOWED_CATEGORIES.includes(c))
       ));
       if (safe.length > 0) {
         allowedUpdate.categories = safe;
-        allowedUpdate.category = safe[0];
       }
     }
 
@@ -160,6 +167,91 @@ const getMyFiestas = async (req, res) => {
   }
 };
 
+const getComments = async (req, res) => {
+  try {
+    const { id } = req.params; // ID de la fiesta
+    const { page = 1, limit = 10 } = req.query; // Paginación
+
+    const fiesta = await Fiesta.findById(id).populate({
+      path: 'comments.user',
+      select: 'username email',
+    });
+
+    if (!fiesta) {
+      return res.status(404).json({ success: false, message: 'Fiesta no encontrada.' });
+    }
+
+    // Paginación de comentarios
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const comments = fiesta.comments.slice(startIndex, endIndex);
+
+    res.json({
+      success: true,
+      count: comments.length,
+      total: fiesta.comments.length,
+      comments,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error al obtener los comentarios.' });
+  }
+};
+
+const addComment = async (req, res) => {
+  try {
+    const { id } = req.params; // ID de la fiesta
+    const { rating, comment } = req.body;
+
+    // Validar que se envíen los datos necesarios
+    if (!rating || !comment) {
+      return res.status(400).json({ success: false, message: 'Rating y comentario son obligatorios.' });
+    }
+
+    // Validar que la valoración esté entre 1 y 5
+    if (rating < 1 || rating > 5) {
+      return res.status(400).json({ success: false, message: 'La valoración debe estar entre 1 y 5 estrellas.' });
+    }
+
+    // Buscar la fiesta por ID
+    const fiesta = await Fiesta.findById(id);
+    if (!fiesta) {
+      return res.status(404).json({ success: false, message: 'Fiesta no encontrada.' });
+    }
+
+    // Añadir el comentario
+    fiesta.comments.push({
+      user: req.user.id, // ID del usuario autenticado
+      rating,
+      comment,
+    });
+
+    await fiesta.save();
+    res.status(201).json({ success: true, message: 'Comentario añadido.', comments: fiesta.comments });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error al añadir el comentario.' });
+  }
+};
+
+const deleteComment = async (req, res) => {
+  try {
+    const fiesta = await Fiesta.findById(req.params.id);
+    if (!fiesta) return res.status(404).json({ success: false, message: 'Fiesta no encontrada.' });
+
+    const comment = fiesta.comments.id(req.params.commentId);
+    if (!comment) return res.status(404).json({ success: false, message: 'Comentario no encontrado.' });
+
+    const isOwner = comment.user.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === 'admin';
+    if (!isOwner && !isAdmin) return res.status(403).json({ success: false, message: 'No tienes permiso.' });
+
+    comment.deleteOne();
+    await fiesta.save();
+    res.json({ success: true, message: 'Comentario eliminado.' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error al eliminar el comentario.' });
+  }
+};
+
 module.exports = { 
   getFiestas, 
   getFiestaBySlug, 
@@ -168,4 +260,7 @@ module.exports = {
   deleteFiesta, 
   toggleSaveFiesta,
   getMyFiestas,
+  getComments,
+  addComment,
+  deleteComment,
 };

@@ -10,17 +10,23 @@ const {
   deleteFiesta,
   toggleSaveFiesta,
   getMyFiestas,
+  getComments,
+  addComment,
+  deleteComment,
 } = require('../controllers/fiestaController');
 
 // Públicas
 router.get('/',      getFiestas);
 
 // Privadas
-router.get  ('/my',         protect, getMyFiestas);
-router.post ('/',           protect, upload.single('coverImage'), multerErrorHandler, uploadToCloudinary, createFiesta);
-router.put  ('/:id',        protect, updateFiesta);
-router.delete('/:id',       protect, deleteFiesta);
-router.post ('/:id/save',   protect, toggleSaveFiesta);
+router.get    ('/my',                      protect, getMyFiestas);
+router.post   ('/',                        protect, upload.single('coverImage'), multerErrorHandler, uploadToCloudinary, createFiesta);
+router.put    ('/:id',                     protect, updateFiesta);
+router.delete ('/:id',                     protect, deleteFiesta);
+router.post   ('/:id/save',                protect, toggleSaveFiesta);
+router.get    ('/:id/comments',                     getComments);
+router.post   ('/:id/comments',            protect, addComment);
+router.delete ('/:id/comments/:commentId', protect, deleteComment);
 
 router.get('/:slug', getFiestaBySlug); // Quitamos optionalProtect por si acaso
 

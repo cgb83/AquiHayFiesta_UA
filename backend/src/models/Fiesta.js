@@ -1,6 +1,30 @@
 const mongoose = require('mongoose');
 const ALLOWED_CATEGORIES = ['amor', 'noche', 'disfraces', 'familia', 'musica', 'gastronomia', 'deporte', 'infantil', 'bodas', 'negocios', 'cultural', 'religiosa'];
 
+// Esquema para los comentarios
+const commentSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User', // Referencia al modelo de usuario
+      required: true,
+    },
+    rating: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5, // Valoración entre 1 y 5 estrellas
+    },
+    comment: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: [500, 'El comentario no puede superar 500 caracteres'],
+    },
+  },
+  { timestamps: true } // Añade createdAt y updatedAt automáticamente
+);
+
 const fiestaSchema = new mongoose.Schema(
   {
     title: {
@@ -27,12 +51,7 @@ const fiestaSchema = new mongoose.Schema(
       required: [true, 'La portada es obligatoria'],
       default: '',
     },
-    // Categoría principal
-    category: {
-      type: String,
-      required: [true, 'La categoría es obligatoria'],
-      enum: ALLOWED_CATEGORIES,
-    },
+    // Categorías
     categories: {
       type: [
         {
@@ -42,13 +61,6 @@ const fiestaSchema = new mongoose.Schema(
       ],
       default: [],
     },
-    // Subcategorías (etiquetas adicionales)
-    subcategories: [
-      {
-        type: String,
-        trim: true,
-      },
-    ],
     // Fechas del evento (opcional)
     startDate: {
       type: Date,
@@ -85,6 +97,8 @@ const fiestaSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // Comentarios
+    comments: [commentSchema],
   },
   {
     timestamps: true,
